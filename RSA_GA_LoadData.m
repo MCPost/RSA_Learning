@@ -33,7 +33,7 @@ ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'Unif
 
 
 %% Initialize Mat files
-save('RSA_Data', 'Subj_names', 'elecs', 'ROI_all_idx')
+save('RSA_Data_SVM', 'Subj_names', 'elecs', 'ROI_all_idx')
 
 %% Loop over Participants to create RSA Matrices
 for sub = 1:length(Subj_names)

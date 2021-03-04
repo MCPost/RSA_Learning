@@ -32,22 +32,39 @@ ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'Unif
 
 
 %% Create Data
-RSA_Data = load('RSA_Data');
-RSA_Data_OCC_full.TimeVec = RSA_Data.('RSA_Data_OCC_AG').TimeVec;
-RSA_Data_OCC_16.TimeVec = RSA_Data.('RSA_Data_OCC_AG').TimeVec;
-RSA_Data_TMP_16.TimeVec = RSA_Data.('RSA_Data_TMP_AG').TimeVec;
-if(~isempty(RSA_Data.('RSA_Data_OCC_AG').RSA_full)) 
-    RSA_Data_OCC_full.Data = zeros(size(RSA_Data.('RSA_Data_OCC_AG').RSA_full{1})); RSA_Data_TMP_full.Data = zeros(size(RSA_Data.('RSA_Data_TMP_AG').RSA_full{1})); 
-end
-RSA_Data_OCC_16.Data = zeros(size(RSA_Data.('RSA_Data_OCC_AG').RSA_16{1})); RSA_Data_TMP_16.Data = zeros(size(RSA_Data.('RSA_Data_TMP_AG').RSA_16{1}));
+tmp_strct = load('RSA_Data_LDA');
+% RSA_Data_OCC_full.TimeVec = RSA_Data.('RSA_Data_OCC_AG').TimeVec;
+% RSA_Data_OCC_16.TimeVec = RSA_Data.('RSA_Data_OCC_AG').TimeVec;
+% RSA_Data_TMP_16.TimeVec = RSA_Data.('RSA_Data_TMP_AG').TimeVec;
+% if(~isempty(RSA_Data.('RSA_Data_OCC_AG').RSA_full)) 
+%     RSA_Data_OCC_full.Data = zeros(size(RSA_Data.('RSA_Data_OCC_AG').RSA_full{1})); RSA_Data_TMP_full.Data = zeros(size(RSA_Data.('RSA_Data_TMP_AG').RSA_full{1})); 
+% end
+% RSA_Data_OCC_16.Data = zeros(size(RSA_Data.('RSA_Data_OCC_AG').RSA_16{1})); RSA_Data_TMP_16.Data = zeros(size(RSA_Data.('RSA_Data_TMP_AG').RSA_16{1}));
+
+RSA_Data = [];
 for sub = 1:length(Subj_names)
-    
-    if(~isempty(RSA_Data.(['RSA_Data_OCC_',Subj_names{sub}]).RSA_full))
-        RSA_Data_OCC_full.Data(:,:,:,sub) = RSA_Data.(['RSA_Data_OCC_',Subj_names{sub}]).RSA_full{1};
-        RSA_Data_TMP_full.Data(:,:,:,sub) = RSA_Data.(['RSA_Data_TMP_',Subj_names{sub}]).RSA_full{1};
+    if(sub == 1)
+        RSA_Data.Names   = Subj_names;
+        for fn = fieldnames(tmp_strct.(['RSA_Data_OCC_',Subj_names{sub}]))'
+            RSA_Data.(fn{1}) = tmp_strct.(['RSA_Data_OCC_',Subj_names{sub}]).(fn{1});
+        end
+        RSA_Data = rmfield(RSA_Data, {'Name','TimeVec1024','RSA_full','MDS_full','RSA_16','Encoding_Data','TrialInfo'...
+                                      'MDS_16','rsa_dim','mds_dim','mds_error_16','curROI','curROI_name'});
+        RSA_Data.Encoding_Data{sub} = tmp_strct.(['RSA_Data_OCC_',Subj_names{sub}]).Encoding_Data;
+        RSA_Data.TrialInfo{sub} = tmp_strct.(['RSA_Data_OCC_',Subj_names{sub}]).TrialInfo;
+        RSA_Data.OCC_ROI = tmp_strct.(['RSA_Data_OCC_',Subj_names{sub}]).curROI; 
+        RSA_Data.TMP_ROI = tmp_strct.(['RSA_Data_TMP_',Subj_names{sub}]).curROI;
+    else
+        RSA_Data.Encoding_Data{sub} = tmp_strct.(['RSA_Data_OCC_',Subj_names{sub}]).Encoding_Data;
+        RSA_Data.TrialInfo{sub} = tmp_strct.(['RSA_Data_OCC_',Subj_names{sub}]).TrialInfo;
     end
-    RSA_Data_OCC_16.Data(:,:,:,sub) = RSA_Data.(['RSA_Data_OCC_',Subj_names{sub}]).RSA_16{1};
-    RSA_Data_TMP_16.Data(:,:,:,sub) = RSA_Data.(['RSA_Data_TMP_',Subj_names{sub}]).RSA_16{1};
+    
+    if(~isempty(tmp_strct.(['RSA_Data_OCC_',Subj_names{sub}]).RSA_full))
+        RSA_Data.OCC.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_OCC_',Subj_names{sub}]).RSA_full{1},[3 1 2]);
+        RSA_Data.TMP.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_TMP_',Subj_names{sub}]).RSA_full{1},[3 1 2]);
+    end
+    RSA_Data.OCC.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_OCC_',Subj_names{sub}]).RSA_16{1},[3 1 2]);
+    RSA_Data.TMP.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_TMP_',Subj_names{sub}]).RSA_16{1},[3 1 2]);
 end
 
     
@@ -86,25 +103,25 @@ subplot(1,2,2)
 imagesc(Semantic_Mat_full); title('Semantic Hypothesis Matrix')
 axis square
 
-Perceptual_Mat_16 = zeros(16);
-Semantic_Mat_16 = zeros(16);
+Perceptual_Mat_red16 = zeros(16);
+Semantic_Mat_red16 = zeros(16);
 for i = 1:16-1
     for j = (i+1):16
         if(j ~= 16 - (i - 1))
             if(trl_mat(8*i,1) == 1 && trl_mat(8*j,1) == 1)
-                Perceptual_Mat_16(i,j) = 1;
+                Perceptual_Mat_red16(i,j) = 1;
             elseif(trl_mat(8*i,1) == 2 && trl_mat(8*j,1) == 2)
-                Perceptual_Mat_16(i,j) = 2;
+                Perceptual_Mat_red16(i,j) = 2;
             else
-                Perceptual_Mat_16(i,j) = -1;
+                Perceptual_Mat_red16(i,j) = -1;
             end
 
             if(trl_mat(8*i,2) == 1 && trl_mat(8*j,2) == 1)
-                Semantic_Mat_16(i,j) = 1;
+                Semantic_Mat_red16(i,j) = 1;
             elseif(trl_mat(8*i,2) == 2 && trl_mat(8*j,2) == 2)
-                Semantic_Mat_16(i,j) = 2;
+                Semantic_Mat_red16(i,j) = 2;
             else
-                Semantic_Mat_16(i,j) = -1;
+                Semantic_Mat_red16(i,j) = -1;
             end
         end
     end
@@ -112,10 +129,10 @@ end
 
 figure
 subplot(1,2,1)
-imagesc(Perceptual_Mat_16); title('Perceptual Hypothesis Matrix')
+imagesc(Perceptual_Mat_red16); title('Perceptual Hypothesis Matrix')
 axis square
 subplot(1,2,2)
-imagesc(Semantic_Mat_16); title('Semantic Hypothesis Matrix')
+imagesc(Semantic_Mat_red16); title('Semantic Hypothesis Matrix')
 axis square
 
  
@@ -123,53 +140,37 @@ axis square
 %% Create RSA Time Courses
 
 RSA_Time = [];
-TimeVec = RSA_Data_OCC_16.TimeVec;
+TimeVec = RSA_Data.TimeVec;
 for sub = 1:length(Subj_names)
     
-    cur_data = zeros(size(RSA_Data_OCC_16,1));
+    cur_data = zeros(size(RSA_Data.OCC.red16_Data,3));
     for tp = 1:length(TimeVec)
         
         % Occipital
-        cur_data = RSA_Data_OCC_16.Data(:,:,tp,sub);
+        cur_data = squeeze(RSA_Data.OCC.red16_Data(sub,tp,:,:));
         % Perceptual Dimension
-        RSA_Time.OCC.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_16 == 1));
-        RSA_Time.OCC.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_16 == 2));
-        RSA_Time.OCC.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_16 > 0));
-        RSA_Time.OCC.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_16 < 0));
-        RSA_Time.OCC.Perceptual.Drawing_SEM(sub,tp) = nanstd(cur_data(Perceptual_Mat_16 == 1))./sqrt(length(Subj_names));
-        RSA_Time.OCC.Perceptual.Picture_SEM(sub,tp) = nanstd(cur_data(Perceptual_Mat_16 == 2))./sqrt(length(Subj_names));
-        RSA_Time.OCC.Perceptual.Within_SEM(sub,tp)  = nanstd(cur_data(Perceptual_Mat_16 > 0))./sqrt(length(Subj_names));
-        RSA_Time.OCC.Perceptual.Between_SEM(sub,tp) = nanstd(cur_data(Perceptual_Mat_16 < 0))./sqrt(length(Subj_names));
+        RSA_Time.OCC.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
+        RSA_Time.OCC.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
+        RSA_Time.OCC.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
+        RSA_Time.OCC.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
         % Semantic Dimension
-        RSA_Time.OCC.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_16 == 1));
-        RSA_Time.OCC.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_16 == 2));
-        RSA_Time.OCC.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_16 > 0));
-        RSA_Time.OCC.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_16 < 0));
-        RSA_Time.OCC.Semantic.Animate_SEM(sub,tp)   = nanstd(cur_data(Semantic_Mat_16 == 1))./sqrt(length(Subj_names));
-        RSA_Time.OCC.Semantic.Inanimate_SEM(sub,tp) = nanstd(cur_data(Semantic_Mat_16 == 2))./sqrt(length(Subj_names));
-        RSA_Time.OCC.Semantic.Within_SEM(sub,tp)    = nanstd(cur_data(Semantic_Mat_16 > 0))./sqrt(length(Subj_names));
-        RSA_Time.OCC.Semantic.Between_SEM(sub,tp)   = nanstd(cur_data(Semantic_Mat_16 < 0))./sqrt(length(Subj_names));
+        RSA_Time.OCC.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
+        RSA_Time.OCC.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
+        RSA_Time.OCC.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
+        RSA_Time.OCC.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
         
         % Temporal
-        cur_data = RSA_Data_TMP_16.Data(:,:,tp,sub);
+        cur_data = squeeze(RSA_Data.TMP.red16_Data(sub,tp,:,:));
         % Perceptual Dimension
-        RSA_Time.TMP.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_16 == 1));
-        RSA_Time.TMP.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_16 == 2));
-        RSA_Time.TMP.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_16 > 0));
-        RSA_Time.TMP.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_16 < 0));
-        RSA_Time.TMP.Perceptual.Drawing_SEM(sub,tp) = nanstd(cur_data(Perceptual_Mat_16 == 1))./sqrt(length(Subj_names));
-        RSA_Time.TMP.Perceptual.Picture_SEM(sub,tp) = nanstd(cur_data(Perceptual_Mat_16 == 2))./sqrt(length(Subj_names));
-        RSA_Time.TMP.Perceptual.Within_SEM(sub,tp)  = nanstd(cur_data(Perceptual_Mat_16 > 0))./sqrt(length(Subj_names));
-        RSA_Time.TMP.Perceptual.Between_SEM(sub,tp) = nanstd(cur_data(Perceptual_Mat_16 < 0))./sqrt(length(Subj_names));
+        RSA_Time.TMP.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
+        RSA_Time.TMP.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
+        RSA_Time.TMP.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
+        RSA_Time.TMP.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
         % Semantic Dimension
-        RSA_Time.TMP.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_16 == 1));
-        RSA_Time.TMP.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_16 == 2));
-        RSA_Time.TMP.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_16 > 0));
-        RSA_Time.TMP.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_16 < 0));
-        RSA_Time.TMP.Semantic.Animate_SEM(sub,tp)   = nanmean(cur_data(Semantic_Mat_16 == 1))./sqrt(length(Subj_names));
-        RSA_Time.TMP.Semantic.Inanimate_SEM(sub,tp) = nanmean(cur_data(Semantic_Mat_16 == 2))./sqrt(length(Subj_names));
-        RSA_Time.TMP.Semantic.Within_SEM(sub,tp)    = nanmean(cur_data(Semantic_Mat_16 > 0))./sqrt(length(Subj_names));
-        RSA_Time.TMP.Semantic.Between_SEM(sub,tp)   = nanmean(cur_data(Semantic_Mat_16 < 0))./sqrt(length(Subj_names));
+        RSA_Time.TMP.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
+        RSA_Time.TMP.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
+        RSA_Time.TMP.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
+        RSA_Time.TMP.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
     
     end
 
@@ -183,10 +184,10 @@ cfg = [];
 cfg.nPerms = 1000;
 cfg.thresh_pval = 0.05;
 cfg.mcc_cluster_pval = 0.05;
-cfg.TimeVec = RSA_Data_TMP_16.TimeVec;
-cfg.Hyp_Mat = double(Semantic_Mat_16>0) + -double(Semantic_Mat_16<0);
+cfg.TimeVec = RSA_Data.TimeVec;
+cfg.Hyp_Mat = double(Semantic_Mat_red16>0) + -double(Semantic_Mat_red16<0);
 cfg.matshuff = false;
-Results = rsa_perm(cfg, RSA_Data_TMP_16.Data);
+%Results = rsa_perm(cfg, RSA_Data.TMP.red16_Data);
 
 
 % Plot RSA Time series
@@ -209,9 +210,9 @@ fill([TimeVec fliplr(TimeVec)],[dat2 fliplr(dat2 - SEM2)],'r','FaceAlpha',0.3,'E
 h1 = plot(TimeVec, dat1,'b','linewidth',2);
 h2 = plot(TimeVec, dat2,'r','linewidth',2);
 hold off
-ylabel('LDA Acc'); xlabel('Time (s)'); title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
+ylabel(RSA_Data.meas16); xlabel('Time (s)'); title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
 xlim([-0.2 1.5]);lg = legend([h1 h2], {Dat_names{dt(1)},Dat_names{dt(2)}}); legend boxoff; set(lg,'FontSize',14)
-box off; ylim([0.42 0.6])
+box off; %ylim([0.42 0.6])
 set(gca,'linewidth',2.5,'FontSize',14)
 %saveas(gcf,sprintf('Results/%s_16_%s_LDA_%s.png',ROI{r},Cat{c},datanames{d}))
 %close(gcf)
@@ -223,13 +224,13 @@ cfg = [];
 cfg.nPerms = 1000;
 cfg.thresh_pval = 0.05;
 cfg.mcc_cluster_pval = 0.05;
-cfg.TimeVec = RSA_Data_OCC_16.TimeVec;
-cfg.Hyp_Mat = double(Perceptual_Mat_16>0) + -double(Perceptual_Mat_16<0);
+cfg.TimeVec = RSA_Data.TimeVec;
+cfg.Hyp_Mat = double(Perceptual_Mat_red16>0) + -double(Perceptual_Mat_red16<0);
 cfg.matshuff = false;
-Results_OCC = rsa_perm(cfg, RSA_Data_OCC_16.Data);
+Results_OCC = rsa_perm(cfg, RSA_Data.OCC.red16_Data);
 
-cfg.Hyp_Mat = double(Semantic_Mat_16>0) + -double(Semantic_Mat_16<0);
-Results_TMP = rsa_perm(cfg, RSA_Data_TMP_16.Data);
+cfg.Hyp_Mat = double(Semantic_Mat_red16>0) + -double(Semantic_Mat_red16<0);
+Results_TMP = rsa_perm(cfg, RSA_Data.TMP.red16_Data);
 
 
 r1 = 1; r2 = 2;
@@ -238,7 +239,7 @@ dt = [3 4];
 
 figure('Pos', [325 510 650 402]);
 plot([]); hold on
-Dat_names = fieldnames(RSA_Time.(ROI{r}).(Cat{c}));
+Dat_names = fieldnames(RSA_Time.(ROI{r}).(Cat{c1}));
 dat1 = RSA_Time.(ROI{r1}).(Cat{c1}).(Dat_names{dt(2)}) - RSA_Time.(ROI{r1}).(Cat{c1}).(Dat_names{dt(1)});
 dat2 = RSA_Time.(ROI{r2}).(Cat{c2}).(Dat_names{dt(2)}) - RSA_Time.(ROI{r2}).(Cat{c2}).(Dat_names{dt(1)});
 SEM1 = nanstd(dat1,0,1)./sqrt(size(dat1,1)); SEM2 = nanstd(dat2,0,1)./sqrt(size(dat2,1));
@@ -257,20 +258,18 @@ xlim([-0.2 1.5]); %ylim([0.35 0.6]);
 plot([-0.2 1.5],[0 0],'--k','linewidth',1)
 h1 = plot(TimeVec, nanmean(dat1,1),'b','linewidth',2);
 h2 = plot(TimeVec, nanmean(dat2,1),'r','linewidth',2);
-ylabel('LDA Acc'); xlabel('Time (s)'); %title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
+ylabel(['Diff ',RSA_Data.meas16]); xlabel('Time (s)'); %title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
 lg = legend([h1 h2], {[ROI{r1},' ',Cat{c1},' BT - WI'],[ROI{r2},' ',Cat{c2},' BT - WI']}); legend boxoff; set(lg,'FontSize',14)
 box off;
-set(gca,'linewidth',2.5,'FontSize',14)
+set(gca,'linewidth',2.5,'FontSize',14,'xlim',[-0.2 1])
 sign_mcc_clust_OCC = Results_OCC.zmapthresh_pos;
-sign_mcc_clust_OCC(sign_mcc_clust_OCC == 0) = NaN;
 sign_mcc_clust_OCC(sign_mcc_clust_OCC > 0) = min(get(gca,'ylim'))*0.8;
 plot(TimeVec,sign_mcc_clust_OCC,'bo','MarkerFaceColor','b')
 sign_mcc_clust_TMP = Results_TMP.zmapthresh_pos;
-sign_mcc_clust_TMP(sign_mcc_clust_TMP == 0) = NaN;
 sign_mcc_clust_TMP(sign_mcc_clust_TMP > 0) = min(get(gca,'ylim'))*0.9;
 plot(TimeVec,sign_mcc_clust_TMP,'ro','MarkerFaceColor','r')
 hold off
-%saveas(gcf,'Results/DiffParams/OCC_TMP_PerceptualvsSemantic_BT-WI_Dat16_LDA.png')
+%saveas(gcf,'Results/OCC_TMP_PerceptualvsSemantic_BT-WI_Dat16_LDA.png')
 %close(gcf)
 
 
