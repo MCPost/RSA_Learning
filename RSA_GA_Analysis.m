@@ -35,6 +35,7 @@ ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'Unif
 RSA_Data = load('RSA_Data');
 RSA_Data_OCC_full.TimeVec = RSA_Data.('RSA_Data_OCC_AG').TimeVec;
 RSA_Data_OCC_16.TimeVec = RSA_Data.('RSA_Data_OCC_AG').TimeVec;
+RSA_Data_TMP_16.TimeVec = RSA_Data.('RSA_Data_TMP_AG').TimeVec;
 if(~isempty(RSA_Data.('RSA_Data_OCC_AG').RSA_full)) 
     RSA_Data_OCC_full.Data = zeros(size(RSA_Data.('RSA_Data_OCC_AG').RSA_full{1})); RSA_Data_TMP_full.Data = zeros(size(RSA_Data.('RSA_Data_TMP_AG').RSA_full{1})); 
 end
@@ -129,7 +130,7 @@ for sub = 1:length(Subj_names)
     for tp = 1:length(TimeVec)
         
         % Occipital
-        cur_data = RSA_Data_OCC_16(:,:,tp,sub);
+        cur_data = RSA_Data_OCC_16.Data(:,:,tp,sub);
         % Perceptual Dimension
         RSA_Time.OCC.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_16 == 1));
         RSA_Time.OCC.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_16 == 2));
@@ -150,7 +151,7 @@ for sub = 1:length(Subj_names)
         RSA_Time.OCC.Semantic.Between_SEM(sub,tp)   = nanstd(cur_data(Semantic_Mat_16 < 0))./sqrt(length(Subj_names));
         
         % Temporal
-        cur_data = RSA_Data_TMP_16(:,:,tp,sub);
+        cur_data = RSA_Data_TMP_16.Data(:,:,tp,sub);
         % Perceptual Dimension
         RSA_Time.TMP.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_16 == 1));
         RSA_Time.TMP.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_16 == 2));
@@ -161,7 +162,6 @@ for sub = 1:length(Subj_names)
         RSA_Time.TMP.Perceptual.Within_SEM(sub,tp)  = nanstd(cur_data(Perceptual_Mat_16 > 0))./sqrt(length(Subj_names));
         RSA_Time.TMP.Perceptual.Between_SEM(sub,tp) = nanstd(cur_data(Perceptual_Mat_16 < 0))./sqrt(length(Subj_names));
         % Semantic Dimension
-        cur_data = RSA_Data_TMP_16(:,:,tp,sub);
         RSA_Time.TMP.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_16 == 1));
         RSA_Time.TMP.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_16 == 2));
         RSA_Time.TMP.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_16 > 0));
@@ -175,6 +175,21 @@ for sub = 1:length(Subj_names)
 
 end
 
+
+%% Permutation Matrix
+
+
+cfg = [];
+cfg.nPerms = 1000;
+cfg.thresh_pval = 0.05;
+cfg.mcc_cluster_pval = 0.05;
+cfg.TimeVec = RSA_Data_TMP_16.TimeVec;
+cfg.Hyp_Mat = double(Semantic_Mat_16>0) + -double(Semantic_Mat_16<0);
+cfg.matshuff = false;
+Results = rsa_perm(cfg, RSA_Data_TMP_16.Data);
+
+
+% Plot RSA Time series
 
 ROI = {'OCC','TMP'}; r = 1;
 Cat = {'Perceptual','Semantic'}; c = 1;
@@ -202,6 +217,21 @@ set(gca,'linewidth',2.5,'FontSize',14)
 %close(gcf)
 
 
+% Plot RSA Difference Time series
+
+cfg = [];
+cfg.nPerms = 1000;
+cfg.thresh_pval = 0.05;
+cfg.mcc_cluster_pval = 0.05;
+cfg.TimeVec = RSA_Data_OCC_16.TimeVec;
+cfg.Hyp_Mat = double(Perceptual_Mat_16>0) + -double(Perceptual_Mat_16<0);
+cfg.matshuff = false;
+Results_OCC = rsa_perm(cfg, RSA_Data_OCC_16.Data);
+
+cfg.Hyp_Mat = double(Semantic_Mat_16>0) + -double(Semantic_Mat_16<0);
+Results_TMP = rsa_perm(cfg, RSA_Data_TMP_16.Data);
+
+
 r1 = 1; r2 = 2;
 c1 = 1; c2 = 2;
 dt = [3 4];
@@ -227,60 +257,57 @@ xlim([-0.2 1.5]); %ylim([0.35 0.6]);
 plot([-0.2 1.5],[0 0],'--k','linewidth',1)
 h1 = plot(TimeVec, nanmean(dat1,1),'b','linewidth',2);
 h2 = plot(TimeVec, nanmean(dat2,1),'r','linewidth',2);
-hold off
 ylabel('LDA Acc'); xlabel('Time (s)'); %title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
 lg = legend([h1 h2], {[ROI{r1},' ',Cat{c1},' BT - WI'],[ROI{r2},' ',Cat{c2},' BT - WI']}); legend boxoff; set(lg,'FontSize',14)
 box off;
 set(gca,'linewidth',2.5,'FontSize',14)
+sign_mcc_clust_OCC = Results_OCC.zmapthresh_pos;
+sign_mcc_clust_OCC(sign_mcc_clust_OCC == 0) = NaN;
+sign_mcc_clust_OCC(sign_mcc_clust_OCC > 0) = min(get(gca,'ylim'))*0.8;
+plot(TimeVec,sign_mcc_clust_OCC,'bo','MarkerFaceColor','b')
+sign_mcc_clust_TMP = Results_TMP.zmapthresh_pos;
+sign_mcc_clust_TMP(sign_mcc_clust_TMP == 0) = NaN;
+sign_mcc_clust_TMP(sign_mcc_clust_TMP > 0) = min(get(gca,'ylim'))*0.9;
+plot(TimeVec,sign_mcc_clust_TMP,'ro','MarkerFaceColor','r')
+hold off
 %saveas(gcf,'Results/DiffParams/OCC_TMP_PerceptualvsSemantic_BT-WI_Dat16_LDA.png')
 %close(gcf)
 
 
-%% Permutation Matrix
-
-Test_Mat = Semantic_Mat_16;
-%Test_Mat = logical(Perceptual_Mat_16).*(rand(16)*1000);
-%labels = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p'};
-
-%Test_Mat = [0 1 2 3 4 0; 0 0 5 6 0 7; 0 0 0 0 8 9; 0 0 0 0 10 11; 0 0 0 0 0 12; 0 0 0 0 0 0];
-%rand_idx = [1 4 3 5 2 6];
-
-figure
-subplot(4,4,1)
-imagesc(Test_Mat)
-axis square
-for sbp = 2:16
-
-    Shuff_Mat = zeros(size(Test_Mat));
-    rand_idx = randperm(size(Test_Mat,1));
-    for row = 1:size(Test_Mat,1)-1
-        for col = (row+1):size(Test_Mat,1)
-            if(Test_Mat(rand_idx(row),rand_idx(col)) ~= 0)
-                Shuff_Mat(row,col) = Test_Mat(rand_idx(row),rand_idx(col));
-            else
-                Shuff_Mat(row,col) = Test_Mat(rand_idx(col),rand_idx(row));
-            end
-        end
-    end
-    
-   
-    subplot(4,4,sbp)
-    imagesc(Shuff_Mat)
-    axis square
-end
 
 
-lab_idx = [find(strcmp(labels,'d')), find(strcmp(labels,'a'))];
-Test_Mat(min(lab_idx), max(lab_idx))
-lab_perm_idx = [find(strcmp(labels(rand_idx),'d')), find(strcmp(labels(rand_idx),'a'))];
-Shuff_Mat(min(lab_perm_idx), max(lab_perm_idx))
-
-Data = RSA_Data_OCC_16.Data;
-cfg = [];
-cfg.nPerms = 1000;
-cfg.thresh_pval = 0.05;
-cfg.mcc_cluster_pval = 0.05;
-cfg.TimeVec = RSA_Data_OCC_16.TimeVec;
-cfg.Hyp_Mat = double(Perceptual_Mat_16>0) + -double(Perceptual_16<0);
-Results = rsa_perm(cfg, Data);
-
+%% Plot Shuffled Hypotheses Matrices
+% Test_Mat = Semantic_Mat_16;
+% %Test_Mat = logical(Perceptual_Mat_16).*(rand(16)*1000);
+% %labels = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p'};
+% %Test_Mat = [0 1 2 3 4 0; 0 0 5 6 0 7; 0 0 0 0 8 9; 0 0 0 0 10 11; 0 0 0 0 0 12; 0 0 0 0 0 0];
+% %rand_idx = [1 4 3 5 2 6];
+% 
+% figure
+% subplot(4,4,1)
+% imagesc(Test_Mat)
+% axis square
+% for sbp = 2:16
+% 
+%     Shuff_Mat = zeros(size(Test_Mat));
+%     rand_idx = randperm(size(Test_Mat,1));
+%     for row = 1:size(Test_Mat,1)-1
+%         for col = (row+1):size(Test_Mat,1)
+%             if(Test_Mat(rand_idx(row),rand_idx(col)) ~= 0)
+%                 Shuff_Mat(row,col) = Test_Mat(rand_idx(row),rand_idx(col));
+%             else
+%                 Shuff_Mat(row,col) = Test_Mat(rand_idx(col),rand_idx(row));
+%             end
+%         end
+%     end
+%     
+%    
+%     subplot(4,4,sbp)
+%     imagesc(Shuff_Mat)
+%     axis square
+% end
+% 
+% lab_idx = [find(strcmp(labels,'d')), find(strcmp(labels,'a'))];
+% Test_Mat(min(lab_idx), max(lab_idx))
+% lab_perm_idx = [find(strcmp(labels(rand_idx),'d')), find(strcmp(labels(rand_idx),'a'))];
+% Shuff_Mat(min(lab_perm_idx), max(lab_perm_idx))

@@ -59,7 +59,7 @@ for sub = 1:length(Subj_names)
     rsa_cfg.slide_step = 0.004;
     rsa_cfg.window_average = 'gaussian';
     rsa_cfg.meas128 = '';
-    rsa_cfg.meas16 = 'LDA';
+    rsa_cfg.meas16 = 'SVM';
     rsa_cfg.MNN = true;
     rsa_cfg.Cktl_blank_rm = true;
     rsa_cfg.only16 = true;
@@ -68,14 +68,14 @@ for sub = 1:length(Subj_names)
     rsa_cfg.curROI_name = 'occipital';
     RSA_Data_OCC.(['RSA_Data_OCC_',Subj_names{sub}]) = createRSA(rsa_cfg);
     
-    save('RSA_Data','-struct','RSA_Data_OCC','-append')
+    save('RSA_Data_SVM','-struct','RSA_Data_OCC','-append')
     clear('RSA_Mat_OCC')
     
     rsa_cfg.curROI = ROI_temp_idx;
     rsa_cfg.curROI_name = 'temporal';
     RSA_Data_TMP.(['RSA_Data_TMP_',Subj_names{sub}]) = createRSA(rsa_cfg);
     
-    save('RSA_Data','-struct','RSA_Data_TMP','-append')
+    save('RSA_Data_SVM','-struct','RSA_Data_TMP','-append')
     clear('RSA_Mat_TMP')
     
 end
