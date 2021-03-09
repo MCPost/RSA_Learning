@@ -173,19 +173,21 @@ end
 
 
 % Average over Examples: 16 x 16 Matrix
-
-if(strcmp(meas16,'euclidian'))
-    measures = {'euclidian c.v.'};
-elseif(strcmp(meas16,'pearson'))
-    measures = {'pearson c.v.'};
-elseif(strcmp(meas16,'LDA'))
-    measures = {'LDA'};
-elseif(strcmp(meas16,'SVM'))
-    measures = {'SVM'};
-elseif(strcmp(meas16,'DistCorr'))
-    measures = {'DistCorr'};
-else
-    measures = {'pearson','spearman','euclidian','mahalanobis','cosine'};
+measures = cell(1,length(meas16));
+for m = 1:length(meas16)
+    if(strcmp(meas16(m),'euclidian'))
+        measures(1,m) = {'euclidian c.v.'};
+    elseif(strcmp(meas16(m),'pearson'))
+        measures(1,m) = {'pearson c.v.'};
+    elseif(strcmp(meas16(m),'LDA'))
+        measures(1,m) = {'LDA'};
+    elseif(strcmp(meas16(m),'SVM'))
+        measures(1,m) = {'SVM'};
+    elseif(strcmp(meas16(m),'DistCorr'))
+        measures(1,m) = {'DistCorr'};
+    else
+        measures = {'euclidian c.v.','pearson c.v.','LDA','SVM','DistCorr'};
+    end
 end
 RSA_Mat_16x16 = repmat({repmat(zeros(16),[1 1 length(TimeVec)])},1,length(measures));
 RSA_Mat_16x16(2,:) = measures;    
@@ -231,7 +233,7 @@ for tp = 1:length(TimeVec)
                 end
 
                 % Crossvalidation Folds
-                if(length(measures) > 1 || strcmp(measures,'euclidian c.v.'))
+                if(sum(strcmp(measures,'euclidian c.v.')) > 0)
                     dist_crossv = zeros(size(diff_crossv,1),2);
                     for fold = 1:size(diff_crossv,2)
                         dist_crossv(fold,1) = diff_crossv(:,fold)'*mean(diff_crossv(:,[1:fold-1 fold+1:end]),2);
@@ -239,7 +241,7 @@ for tp = 1:length(TimeVec)
                     RSA_Mat_16x16{1,strcmp(RSA_Mat_16x16(2,:),'euclidian c.v.')}(ct_x,ct_y,tp) = mean(dist_crossv(:,1)); 
                 end
                 
-                if(length(measures) > 1 || strcmp(meas16,'pearson c.v.'))
+                if(sum(strcmp(measures,'pearson c.v.')) > 0)
                     dist_crossv = zeros(size(diff_crossv,1),2);
                     for fold = 1:size(diff_crossv,2)
                         dist_crossv(fold,1) = diff_crossv(:,fold)'*mean(diff_crossv(:,[1:fold-1 fold+1:end]),2);
@@ -258,7 +260,7 @@ for tp = 1:length(TimeVec)
                 end
                 
                 % SVM and LDA
-                if(length(measures) > 1 || strcmp(meas16,'LDA'))
+                if(sum(strcmp(measures,'LDA')) > 0)
                     cfg = [];
                     cfg.metric      = 'acc';
                     cfg.cv          = 'holdout';
@@ -268,7 +270,7 @@ for tp = 1:length(TimeVec)
                     cfg.feedback    = 0;
                     RSA_Mat_16x16{1,strcmp(RSA_Mat_16x16(2,:),'LDA')}(ct_x,ct_y,tp) = mv_classify(cfg, Cur_trial, [ones(1,size(cur_trial1,1)) 2*ones(1,size(cur_trial2,1))]');
                 end
-                if(length(measures) > 1 || strcmp(meas16,'SVM'))
+                if(sum(strcmp(measures,'SVM')) > 0)
                     cfg = [];
                     cfg.metric      = 'acc';
                     cfg.cv          = 'holdout';
@@ -280,7 +282,7 @@ for tp = 1:length(TimeVec)
                 end
                 
                 % Distance Correlation (Brownian Correlation)
-                if(length(measures) > 1 || strcmp(meas16,'DistCorr'))
+                if(sum(strcmp(meas16,'DistCorr')) > 0)
                     RSA_Mat_16x16{1,strcmp(RSA_Mat_16x16(2,:),'DistCorr')}(ct_x,ct_y,tp) = distCorr(x, y);
                 end
             end

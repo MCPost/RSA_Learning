@@ -11,18 +11,18 @@ ROI_temp_idx = Elec_Info.ROI_temp_idx;
 artef_perms = {'ArtCorr','NoArtCorr'};
 BL_perms = {'NoBL','MinBL','CovBL'};
 CBR_perms = {'CBR','NoCBR'};
-MNN_perms = {'MNN','NoMNN'};
+MNN_perms = {'NoMNN','MNN'};
 
 
 %% 1. Permutation: Artifact Rejection (yes / no)
 
-for art = 2 %:length(artef_perms)
+for art = 1:length(artef_perms)
     
     art_corr = logical(mod(art,2));
     
 %% 2. Permutation: Baseline Correction (no / minus BL / covariate BL)
 
-    for blc = 2:length(BL_perms)
+    for blc = 1:length(BL_perms)
         
         bl_corr = 'no';
         if(blc == 2)

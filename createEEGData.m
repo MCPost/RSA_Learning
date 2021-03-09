@@ -113,16 +113,18 @@ if(Art_corr)
 end
 
 % Baseline Correction
-[~,BL_wind_idx] = min(abs(bsxfun(@minus, [cfg.TimeVec1024; cfg.TimeVec1024], BL_wind')),[],2);
-BL_mean = mean(Data(:,:,BL_wind_idx(1):BL_wind_idx(2)),3);
-if(strcmp(BL_corr,'covBL'))
-    for ch = 1:128
-        na_idx = find(~sum(isnan(BL_mean(:,ch)),2));
-        X = BL_mean(na_idx,ch); %[ones(size(BL_mean,1),1) BL_mean(:,ch)];
-        Data(na_idx,ch,:) = squeeze(Data(na_idx,ch,:)) - X*((X'*X)\X'*squeeze(Data(na_idx,ch,:)));
+if(~strcmp(BL_corr,'no'))
+    [~,BL_wind_idx] = min(abs(bsxfun(@minus, [cfg.TimeVec1024; cfg.TimeVec1024], BL_wind')),[],2);
+    BL_mean = mean(Data(:,:,BL_wind_idx(1):BL_wind_idx(2)),3);
+    if(strcmp(BL_corr,'covBL'))
+        for ch = 1:128
+            na_idx = find(~sum(isnan(BL_mean(:,ch)),2));
+            X = BL_mean(na_idx,ch); %[ones(size(BL_mean,1),1) BL_mean(:,ch)];
+            Data(na_idx,ch,:) = squeeze(Data(na_idx,ch,:)) - X*((X'*X)\X'*squeeze(Data(na_idx,ch,:)));
+        end
+    elseif(strcmp(BL_corr,'minBL'))
+        Data = bsxfun(@minus, Data, BL_mean);
     end
-elseif(strcmp(BL_corr,'minBL'))
-    Data = bsxfun(@minus, Data, BL_mean);
 end
 
 % Fill in NaN Trials
