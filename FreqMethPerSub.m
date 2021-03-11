@@ -43,12 +43,8 @@ fprintf('Subject %s: Data Important!', Name)
 fprintf('\n')
 
 
-%% Fieldtrip Analysis
-
+%% cfg_rsa struct
 cycles = 7;
-
-RSA_Power_FT = [];
-
 rsa_cfg = Data_EEG;
 rsa_cfg.slide_window = 0.080; 
 rsa_cfg.slide_step = 0.004;
@@ -58,6 +54,13 @@ rsa_cfg.meas16 = {'LDA','SVM','euclidian'};
 rsa_cfg.Cktl_blank_rm = false;
 rsa_cfg.only16 = true;
 rsa_cfg.MNN = true;
+
+
+%% Fieldtrip Analysis
+
+RSA_Power_FT = [];
+
+
 for frq = 1:length(centerfreq)
     
     fprintf('Subject %s: MTM DPSS - Frequency %s started!', Name, freq_band{frq})
@@ -112,7 +115,7 @@ end
 clear freq
 
 % Save Data
-save(['RSA_DiffFreq/RSA_Power_',Name],'RSA_Power_FT')
+save(['RSA_DiffFreq/RSA_Power_',Name],'RSA_Power_FT','-append')
 
 
 %% Wavelet Analysis

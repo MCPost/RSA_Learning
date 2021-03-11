@@ -32,17 +32,26 @@ Elec_Info.ROI_temp = {'B18','B17','B16','B15','B14','B22','B23','B24','B25','B26
 Elec_Info.ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, Elec_Info.ROI_temp)), Elec_Info.elecs, 'UniformOutput', 0)));
 
 
-c = parcluster();
-j_AG    = batch(c, @ParamPermPerSub, 0, {Subj_names{1}, Elec_Info});
-j_CEWD  = batch(c, @ParamPermPerSub, 0, {Subj_names{2}, Elec_Info});
-j_CM    = batch(c, @ParamPermPerSub, 0, {Subj_names{3}, Elec_Info});
-j_DS    = batch(c, @ParamPermPerSub, 0, {Subj_names{4}, Elec_Info});
-j_FVM   = batch(c, @ParamPermPerSub, 0, {Subj_names{5}, Elec_Info});
+% c = parcluster();
+% j_AG    = batch(c, @FreqMethPerSub, 0, {Subj_names{1}, Elec_Info});
+% j_CEWD  = batch(c, @FreqMethPerSub, 0, {Subj_names{2}, Elec_Info});
+% j_CM    = batch(c, @FreqMethPerSub, 0, {Subj_names{3}, Elec_Info});
+% j_DS    = batch(c, @FreqMethPerSub, 0, {Subj_names{4}, Elec_Info});
+% j_FVM   = batch(c, @FreqMethPerSub, 0, {Subj_names{5}, Elec_Info});
+
+%FreqMethPerSub(Subj_names{1}, Elec_Info)
 
 diary(j_AG)
 diary(j_CEWD)
 diary(j_CM)
 diary(j_DS)
 diary(j_FVM)
+
+%delete(j_AG)
+%delete(j_CEWD)
+%delete(j_CM)
+%delete(j_DS)
+%delete(j_FVM)
+
 
 
