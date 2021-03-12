@@ -1,8 +1,11 @@
-%% Load in RSA Grand Average Data
+%% Load in RSA Encoding Grand Average Data
 
 
 %% Subject Names
-Subj_names = {'AG','CEWD','CM','DS','FVM'};
+[~,message,~] = fileattrib('Preproc_EEG_Data\Encoding_object_locked\*');
+currentdir = pwd;
+filenames = strrep({message([message.directory] == 0).Name}',[currentdir,'\Preproc_EEG_Data\Encoding_object_locked\'],'');
+Subj_names = cellfun(@(x) x{1}(10:end), regexp(filenames,'_(\w*).','tokens','once'),'UniformOutput', 0);
 
 
 %% ROI Electrode positions
@@ -33,20 +36,21 @@ ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'Unif
 
 
 %% Initialize Mat files
-save('RSA_Data_SVM', 'Subj_names', 'elecs', 'ROI_all_idx')
+save('RSA_Data_Enc', 'Subj_names', 'elecs', 'ROI_all_idx')
 
 %% Loop over Participants to create RSA Matrices
 for sub = 1:length(Subj_names)
     
     %% Import Data
+    load(['Preproc_EEG_Data/Encoding_object_locked/Enc_EEG_Data_',Subj_names{sub}])
     eeg_cfg = [];
     eeg_cfg.Name = Subj_names{sub};
     eeg_cfg.chan_label = elecs;
     eeg_cfg.chan_idx = ROI_occ_idx'; 
-    eeg_cfg.Art_corr = true;
+    eeg_cfg.Art_corr = false;
     eeg_cfg.BL_corr = 'minBL';
     eeg_cfg.BL_wind = [-0.26 -0.05];
-    [Data_EEG] = createEEGData(eeg_cfg);
+    [Data_EEG] = preproc_EEGData(eeg_cfg, Enc_Data_EEG);
     
     %assignin('base',['Data_EEG_',Subj_names{sub}],Data_EEG)
     %save('Data_EEG',['Data_EEG_',Subj_names{sub}],'-append')
@@ -59,24 +63,21 @@ for sub = 1:length(Subj_names)
     rsa_cfg.slide_step = 0.004;
     rsa_cfg.window_average = 'gaussian';
     rsa_cfg.meas128 = '';
-    rsa_cfg.meas16 = 'SVM';
+    rsa_cfg.meas16 = {'LDA', 'SVM', 'euclidian'};
     rsa_cfg.MNN = true;
     rsa_cfg.Cktl_blank_rm = true;
     rsa_cfg.only16 = true;
     
     rsa_cfg.curROI = ROI_occ_idx;
     rsa_cfg.curROI_name = 'occipital';
-    RSA_Data_OCC.(['RSA_Data_OCC_',Subj_names{sub}]) = createRSA(rsa_cfg);
-    
-    save('RSA_Data_SVM','-struct','RSA_Data_OCC','-append')
-    clear('RSA_Mat_OCC')
+    RSA_Data.(['RSA_Data_',Subj_names{sub}]).OCC = createRSA(rsa_cfg);
     
     rsa_cfg.curROI = ROI_temp_idx;
     rsa_cfg.curROI_name = 'temporal';
-    RSA_Data_TMP.(['RSA_Data_TMP_',Subj_names{sub}]) = createRSA(rsa_cfg);
+    RSA_Data.(['RSA_Data_',Subj_names{sub}]).TMP = createRSA(rsa_cfg);
     
-    save('RSA_Data_SVM','-struct','RSA_Data_TMP','-append')
-    clear('RSA_Mat_TMP')
+    save('RSA_Data_Enc','-struct','RSA_Data','-append')
+    clear('RSA_Data')
     
 end
 

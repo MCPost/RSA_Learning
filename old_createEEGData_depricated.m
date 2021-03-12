@@ -1,6 +1,6 @@
 %% Import and Create Data Set
 
-function Data_EEG = createEEGData(cfg)
+%function Data_EEG = createEEGData(cfg)
 
 %% cfg Struct
 
@@ -15,6 +15,8 @@ BL_wind = cfg.BL_wind;
 fprintf('\n')
 fprintf('Load Data for Subject %s created!', Name)
 fprintf('\n')
+
+
 Preproc_Data_1 = load(['Prepro_2_encoding_full_',Name,'.mat'], ['r_1_',Name]);
 Preproc_Data_1 = Preproc_Data_1.(cell2mat(fieldnames(Preproc_Data_1)));
 Preproc_Data_2 = load(['Prepro_2_encoding_full_',Name,'.mat'], ['r_2_',Name]);
@@ -140,4 +142,4 @@ Data_EEG = cfg;
 Data_EEG.Data = Data;
 Data_EEG.dim = 'trl_chan_time';
 
-end
+%end

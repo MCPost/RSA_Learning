@@ -1,0 +1,241 @@
+subID	 block_state	 block_number	 trial_encoding	 trial_retrieval	 trial_total_enc	 trial_total_ret	 object_name	 object_number	 object_percep	 object_category	 context_name	 context_number	 context_category	 RT_encoding	 cue_retrieval	 RT_reinstatement	 catch_trial_type	 acc_catch	 RT_catch_trial	 catch_trial_2_type	 acc_catch_2	 RT_catch__2_trial	 total_responses_distractor	 accuracy_distractor	 OnsetEncodingBlockStart	 WordOnsetEncoding	 ObjectContextOnset	 ResponseEncodingOnset	 OnsetRetrievalBlockStart	 CueRetrievalOnset	 ResponseRetrievalOnset	 CatchTrialOnset	 ResponseCatchOnset	 CatchTrialOnset_2	 ResponseCatchOnset_2	 episode_remembered	 OnsetEnd
+TVV	 encoding	1	1	0	1	0	 football sneaker	4	2	8	 	0	0	0	 hide	0	 NO	2	0	 NO	2	0	0	0	37.173111	44.130459	47.494141	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	2	0	2	0	 coffee maker	3	2	6	 	0	0	5.609261	 punch	0	 NO	2	0	 NO	2	0	0	0	37.173111	55.924122	59.176972	64.792603	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	3	0	3	0	 dolphin	3	2	4	 	0	0	5.850774	 assemble	0	 NO	2	0	 NO	2	0	0	0	37.173111	65.461686	68.27138	74.127718	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	4	0	4	0	 eagle	4	1	2	 	0	0	6.2644	 jam	0	 NO	2	0	 NO	2	0	0	0	37.173111	75.28949	78.26564	84.535406	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	5	0	5	0	 coconut	5	2	5	 	0	0	6.106443	 blur	0	 NO	2	0	 NO	2	0	0	0	37.173111	85.505221	88.287529	94.399329	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	6	0	6	0	 onions	12	2	7	 	0	0	0	 melt	0	 NO	2	0	 NO	2	0	0	0	37.173111	95.180999	98.032511	94.399329	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	7	0	7	0	 bear	2	1	3	 	0	0	0	 dig	0	 NO	2	0	 NO	2	0	0	0	37.173111	106.351789	109.327856	94.399329	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	8	0	8	0	 bowtie	2	1	8	 	0	0	6.914261	 fade	0	 NO	2	0	 NO	2	0	0	0	37.173111	117.508718	120.415574	127.335057	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	1	0	1	8	1	 coconut	5	2	5	 music_store	21	3	0	 blur	8.867495	 perceptual	1	1.088805	 semantic_animated	1	1.599434	36	0.944444	 	 	 	 	193.172822	208.909708	217.783617	221.312375	222.407439	222.945694	224.551285	1	 
+TVV	 retrieval	1	0	2	8	2	 bear	2	1	3	 rome_skyline	21	2	0	 dig	7.894529	 perceptual	1	1.360447	 semantic_animated	1	0.792147	36	0.944444	 	 	 	 	193.172822	225.866572	233.766574	237.272602	238.638586	239.168917	239.966579	1	 
+TVV	 retrieval	1	0	3	8	3	 eagle	4	1	2	 street	26	2	0	 jam	3.007193	 perceptual	1	0.943485	 semantic_animated	1	0.494419	36	0.944444	 	 	 	 	193.172822	240.857814	243.870356	247.377503	248.326287	248.858592	249.35828	1	 
+TVV	 retrieval	1	0	4	8	4	 coffee maker	3	2	6	 luxury_living	26	4	0	 punch	6.351169	 semantic_animated	3	0.601529	 perceptual	3	0.722523	36	0.944444	 	 	 	 	193.172822	250.865801	257.222239	260.735382	261.342189	261.870446	262.59828	0	 
+TVV	 retrieval	1	0	5	8	5	 bowtie	2	1	8	 wetlands	32	1	0	 fade	3.581228	 perceptual	3	0.736008	 semantic_animated	3	0.51067	36	0.944444	 	 	 	 	193.172822	264.043625	267.630229	271.144826	271.886125	272.418206	272.934116	0	 
+TVV	 retrieval	1	0	6	8	6	 onions	12	2	7	 island_kitchen	17	4	0	 melt	2.246359	 perceptual	1	1.551829	 semantic_animated	1	0.813768	36	0.944444	 	 	 	 	193.172822	273.802559	276.05418	279.56095	281.118074	281.651009	282.470126	1	 
+TVV	 retrieval	1	0	7	8	7	 dolphin	3	2	4	 rainforest	23	1	0	 assemble	6.339371	 perceptual	3	0.779548	 semantic_animated	3	0.424584	36	0.944444	 	 	 	 	193.172822	283.381428	289.726017	293.237187	294.022001	294.552117	294.982075	0	 
+TVV	 retrieval	1	0	8	8	8	 football sneaker	4	2	8	 parking_sub	24	3	0	 hide	6.607491	 perceptual	3	0.472623	 semantic_animated	3	0.022315	36	0.944444	 	 	 	 	193.172822	296.393148	303.005948	306.511991	306.989917	307.522457	307.550088	0	 
+TVV	 encoding	2	1	0	9	8	 horse	9	2	3	 	0	0	6.399789	 pull	0	 NO	2	0	 NO	2	0	0	0	314.533581	319.357577	322.416718	328.822018	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	2	0	10	8	 seal	11	1	4	 	0	0	4.800499	 scratch	0	 NO	2	0	 NO	2	0	0	0	314.533581	330.030118	333.199924	338.005715	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	3	0	11	8	 ant	1	2	1	 	0	0	0	 whirl	0	 NO	2	0	 NO	2	0	0	0	314.533581	338.944598	342.419012	338.005715	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	4	0	12	8	 betroot	4	1	7	 	0	0	0	 fit	0	 NO	2	0	 NO	2	0	0	0	314.533581	350.890526	354.032698	338.005715	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	5	0	13	8	 artichoke	1	1	7	 	0	0	6.541148	 deposit	0	 NO	2	0	 NO	2	0	0	0	314.533581	362.268912	365.051103	371.597519	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	6	0	14	8	 antelope	1	1	3	 	0	0	0	 revolve	0	 NO	2	0	 NO	2	0	0	0	314.533581	372.858299	375.405296	371.597519	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	7	0	15	8	 grasshopper	9	1	1	 	0	0	0	 peek	0	 NO	2	0	 NO	2	0	0	0	314.533581	383.281589	386.368438	371.597519	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	8	0	16	8	 scorpion	13	2	1	 	0	0	0	 forge	0	 NO	2	0	 NO	2	0	0	0	314.533581	394.743065	398.217474	371.597519	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	2	0	1	16	9	 antelope	1	1	3	 destroyed_living	11	4	0	 revolve	2.593911	 perceptual	1	1.185487	 semantic_animated	1	1.127194	37	1	 	 	 	 	453.214151	461.061703	463.661213	467.166098	468.35694	468.896452	470.029116	1	 
+TVV	 retrieval	2	0	2	16	10	 seal	11	1	4	 airport	1	2	0	 scratch	2.039986	 perceptual	1	0.689137	 semantic_animated	1	0.577252	37	1	 	 	 	 	453.214151	470.903677	472.949413	476.454391	477.148846	477.686348	478.268902	1	 
+TVV	 retrieval	2	0	3	16	11	 scorpion	13	2	1	 iceberg	16	1	0	 forge	4.127185	 perceptual	1	1.422089	 semantic_animated	1	0.752515	37	1	 	 	 	 	453.214151	479.264305	483.396789	486.905407	488.332776	488.870932	489.628782	1	 
+TVV	 retrieval	2	0	4	16	12	 artichoke	1	1	7	 home_stairs_1	16	4	0	 deposit	5.548787	 semantic_animated	3	0.577951	 perceptual	3	0.424825	37	1	 	 	 	 	453.214151	491.002678	496.556704	500.069423	500.652732	501.190642	501.620725	0	 
+TVV	 retrieval	2	0	5	16	13	 grasshopper	9	1	1	 bedroom_dirty	4	4	0	 peek	8.957013	 perceptual	3	0.396849	 semantic_animated	3	0.423594	37	1	 	 	 	 	453.214151	502.962362	511.924707	515.434442	515.836632	516.375696	516.804588	0	 
+TVV	 retrieval	2	0	6	16	14	 ant	1	2	1	 japanese_living	18	4	0	 whirl	4.812685	 perceptual	1	0.655445	 semantic_animated	1	0.513043	37	1	 	 	 	 	453.214151	517.690621	522.508663	526.023817	526.684551	527.214239	527.732528	1	 
+TVV	 retrieval	2	0	7	16	15	 horse	9	2	3	 venecia	30	2	0	 pull	3.744656	 perceptual	1	2.093528	 semantic_animated	1	0.647339	37	1	 	 	 	 	453.214151	529.470548	533.220484	536.73766	538.836444	539.367831	540.020423	1	 
+TVV	 retrieval	2	0	8	16	16	 betroot	4	1	7	 strange_field	27	1	0	 fit	5.395898	 semantic_animated	3	0.42541	 perceptual	3	0.456526	37	1	 	 	 	 	453.214151	541.707192	547.108398	550.621647	551.05236	551.590523	552.052372	0	 
+TVV	 encoding	3	1	0	17	16	 mantis	11	1	1	 	0	0	0	 boot	0	 NO	2	0	 NO	2	0	0	0	555.887778	566.457275	569.931691	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	2	0	18	16	 fly	8	2	1	 	0	0	0	 break	0	 NO	2	0	 NO	2	0	0	0	555.887778	578.017096	580.924077	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	3	0	19	16	 apple	1	2	5	 	0	0	0	 build	0	 NO	2	0	 NO	2	0	0	0	555.887778	588.994151	591.638051	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	4	0	20	16	 pelican	11	1	2	 	0	0	3.450059	 divide	0	 NO	2	0	 NO	2	0	0	0	555.887778	599.555814	602.988785	606.444035	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	5	0	21	16	 rabbit	12	2	3	 	0	0	5.223944	 kick	0	 NO	2	0	 NO	2	0	0	0	555.887778	607.930465	611.238798	616.468005	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	6	0	22	16	 worm	16	1	1	 	0	0	2.942555	 multiply	0	 NO	2	0	 NO	2	0	0	0	555.887778	617.346058	619.904131	622.851981	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	7	0	23	16	 vulture	16	1	2	 	0	0	3.495018	 bury	0	 NO	2	0	 NO	2	0	0	0	555.887778	623.655307	626.271646	629.771942	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	8	0	24	16	 microphone	10	2	6	 	0	0	2.966845	 smooth	0	 NO	2	0	 NO	2	0	0	0	555.887778	631.310201	634.327743	637.299847	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	3	0	1	24	17	 vulture	16	1	2	 retro_living	29	4	0	 bury	6.914093	 semantic_animated	1	2.436262	 perceptual	1	0.904112	37	1	 	 	 	 	684.933359	687.676212	694.595604	698.089976	700.531529	701.038091	701.947435	0	 
+TVV	 retrieval	3	0	2	24	18	 apple	1	2	5	 corridor_home	9	4	0	 build	6.601033	 semantic_animated	1	1.834009	 perceptual	1	0.601551	37	1	 	 	 	 	684.933359	703.221123	709.827541	713.316158	715.155443	715.668515	716.275383	1	 
+TVV	 retrieval	3	0	3	24	19	 fly	8	2	1	 hardware_shop	18	3	0	 break	6.644138	 semantic_animated	3	0.484746	 perceptual	3	0.376023	37	1	 	 	 	 	684.933359	718.073925	724.723497	728.209261	728.699277	729.20594	729.587285	0	 
+TVV	 retrieval	3	0	4	24	20	 pelican	11	1	2	 canyon	4	1	0	 divide	11.153598	 perceptual	1	1.009806	 semantic_animated	1	0.510962	37	1	 	 	 	 	684.933359	730.684309	741.843184	745.332078	746.347139	746.85495	747.371184	1	 
+TVV	 retrieval	3	0	5	24	21	 mantis	11	1	1	 uni_londo	29	2	0	 boot	6.660984	 semantic_animated	3	0.479963	 perceptual	3	0.330996	37	1	 	 	 	 	684.933359	748.720864	755.387216	758.869846	759.355127	759.866859	760.203109	0	 
+TVV	 retrieval	3	0	6	24	22	 rabbit	12	2	3	 home_office_2	15	4	0	 kick	7.629936	 semantic_animated	3	1.632085	 perceptual	3	0.669826	37	1	 	 	 	 	684.933359	761.095906	768.731092	772.213691	773.851016	774.359895	775.03503	0	 
+TVV	 retrieval	3	0	7	24	23	 worm	16	1	1	 operating_room	22	3	0	 multiply	13.75589	 semantic_animated	1	1.402598	 perceptual	0	0.649295	37	1	 	 	 	 	684.933359	776.737767	790.49895	793.986951	795.394858	795.900273	796.554867	1	 
+TVV	 retrieval	3	0	8	24	24	 microphone	10	2	6	 cadena_montaje	3	3	0	 smooth	2.348177	 semantic_animated	1	1.248696	 perceptual	1	0.60109	37	1	 	 	 	 	684.933359	797.321372	799.674829	803.165025	804.418849	804.924662	805.530895	1	 
+TVV	 encoding	1	1	0	1	0	 sock02	14	2	8	 	0	0	0	 throw	0	 NO	2	0	 NO	2	0	0	0	5.402515	24.055896	26.741187	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	2	0	2	0	 squirrel	15	1	3	 	0	0	4.8497	 inject	0	 NO	2	0	 NO	2	0	0	0	5.402515	34.493005	37.967451	42.823511	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	3	0	3	0	 carrots	5	1	7	 	0	0	0	 fall	0	 NO	2	0	 NO	2	0	0	0	5.402515	43.490678	46.494308	42.823511	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	4	0	4	0	 owl	8	2	2	 	0	0	3.943313	 harm	0	 NO	2	0	 NO	2	0	0	0	5.402515	55.034979	58.481712	62.430555	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	5	0	5	0	 pineapple	13	1	5	 	0	0	0	 combine	0	 NO	2	0	 NO	2	0	0	0	5.402515	63.257299	65.804375	62.430555	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	6	0	6	0	 printer	12	2	6	 	0	0	6.815459	 adjusted	0	 NO	2	0	 NO	2	0	0	0	5.402515	74.303594	77.473444	84.294216	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	7	0	7	0	 tomato	16	2	7	 	0	0	4.453783	 wash	0	 NO	2	0	 NO	2	0	0	0	5.402515	85.045242	88.035111	92.494163	 	 	 	 	 	 	 	 	 
+TVV	 encoding	1	8	0	8	0	 scarf	11	2	8	 	0	0	0	 crush	0	 NO	2	0	 NO	2	0	0	0	5.402515	93.309065	96.202146	92.494163	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	1	0	1	8	1	 tomato	16	2	7	 storm	26	1	0	 wash	1.927422	 semantic_animated	1	0.665669	 perceptual	1	1.06343	36	0.916667	 	 	 	 	147.918481	152.665079	154.598804	158.118859	158.790951	159.336988	160.406493	1	 
+TVV	 retrieval	1	0	2	8	2	 printer	12	2	6	 snow_night	25	2	0	 adjusted	1.789631	 perceptual	1	0.91993	 semantic_animated	1	0.650466	36	0.916667	 	 	 	 	147.918481	161.994822	163.789924	167.296437	168.221919	168.749881	169.406018	1	 
+TVV	 retrieval	1	0	3	8	3	 carrots	5	1	7	 new_york	17	2	0	 fall	9.472436	 semantic_animated	3	0.600385	 perceptual	3	0.441313	36	0.916667	 	 	 	 	147.918481	170.327902	179.80558	183.312028	183.917649	184.446986	184.893619	0	 
+TVV	 retrieval	1	0	4	8	4	 owl	8	2	2	 torcal	29	1	0	 harm	2.74381	 semantic_animated	1	0.927154	 perceptual	1	0.867696	36	0.916667	 	 	 	 	147.918481	186.080475	188.829591	192.337147	193.269596	193.804496	194.677538	1	 
+TVV	 retrieval	1	0	5	8	5	 scarf	11	2	8	 corridor_home	8	2	0	 crush	3.060786	 perceptual	1	1.085644	 semantic_animated	1	0.498106	36	0.916667	 	 	 	 	147.918481	195.659382	198.725466	202.234498	203.32558	203.854064	204.357467	1	 
+TVV	 retrieval	1	0	6	8	6	 squirrel	15	1	3	 fall	11	1	0	 inject	4.321902	 perceptual	1	1.863082	 semantic_animated	1	0.550421	36	0.916667	 	 	 	 	147.918481	205.238279	209.565455	213.072992	214.94139	215.481666	216.037431	1	 
+TVV	 retrieval	1	0	7	8	7	 sock02	14	2	8	 baby_room	2	4	0	 throw	4.292396	 semantic_animated	3	0.693318	 perceptual	3	0.461312	36	0.916667	 	 	 	 	147.918481	217.059656	221.357327	224.866726	225.5654	226.098714	226.565383	0	 
+TVV	 retrieval	1	0	8	8	8	 pineapple	13	1	5	 church	6	3	0	 combine	2.219582	 perceptual	1	0.696746	 semantic_animated	1	0.55285	36	0.916667	 	 	 	 	147.918481	227.524454	229.74933	233.255195	233.957287	234.487086	235.045281	1	 
+TVV	 encoding	2	1	0	9	8	 strawberry	15	1	5	 	0	0	5.687338	 connect	0	 NO	2	0	 NO	2	0	0	0	238.342175	245.893151	248.59249	254.28533	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	2	0	10	8	 crab	2	2	4	 	0	0	3.819017	 dance	0	 NO	2	0	 NO	2	0	0	0	238.342175	255.49982	258.57281	262.397065	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	3	0	11	8	 gloves	6	1	8	 	0	0	6.00474	 drop	0	 NO	2	0	 NO	2	0	0	0	238.342175	263.237696	266.28299	272.293009	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	4	0	12	8	 gorilla	8	2	3	 	0	0	2.509013	 tear	0	 NO	2	0	 NO	2	0	0	0	238.342175	273.813229	276.498652	279.012958	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	5	0	13	8	 pumpkin	15	2	7	 	0	0	4.835739	 touch	0	 NO	2	0	 NO	2	0	0	0	238.342175	279.848417	282.699923	287.540908	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	6	0	14	8	 ostrich	7	2	2	 	0	0	5.947592	 locate	0	 NO	2	0	 NO	2	0	0	0	238.342175	288.33385	291.835954	297.788866	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	7	0	15	8	 glasses	5	1	8	 	0	0	3.751944	 stamp	0	 NO	2	0	 NO	2	0	0	0	238.342175	299.283127	302.231563	305.988806	 	 	 	 	 	 	 	 	 
+TVV	 encoding	2	8	0	16	8	 jellyfish	5	1	4	 	0	0	0	 tie	0	 NO	2	0	 NO	2	0	0	0	238.342175	307.629929	310.93838	305.988806	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	2	0	1	16	9	 gloves	6	1	8	 living_room	23	4	0	 drop	1.666519	 semantic_animated	1	1.273462	 perceptual	1	1.028092	36	1	 	 	 	 	362.681581	365.532584	367.204415	370.709611	371.98842	372.523007	373.556433	1	 
+TVV	 retrieval	2	0	2	16	10	 crab	2	2	4	 costarica	9	2	0	 dance	4.41372	 perceptual	1	0.618115	 semantic_animated	1	0.455332	36	1	 	 	 	 	362.681581	374.945334	379.364341	382.876957	383.500374	384.039708	384.500357	1	 
+TVV	 retrieval	2	0	3	16	11	 pumpkin	15	2	7	 woodsmill	32	2	0	 touch	15.936463	 perceptual	3	0.432008	 semantic_animated	3	0.311027	36	1	 	 	 	 	362.681581	385.742422	401.684174	405.190888	405.628207	406.159858	406.476189	0	 
+TVV	 retrieval	2	0	4	16	12	 gorilla	8	2	3	 savana	25	1	0	 tear	8.033061	 semantic_animated	3	0.568358	 perceptual	3	0.412925	36	1	 	 	 	 	362.681581	407.557843	415.596084	419.102477	419.676107	420.209835	420.628126	0	 
+TVV	 retrieval	2	0	5	16	13	 ostrich	7	2	2	 vienna	31	2	0	 locate	8.355188	 semantic_animated	1	0.654428	 perceptual	1	0.703921	36	1	 	 	 	 	362.681581	421.635584	429.996002	433.512305	434.171971	434.702775	435.412024	1	 
+TVV	 retrieval	2	0	6	16	14	 strawberry	15	1	5	 dif_river	9	1	0	 connect	4.368335	 perceptual	1	0.7582	 semantic_animated	0	0.568957	36	1	 	 	 	 	362.681581	437.014315	441.387938	444.904483	445.667939	446.205744	446.779961	1	 
+TVV	 retrieval	2	0	7	16	15	 glasses	5	1	8	 houses	13	2	0	 stamp	10.929661	 perceptual	3	0.414214	 semantic_animated	3	0.37111	36	1	 	 	 	 	362.681581	447.852908	458.787826	462.304331	462.723821	463.259384	463.635807	0	 
+TVV	 retrieval	2	0	8	16	16	 jellyfish	5	1	4	 Untitled	1	4	0	 tie	3.550173	 perceptual	3	0.754507	 semantic_animated	3	0.435184	36	1	 	 	 	 	362.681581	464.768323	468.323823	471.82792	472.587806	473.115284	473.555747	0	 
+TVV	 encoding	3	1	0	17	16	 piranha	9	1	4	 	0	0	0	 clean	0	 NO	2	0	 NO	2	0	0	0	476.334438	494.390937	497.200846	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	2	0	18	16	 blowfish	1	2	4	 	0	0	0	 twitch	0	 NO	2	0	 NO	2	0	0	0	476.334438	505.409434	508.330159	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	3	0	19	16	 ladybug	10	1	1	 	0	0	0	 glide	0	 NO	2	0	 NO	2	0	0	0	476.334438	516.92627	519.473241	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	4	0	20	16	 corn	6	2	7	 	0	0	4.833727	 move	0	 NO	2	0	 NO	2	0	0	0	476.334438	528.041656	531.308369	536.147349	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	5	0	21	16	 butterfly	4	2	1	 	0	0	2.955564	 lay	0	 NO	2	0	 NO	2	0	0	0	476.334438	537.77282	540.610422	543.571328	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	6	0	22	16	 colibri	2	1	2	 	0	0	4.364269	 decorate	0	 NO	2	0	 NO	2	0	0	0	476.334438	544.638622	548.05767	552.427231	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	7	0	23	16	 pear	12	2	5	 	0	0	4.815033	 grab	0	 NO	2	0	 NO	2	0	0	0	476.334438	553.580861	556.902921	561.723192	 	 	 	 	 	 	 	 	 
+TVV	 encoding	3	8	0	24	16	 calculator	1	1	6	 	0	0	5.766368	 swim	0	 NO	2	0	 NO	2	0	0	0	476.334438	562.785937	565.623495	571.395128	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	3	0	1	24	17	 butterfly	4	2	1	 chernobil	6	2	0	 lay	7.246927	 semantic_animated	3	0.733503	 perceptual	3	0.580101	36	0.972222	 	 	 	 	615.927864	624.190559	631.443079	634.959896	635.698756	636.233415	636.818868	0	 
+TVV	 retrieval	3	0	2	24	18	 pear	12	2	5	 town_riff	28	2	0	 grab	4.038424	 perceptual	1	1.016512	 semantic_animated	1	0.602207	36	0.972222	 	 	 	 	615.927864	638.558915	642.603151	646.11686	647.138736	647.667206	648.27472	1	 
+TVV	 retrieval	3	0	3	24	19	 colibri	2	1	2	 shooting_room	29	3	0	 decorate	5.812675	 semantic_animated	1	1.098867	 perceptual	1	0.553411	36	0.972222	 	 	 	 	615.927864	649.992593	655.81058	659.322407	660.426573	660.955818	661.514557	1	 
+TVV	 retrieval	3	0	4	24	20	 piranha	9	1	4	 dune	10	1	0	 clean	15.094831	 semantic_animated	1	2.554654	 perceptual	0	0.958097	36	0.972222	 	 	 	 	615.927864	663.19828	678.298433	681.802431	684.362457	684.902979	685.86641	0	 
+TVV	 retrieval	3	0	5	24	21	 ladybug	10	1	1	 natural_night	21	1	0	 glide	2.232399	 perceptual	1	1.103936	 semantic_animated	1	0.864587	36	0.972222	 	 	 	 	615.927864	686.868681	689.106369	692.613166	693.722379	694.26048	695.130366	1	 
+TVV	 retrieval	3	0	6	24	22	 blowfish	1	2	4	 foyer	13	4	0	 twitch	4.120125	 perceptual	3	0.871093	 semantic_animated	3	0.331145	36	0.972222	 	 	 	 	615.927864	696.156881	700.282353	703.797892	704.67429	705.209809	705.546291	0	 
+TVV	 retrieval	3	0	7	24	23	 corn	6	2	7	 candy_shop	4	3	0	 move	8.313996	 perceptual	3	0.606826	 semantic_animated	3	0.441913	36	0.972222	 	 	 	 	615.927864	706.6909	715.010189	718.526095	719.138244	719.674953	720.122183	0	 
+TVV	 retrieval	3	0	8	24	24	 calculator	1	1	6	 french	11	2	0	 swim	7.347799	 perceptual	3	0.633569	 semantic_animated	3	0.304955	36	0.972222	 	 	 	 	615.927864	721.43301	728.786109	732.299269	732.93813	733.47587	733.7861	0	 
+TVV	 encoding	4	1	0	25	24	 pullover	10	1	8	 	0	0	4.945433	 expand	0	 NO	2	0	 NO	2	0	0	0	894.33223	897.590609	900.954299	905.905018	 	 	 	 	 	 	 	 	 
+TVV	 encoding	4	2	0	26	24	 lettuce	10	1	7	 	0	0	5.534079	 copy	0	 NO	2	0	 NO	2	0	0	0	894.33223	906.823446	909.965544	915.504952	 	 	 	 	 	 	 	 	 
+TVV	 encoding	4	3	0	27	24	 kiwi	7	1	5	 	0	0	6.779703	 polish	0	 NO	2	0	 NO	2	0	0	0	894.33223	916.803697	919.599853	926.384851	 	 	 	 	 	 	 	 	 
+TVV	 encoding	4	4	0	28	24	 kangaroo	10	2	3	 	0	0	5.626643	 discover	0	 NO	2	0	 NO	2	0	0	0	894.33223	927.407006	930.216911	935.8488	 	 	 	 	 	 	 	 	 
+TVV	 encoding	4	5	0	29	24	 seaturtle	12	2	4	 	0	0	6.576546	 stick	0	 NO	2	0	 NO	2	0	0	0	894.33223	936.612176	940.058906	946.640747	 	 	 	 	 	 	 	 	 
+TVV	 encoding	4	6	0	30	24	 cherry	4	2	5	 	0	0	0	 arrange	0	 NO	2	0	 NO	2	0	0	0	894.33223	947.436867	950.842074	946.640747	 	 	 	 	 	 	 	 	 
+TVV	 encoding	4	7	0	31	24	 octopus	8	1	4	 	0	0	2.997757	 guide	0	 NO	2	0	 NO	2	0	0	0	894.33223	959.382735	962.829553	965.832609	 	 	 	 	 	 	 	 	 
+TVV	 encoding	4	8	0	32	24	 phone	11	1	6	 	0	0	5.28253	 bring	0	 NO	2	0	 NO	2	0	0	0	894.33223	966.982276	970.096775	975.384544	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	4	0	1	32	25	 kiwi	7	1	5	 cool_room	8	4	0	 polish	2.775892	 semantic_animated	1	1.077494	 perceptual	1	0.825912	37	0.972973	 	 	 	 	1019.099804	1024.33108	1027.112289	1030.629392	1031.712275	1032.248976	1033.080238	1	 
+TVV	 retrieval	4	0	2	32	26	 seaturtle	12	2	4	 disco	11	3	0	 stick	11.634514	 semantic_animated	3	0.523114	 perceptual	3	0.265135	37	0.972973	 	 	 	 	1019.099804	1034.408304	1046.048181	1049.551738	1050.080101	1050.6177	1050.888077	0	 
+TVV	 retrieval	4	0	3	32	27	 lettuce	10	1	7	 shpping	30	3	0	 copy	7.546769	 perceptual	3	0.510742	 semantic_animated	3	0.306861	37	0.972973	 	 	 	 	1019.099804	1052.527939	1060.080087	1063.587949	1064.104038	1064.639853	1064.95205	0	 
+TVV	 retrieval	4	0	4	32	28	 phone	11	1	6	 desktop_house	10	4	0	 bring	5.301367	 semantic_animated	3	0.515677	 perceptual	3	0.279647	37	0.972973	 	 	 	 	1019.099804	1066.093314	1071.400062	1074.911001	1075.431958	1075.962967	1076.248012	0	 
+TVV	 retrieval	4	0	5	32	29	 kangaroo	10	2	3	 coffee_shop	9	3	0	 discover	2.457653	 perceptual	1	0.749701	 semantic_animated	1	0.68637	37	0.972973	 	 	 	 	1019.099804	1077.72092	1080.183939	1083.700917	1084.455896	1084.988219	1085.679872	1	 
+TVV	 retrieval	4	0	6	32	30	 octopus	8	1	4	 comic_shop	10	3	0	 guide	5.30017	 semantic_animated	3	0.418589	 perceptual	3	0.335436	37	0.972973	 	 	 	 	1019.099804	1087.43831	1092.743939	1096.255886	1096.679818	1097.211046	1097.551784	0	 
+TVV	 retrieval	4	0	7	32	31	 cherry	4	2	5	 beach	2	1	0	 arrange	4.895528	 perceptual	3	0.767292	 semantic_animated	3	0.306119	37	0.972973	 	 	 	 	1019.099804	1098.442961	1103.343773	1106.859156	1107.63176	1108.160297	1108.471772	0	 
+TVV	 retrieval	4	0	8	32	32	 pullover	10	1	8	 hairdresser	17	3	0	 expand	6.02742	 semantic_animated	3	0.521957	 perceptual	3	0.368126	37	0.972973	 	 	 	 	1019.099804	1109.502998	1115.535698	1119.040411	1119.567663	1120.106236	1120.479699	0	 
+TVV	 encoding	5	1	0	33	32	 elephant	6	1	3	 	0	0	0	 split	0	 NO	2	0	 NO	2	0	0	0	1141.915523	1145.10539	1148.219907	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	5	2	0	34	32	 keyboard	8	1	6	 	0	0	0	 pick	0	 NO	2	0	 NO	2	0	0	0	1141.915523	1156.137855	1158.823252	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	5	3	0	35	32	 camera	2	2	6	 	0	0	0	 walk	0	 NO	2	0	 NO	2	0	0	0	1141.915523	1166.699442	1169.994013	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	5	4	0	36	32	 orange	10	1	5	 	0	0	0	 splash	0	 NO	2	0	 NO	2	0	0	0	1141.915523	1178.59012	1181.884537	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	5	5	0	37	32	 radio	13	1	6	 	0	0	0	 brush	0	 NO	2	0	 NO	2	0	0	0	1141.915523	1190.286797	1193.512165	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	5	6	0	38	32	 jeans	9	2	8	 	0	0	0	 cover	0	 NO	2	0	 NO	2	0	0	0	1141.915523	1201.305395	1204.447514	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	5	7	0	39	32	 pigeon	13	2	2	 	0	0	0	 circle	0	 NO	2	0	 NO	2	0	0	0	1141.915523	1213.029762	1215.687583	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	5	8	0	40	32	 penguin	12	2	2	 	0	0	0	 give	0	 NO	2	0	 NO	2	0	0	0	1141.915523	1223.549938	1226.636873	 	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	5	0	1	40	33	 penguin	12	2	2	 luxury_kitchen	25	4	0	 give	8.843413	 semantic_animated	3	0.690113	 perceptual	3	0.370106	36	1	 	 	 	 	1277.785327	1282.213881	1291.062916	1294.575118	1295.270612	1295.807101	1296.182579	0	 
+TVV	 retrieval	5	0	2	40	34	 jeans	9	2	8	 desert_landscape	8	1	0	 cover	8.079438	 semantic_animated	3	1.167659	 perceptual	3	0.592895	36	1	 	 	 	 	1277.785327	1297.329719	1305.41449	1308.929504	1310.102516	1310.632221	1311.230452	0	 
+TVV	 retrieval	5	0	3	40	35	 orange	10	1	5	 temple_indian	27	2	0	 splash	3.981711	 perceptual	1	1.479161	 semantic_animated	1	0.482125	36	1	 	 	 	 	1277.785327	1312.459382	1316.44637	1319.961943	1321.446384	1321.982928	1322.470378	1	 
+TVV	 retrieval	5	0	4	40	36	 elephant	6	1	3	 paris_metro	23	3	0	 split	10.722007	 semantic_animated	3	0.790177	 perceptual	3	0.317386	36	1	 	 	 	 	1277.785327	1324.08697	1334.814268	1338.330768	1339.126283	1339.659595	1339.982315	0	 
+TVV	 retrieval	5	0	5	40	37	 camera	2	2	6	 olives	22	1	0	 walk	6.002245	 perceptual	3	0.510618	 semantic_animated	3	0.618519	36	1	 	 	 	 	1277.785327	1341.486698	1347.494266	1351.010323	1351.526188	1352.06237	1352.686188	0	 
+TVV	 retrieval	5	0	6	40	38	 pigeon	13	2	2	 casino	5	3	0	 circle	11.549048	 semantic_animated	1	0.880485	 perceptual	1	0.718735	36	1	 	 	 	 	1277.785327	1353.515782	1365.070106	1368.576257	1369.462079	1370.002007	1370.726128	1	 
+TVV	 retrieval	5	0	7	40	39	 radio	13	1	6	 burned	3	1	0	 brush	11.518129	 perceptual	3	0.485176	 semantic_animated	3	0.3169	36	1	 	 	 	 	1277.785327	1372.050584	1383.574025	1387.083466	1387.573956	1388.107793	1388.429962	0	 
+TVV	 retrieval	5	0	8	40	40	 keyboard	8	1	6	 pharmacy	26	3	0	 pick	2.301499	 semantic_animated	1	1.007806	 perceptual	1	0.737363	36	1	 	 	 	 	1277.785327	1389.395127	1391.701975	1395.208825	1396.221945	1396.759239	1397.501903	1	 
+TVV	 encoding	6	1	0	41	40	 toaster	16	1	6	 	0	0	0	 stroke	0	 NO	2	0	 NO	2	0	0	0	1400.836562	1426.866338	1429.870117	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	6	2	0	42	40	 snail	14	2	1	 	0	0	0	 destroy	0	 NO	2	0	 NO	2	0	0	0	1400.836562	1438.00944	1441.248523	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	6	3	0	43	40	 hat	7	2	8	 	0	0	0	 spray	0	 NO	2	0	 NO	2	0	0	0	1400.836562	1449.33246	1452.806894	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	6	4	0	44	40	 giraffe	7	1	3	 	0	0	0	 explode	0	 NO	2	0	 NO	2	0	0	0	1400.836562	1460.987706	1464.282178	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	6	5	0	45	40	 asparagus	2	2	7	 	0	0	0	 press	0	 NO	2	0	 NO	2	0	0	0	1400.836562	1472.07536	1474.816204	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	6	6	0	46	40	 centipede	5	1	1	 	0	0	0	 draw	0	 NO	2	0	 NO	2	0	0	0	1400.836562	1482.623292	1485.710118	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	6	7	0	47	40	 peacock	10	2	2	 	0	0	0	 mount	0	 NO	2	0	 NO	2	0	0	0	1400.836562	1493.544907	1496.188678	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	6	8	0	48	40	 satellite dish	15	2	6	 	0	0	0	 hit	0	 NO	2	0	 NO	2	0	0	0	1400.836562	1504.577255	1507.52565	 	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	6	0	1	48	41	 snail	14	2	1	 highland	15	1	0	 destroy	7.71494	 semantic_animated	3	1.216748	 perceptual	3	0.298864	37	0.972973	 	 	 	 	1564.197111	1566.092532	1573.812928	1577.318747	1578.540811	1579.076636	1579.38079	0	 
+TVV	 retrieval	6	0	2	48	42	 asparagus	2	2	7	 alpine	1	1	0	 press	6.304577	 semantic_animated	1	0.890364	 perceptual	1	0.728576	37	0.972973	 	 	 	 	1564.197111	1580.294842	1586.60475	1590.109069	1591.004714	1591.53484	1592.268668	1	 
+TVV	 retrieval	6	0	3	48	43	 centipede	5	1	1	 library	20	3	0	 draw	6.978585	 semantic_animated	1	1.886129	 perceptual	1	0.80764	37	0.972973	 	 	 	 	1564.197111	1593.6527	1600.636568	1604.145197	1606.036583	1606.5676	1607.380615	1	 
+TVV	 retrieval	6	0	4	48	44	 hat	7	2	8	 granada	12	2	0	 spray	7.524534	 semantic_animated	1	1.230324	 perceptual	1	0.802559	37	0.972973	 	 	 	 	1564.197111	1608.754698	1616.284528	1619.800886	1621.03652	1621.572702	1622.380547	1	 
+TVV	 retrieval	6	0	5	48	45	 satellite dish	15	2	6	 chessy_bedroom	6	4	0	 hit	6.661691	 perceptual	3	0.439666	 semantic_animated	3	0.344784	37	0.972973	 	 	 	 	1564.197111	1623.441433	1630.108396	1633.61546	1634.06037	1634.598347	1634.948414	0	 
+TVV	 retrieval	6	0	6	48	46	 giraffe	7	1	3	 lake_	18	1	0	 explode	7.387301	 perceptual	3	0.623564	 semantic_animated	3	0.388798	37	0.972973	 	 	 	 	1564.197111	1636.411726	1643.804344	1647.319462	1647.948321	1648.48222	1648.876329	0	 
+TVV	 retrieval	6	0	7	48	47	 toaster	16	1	6	 toy_room	30	4	0	 stroke	7.729437	 semantic_animated	3	0.441372	 perceptual	3	0.2986	37	0.972973	 	 	 	 	1564.197111	1649.949504	1657.684323	1661.189519	1661.636221	1662.172288	1662.476213	0	 
+TVV	 retrieval	6	0	8	48	48	 peacock	10	2	2	 japanese_temple	15	2	0	 mount	6.29403	 perceptual	3	0.263823	 semantic_animated	3	0.317039	37	0.972973	 	 	 	 	1564.197111	1663.52884	1669.828176	1673.343096	1673.612133	1674.145833	1674.468221	0	 
+TVV	 encoding	7	1	0	49	48	 papaya	11	1	5	 	0	0	0	 wrap	0	 NO	2	0	 NO	2	0	0	0	1677.629194	1753.794749	1756.604739	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	7	2	0	50	48	 dress	3	1	8	 	0	0	3.112173	 bump	0	 NO	2	0	 NO	2	0	0	0	1677.629194	1764.42566	1767.374059	1770.491537	 	 	 	 	 	 	 	 	 
+TVV	 encoding	7	3	0	51	48	 hen	6	1	2	 	0	0	0	 utilize	0	 NO	2	0	 NO	2	0	0	0	1677.629194	1771.402199	1774.876608	1770.491537	 	 	 	 	 	 	 	 	 
+TVV	 encoding	7	4	0	52	48	 lemon	8	1	5	 	0	0	4.313509	 launch	0	 NO	2	0	 NO	2	0	0	0	1677.629194	1782.739036	1786.116591	1790.435378	 	 	 	 	 	 	 	 	 
+TVV	 encoding	7	5	0	53	48	 gamepad	5	1	6	 	0	0	4.979438	 cut	0	 NO	2	0	 NO	2	0	0	0	1677.629194	1791.708879	1794.546584	1799.531308	 	 	 	 	 	 	 	 	 
+TVV	 encoding	7	6	0	54	48	 melon	9	2	5	 	0	0	6.642986	 attach	0	 NO	2	0	 NO	2	0	0	0	1677.629194	1801.038626	1803.986977	1810.635238	 	 	 	 	 	 	 	 	 
+TVV	 encoding	7	7	0	55	48	 turkey	15	2	2	 	0	0	5.73115	 flash	0	 NO	2	0	 NO	2	0	0	0	1677.629194	1811.669475	1815.074766	1820.81119	 	 	 	 	 	 	 	 	 
+TVV	 encoding	7	8	0	56	48	 watermelon	16	2	5	 	0	0	0	 jump	0	 NO	2	0	 NO	2	0	0	0	1677.629194	1822.286539	1825.567266	1820.81119	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	7	0	1	56	49	 papaya	11	1	5	 bedroom_girly	5	4	0	 wrap	6.118157	 semantic_animated	3	0.283795	 perceptual	3	0.731178	36	0.972222	 	 	 	 	1876.494129	1879.81541	1885.93881	1889.449694	1889.738876	1890.266306	1891.002851	0	 
+TVV	 retrieval	7	0	2	56	50	 turkey	15	2	2	 gym	16	3	0	 flash	12.021062	 semantic_animated	3	0.545913	 perceptual	3	0.322187	36	0.972222	 	 	 	 	1876.494129	1892.024353	1904.050721	1907.555508	1908.106698	1908.635178	1908.962684	0	 
+TVV	 retrieval	7	0	3	56	51	 watermelon	16	2	5	 kitchen_2	22	4	0	 jump	7.127632	 perceptual	1	1.450782	 semantic_animated	1	1.161552	36	0.972222	 	 	 	 	1876.494129	1910.517638	1917.650561	1921.162493	1922.618582	1923.155803	1924.32266	1	 
+TVV	 retrieval	7	0	4	56	52	 gamepad	5	1	6	 amsterdam	2	2	0	 cut	3.069186	 perceptual	1	0.936192	 semantic_animated	1	0.903069	36	0.972222	 	 	 	 	1876.494129	1925.592035	1928.666549	1932.180983	1933.122539	1933.662143	1934.570665	1	 
+TVV	 retrieval	7	0	5	56	53	 dress	3	1	8	 roundabout	23	2	0	 bump	3.901473	 perceptual	1	0.92986	 semantic_animated	1	0.526629	36	0.972222	 	 	 	 	1876.494129	1935.447697	1939.354449	1942.867283	1943.802478	1944.334558	1944.866494	1	 
+TVV	 retrieval	7	0	6	56	54	 hen	6	1	2	 old_bathroom	27	4	0	 utilize	6.193835	 semantic_animated	0	1.89034	 perceptual	0	0.678004	36	0.972222	 	 	 	 	1876.494129	1946.203284	1952.40234	1955.906768	1957.802423	1958.343021	1959.026427	0	 
+TVV	 retrieval	7	0	7	56	55	 melon	9	2	5	 parlamento_europeo	25	3	0	 attach	3.776628	 perceptual	1	0.945719	 semantic_animated	1	1.248625	36	0.972222	 	 	 	 	1876.494129	1960.156348	1963.938283	1967.451279	1968.4023	1968.932411	1970.18633	1	 
+TVV	 retrieval	7	0	8	56	56	 lemon	8	1	5	 laundry	19	3	0	 launch	4.092879	 perceptual	3	0.847493	 semantic_animated	3	0.367244	36	0.972222	 	 	 	 	1876.494129	1971.064034	1975.162252	1978.677454	1979.530207	1980.061644	1980.434221	0	 
+TVV	 encoding	8	1	0	57	56	 dragonfly	7	2	1	 	0	0	0	 reduce	0	 NO	2	0	 NO	2	0	0	0	1983.225366	2101.74968	2104.587336	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	8	2	0	58	56	 laptop	9	2	6	 	0	0	0	 allocate	0	 NO	2	0	 NO	2	0	0	0	1983.225366	2113.017348	2115.647368	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	8	3	0	59	56	 cucumber	8	1	7	 	0	0	0	 squeeze	0	 NO	2	0	 NO	2	0	0	0	1983.225366	2123.925533	2126.845742	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	8	4	0	60	56	 sport t-shirt	15	2	8	 	0	0	0	 pat	0	 NO	2	0	 NO	2	0	0	0	1983.225366	2135.27624	2138.404176	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	8	5	0	61	56	 parrot	9	2	2	 	0	0	0	 catapult	0	 NO	2	0	 NO	2	0	0	0	1983.225366	2146.336267	2148.882826	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	8	6	0	62	56	 high heels	8	1	8	 	0	0	0	 hold	0	 NO	2	0	 NO	2	0	0	0	1983.225366	2157.021993	2159.569124	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	8	7	0	63	56	 grapes	6	2	5	 	0	0	0	 strike	0	 NO	2	0	 NO	2	0	0	0	1983.225366	2168.261972	2171.348942	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	8	8	0	64	56	 cockroach	6	1	1	 	0	0	0	 shake	0	 NO	2	0	 NO	2	0	0	0	1983.225366	2179.695737	2182.741199	 	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	8	0	1	64	57	 sport t-shirt	15	2	8	 art_gallery	1	3	0	 pat	3.608854	 perceptual	1	1.744008	 semantic_animated	1	0.756042	35	0.885714	 	 	 	 	2233.847965	2236.546392	2240.160589	2243.675198	2245.424603	2245.959184	2246.720604	1	 
+TVV	 retrieval	8	0	2	64	58	 grapes	6	2	5	 brooklyn	4	2	0	 strike	2.984349	 semantic_animated	1	1.366405	 perceptual	1	0.520179	35	0.885714	 	 	 	 	2233.847965	2248.450808	2251.440467	2254.956708	2256.328505	2256.866991	2257.392488	1	 
+TVV	 retrieval	8	0	3	64	59	 dragonfly	7	2	1	 greenhouse	14	3	0	 reduce	8.461573	 semantic_animated	1	1.647979	 perceptual	1	0.596818	35	0.885714	 	 	 	 	2233.847965	2258.749505	2267.216357	2270.72305	2272.376464	2272.910233	2273.512406	1	 
+TVV	 retrieval	8	0	4	64	60	 laptop	9	2	6	 paris	20	2	0	 allocate	1.876439	 perceptual	1	0.701897	 semantic_animated	1	0.976047	35	0.885714	 	 	 	 	2233.847965	2274.806639	2276.688278	2280.205128	2280.912323	2281.450954	2282.432329	1	 
+TVV	 retrieval	8	0	5	64	61	 parrot	9	2	2	 mountain_landscape	19	1	0	 catapult	14.996334	 perceptual	1	0.921021	 semantic_animated	1	0.643662	35	0.885714	 	 	 	 	2233.847965	2283.942576	2298.944145	2302.44982	2303.376171	2303.903158	2304.552164	1	 
+TVV	 retrieval	8	0	6	64	62	 high heels	8	1	8	 fish_market	13	3	0	 hold	12.888476	 perceptual	3	0.50121	 semantic_animated	3	0.519098	35	0.885714	 	 	 	 	2233.847965	2306.090318	2318.984031	2322.493496	2323.000067	2323.531702	2324.056043	0	 
+TVV	 retrieval	8	0	7	64	63	 cucumber	8	1	7	 ruthenburg	24	2	0	 squeeze	9.155772	 semantic_animated	1	0.930037	 perceptual	1	0.678705	35	0.885714	 	 	 	 	2233.847965	2325.358868	2334.519934	2338.024607	2338.959959	2339.491888	2340.175942	1	 
+TVV	 retrieval	8	0	8	64	64	 cockroach	6	1	1	 old_street	19	2	0	 shake	7.451812	 semantic_animated	3	0.840585	 perceptual	3	0.312364	35	0.885714	 	 	 	 	2233.847965	2341.166812	2348.623839	2352.129982	2352.975864	2353.514179	2353.831886	0	 
+TVV	 encoding	9	1	0	65	64	 toucan	14	2	2	 	0	0	0	 balance	0	 NO	2	0	 NO	2	0	0	0	2356.844027	2371.121646	2374.374492	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	9	2	0	66	64	 potato	14	2	7	 	0	0	0	 swing	0	 NO	2	0	 NO	2	0	0	0	2356.844027	2382.112465	2384.687119	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	9	3	0	67	64	 canary	1	1	2	 	0	0	0	 chain	0	 NO	2	0	 NO	2	0	0	0	2356.844027	2393.242135	2396.660744	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	9	4	0	68	64	 pepper	13	2	7	 	0	0	0	 spread	0	 NO	2	0	 NO	2	0	0	0	2356.844027	2404.74511	2408.011387	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	9	5	0	69	64	 mantaray	7	1	4	 	0	0	0	 identify	0	 NO	2	0	 NO	2	0	0	0	2356.844027	2415.998925	2418.850019	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	9	6	0	70	64	 apricot	2	1	5	 	0	0	0	 lift	0	 NO	2	0	 NO	2	0	0	0	2356.844027	2427.252161	2430.006934	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	9	7	0	71	64	 hairdryer	6	1	6	 	0	0	0	 hammer	0	 NO	2	0	 NO	2	0	0	0	2356.844027	2438.436825	2441.149933	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	9	8	0	72	64	 slipper	13	1	8	 	0	0	0	 pump	0	 NO	2	0	 NO	2	0	0	0	2356.844027	2448.901587	2452.154688	 	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	9	0	1	72	65	 apricot	2	1	5	 ronda_road	22	2	0	 lift	9.289799	 perceptual	3	0.733589	 semantic_animated	3	0.436058	37	0.972973	 	 	 	 	2503.011758	2510.015688	2519.310771	2522.819869	2523.558892	2524.093364	2524.534848	0	 
+TVV	 retrieval	9	0	2	72	66	 mantaray	7	1	4	 grocery	15	3	0	 identify	5.072746	 perceptual	1	1.034536	 semantic_animated	1	0.688428	37	0.972973	 	 	 	 	2503.011758	2525.560644	2530.638744	2534.142906	2535.182699	2535.720926	2536.414704	1	 
+TVV	 retrieval	9	0	3	72	67	 pepper	13	2	7	 budapest	5	2	0	 spread	4.543813	 perceptual	1	0.847485	 semantic_animated	1	0.599324	37	0.972973	 	 	 	 	2503.011758	2537.769584	2542.318902	2545.825838	2546.678637	2547.210054	2547.81466	1	 
+TVV	 retrieval	9	0	4	72	68	 potato	14	2	7	 swimming_pool	31	3	0	 swing	3.145607	 semantic_animated	1	1.791411	 perceptual	1	0.577879	37	0.972973	 	 	 	 	2503.011758	2549.175673	2552.326578	2555.833845	2557.630548	2558.15937	2558.742533	1	 
+TVV	 retrieval	9	0	5	72	69	 toucan	14	2	2	 bedroom_baby	3	4	0	 balance	8.398689	 perceptual	3	0.312323	 semantic_animated	3	0.374194	37	0.972973	 	 	 	 	2503.011758	2559.98655	2568.390516	2571.904803	2572.22246	2572.762966	2573.142457	0	 
+TVV	 retrieval	9	0	6	72	70	 canary	1	1	2	 waterfall	31	1	0	 chain	10.906631	 semantic_animated	3	0.490849	 perceptual	3	0.266563	37	0.972973	 	 	 	 	2503.011758	2574.742408	2585.654343	2589.166206	2589.662353	2590.19045	2590.462369	0	 
+TVV	 retrieval	9	0	7	72	71	 hairdryer	6	1	6	 sunset	28	1	0	 hammer	1.186983	 perceptual	1	1.256569	 semantic_animated	1	0.689059	37	0.972973	 	 	 	 	2503.011758	2591.990033	2593.182354	2596.69644	2597.958287	2598.49594	2599.190302	1	 
+TVV	 retrieval	9	0	8	72	72	 slipper	13	1	8	 wardrobe	32	4	0	 pump	7.492774	 semantic_animated	3	1.359926	 perceptual	3	0.351523	37	0.972973	 	 	 	 	2503.011758	2600.57222	2608.07019	2611.576994	2612.942209	2613.473357	2613.830206	0	 
+TVV	 encoding	10	1	0	73	72	 shrimp	14	1	4	 	0	0	5.793485	 include	0	 NO	2	0	 NO	2	0	0	0	2617.410422	2629.350518	2632.271233	2638.070045	 	 	 	 	 	 	 	 	 
+TVV	 encoding	10	2	0	74	72	 rhinoceros	13	2	3	 	0	0	0	 join	0	 NO	2	0	 NO	2	0	0	0	2617.410422	2638.94327	2641.614816	2638.070045	 	 	 	 	 	 	 	 	 
+TVV	 encoding	10	3	0	75	72	 eel	4	1	4	 	0	0	4.599718	 bounce	0	 NO	2	0	 NO	2	0	0	0	2617.410422	2649.796075	2653.200863	2657.805918	 	 	 	 	 	 	 	 	 
+TVV	 encoding	10	4	0	76	72	 bumble bee	3	2	1	 	0	0	6.211197	 add	0	 NO	2	0	 NO	2	0	0	0	2617.410422	2659.332879	2662.101385	2668.317876	 	 	 	 	 	 	 	 	 
+TVV	 encoding	10	5	0	77	72	 sheep	14	1	3	 	0	0	0	 knock	0	 NO	2	0	 NO	2	0	0	0	2617.410422	2669.894606	2673.39684	2668.317876	 	 	 	 	 	 	 	 	 
+TVV	 encoding	10	6	0	78	72	 garlic	9	1	7	 	0	0	6.464987	 remove	0	 NO	2	0	 NO	2	0	0	0	2617.410422	2682.103536	2685.287451	2691.757688	 	 	 	 	 	 	 	 	 
+TVV	 encoding	10	7	0	79	72	 pomegranate	14	2	5	 	0	0	0	 chop	0	 NO	2	0	 NO	2	0	0	0	2617.410422	2692.955934	2695.793678	2691.757688	 	 	 	 	 	 	 	 	 
+TVV	 encoding	10	8	0	80	72	 flamingo	5	1	2	 	0	0	5.044361	 fold	0	 NO	2	0	 NO	2	0	0	0	2617.410422	2703.878099	2707.019878	2712.06954	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	10	0	1	80	73	 pomegranate	14	2	5	 myst	20	1	0	 chop	3.324613	 semantic_animated	1	0.934469	 perceptual	1	0.627156	38	0.894737	 	 	 	 	2758.195505	2761.683314	2765.013258	2768.521416	2769.461415	2769.988714	2770.621308	1	 
+TVV	 retrieval	10	0	2	80	74	 eel	4	1	4	 kitchen_1	21	4	0	 bounce	2.572084	 perceptual	1	1.20147	 semantic_animated	1	0.697364	38	0.894737	 	 	 	 	2758.195505	2772.355757	2774.933177	2778.446386	2779.653149	2780.190469	2780.893145	1	 
+TVV	 retrieval	10	0	3	80	75	 garlic	9	1	7	 geisser	14	1	0	 remove	7.530449	 perceptual	3	0.732241	 semantic_animated	3	0.450788	38	0.894737	 	 	 	 	2758.195505	2782.405295	2789.941091	2793.451528	2794.189064	2794.724963	2795.181076	0	 
+TVV	 retrieval	10	0	4	80	76	 bumble bee	3	2	1	 nice_port	18	2	0	 add	5.710385	 semantic_animated	1	0.781399	 perceptual	1	0.402352	38	0.894737	 	 	 	 	2758.195505	2796.441333	2802.157031	2805.674284	2806.460978	2806.989299	2807.396945	1	 
+TVV	 retrieval	10	0	5	80	77	 flamingo	5	1	2	 shoe_shop	28	3	0	 fold	2.430819	 semantic_animated	1	1.366645	 perceptual	1	0.704295	38	0.894737	 	 	 	 	2758.195505	2808.608846	2811.044979	2814.560989	2815.932945	2816.471309	2817.180928	1	 
+TVV	 retrieval	10	0	6	80	78	 shrimp	14	1	4	 malopolska	16	2	0	 include	6.562299	 semantic_animated	1	1.029013	 perceptual	1	0.520826	38	0.894737	 	 	 	 	2758.195505	2818.229264	2824.796828	2828.306499	2829.340948	2829.870706	2830.396871	1	 
+TVV	 retrieval	10	0	7	80	79	 sheep	14	1	3	 barcelona	3	2	0	 knock	7.143986	 perceptual	3	0.533428	 semantic_animated	3	0.243569	38	0.894737	 	 	 	 	2758.195505	2831.559448	2838.708775	2842.218074	2842.756737	2843.283935	2843.532762	0	 
+TVV	 retrieval	10	0	8	80	80	 rhinoceros	13	2	3	 industry_texas	14	2	0	 join	1.333861	 semantic_animated	1	0.704836	 perceptual	1	0.875073	38	0.894737	 	 	 	 	2758.195505	2844.529646	2845.868767	2849.374545	2850.084703	2850.620287	2851.500694	1	 
+TVV	 encoding	11	1	0	81	80	 spider	15	1	1	 	0	0	0	 drill	0	 NO	2	0	 NO	2	0	0	0	2855.168465	2876.50553	2879.97995	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	11	2	0	82	80	 lion	11	2	3	 	0	0	0	 hop	0	 NO	2	0	 NO	2	0	0	0	2855.168465	2888.050054	2890.943013	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	11	3	0	83	80	 duck	3	1	2	 	0	0	0	 center	0	 NO	2	0	 NO	2	0	0	0	2855.168465	2898.916695	2901.933892	 	 	 	 	 	 	 	 	 	 
+TVV	 encoding	11	4	0	84	80	 couliflower	7	2	7	 	0	0	5.863794	 rub	0	 NO	2	0	 NO	2	0	0	0	2855.168465	2910.502176	2913.063156	2918.932247	 	 	 	 	 	 	 	 	 
+TVV	 encoding	11	5	0	85	80	 shark	13	2	4	 	0	0	5.311862	 trap	0	 NO	2	0	 NO	2	0	0	0	2855.168465	2919.914982	2923.071056	2928.388173	 	 	 	 	 	 	 	 	 
+TVV	 encoding	11	6	0	86	80	 banana	3	1	5	 	0	0	5.179683	 cross	0	 NO	2	0	 NO	2	0	0	0	2855.168465	2929.882021	2933.259122	2938.444126	 	 	 	 	 	 	 	 	 
+TVV	 encoding	11	7	0	87	80	 computer mouse	4	2	6	 	0	0	2.683959	 grind	0	 NO	2	0	 NO	2	0	0	0	2855.168465	2939.751611	2942.754884	2945.444069	 	 	 	 	 	 	 	 	 
+TVV	 encoding	11	8	0	88	80	 belt	1	2	8	 	0	0	5.090652	 wipe	0	 NO	2	0	 NO	2	0	0	0	2855.168465	2946.215412	2948.804084	2953.900036	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	11	0	1	88	81	 couliflower	7	2	7	 pool_room	28	4	0	 rub	8.82513	 perceptual	3	0.365813	 semantic_animated	3	0.297973	38	0.973684	 	 	 	 	2997.141868	3002.789217	3011.619653	3015.136501	3015.507713	3016.036379	3016.33971	0	 
+TVV	 retrieval	11	0	2	88	82	 spider	15	1	1	 kid_bedroom_pink	20	4	0	 drill	2.796568	 perceptual	1	1.172397	 semantic_animated	1	0.944039	38	0.973684	 	 	 	 	2997.141868	3017.489783	3020.291573	3023.801911	3024.979588	3025.518284	3026.467626	1	 
+TVV	 retrieval	11	0	3	88	83	 lion	11	2	3	 firing_room	12	3	0	 hop	3.234887	 perceptual	1	1.031843	 semantic_animated	1	0.819598	38	0.973684	 	 	 	 	2997.141868	3027.539315	3030.779608	3034.294394	3035.331532	3035.858578	3036.683509	1	 
+TVV	 retrieval	11	0	4	88	84	 shark	13	2	4	 rice_terrace	24	1	0	 trap	4.313754	 perceptual	1	0.758875	 semantic_animated	1	0.601744	38	0.973684	 	 	 	 	2997.141868	3037.796412	3042.115459	3045.631275	3046.395488	3046.932434	3047.539453	1	 
+TVV	 retrieval	11	0	5	88	85	 duck	3	1	2	 city_street	7	2	0	 center	8.78316	 semantic_animated	3	0.523123	 perceptual	3	0.297251	38	0.973684	 	 	 	 	2997.141868	3049.174903	3057.963367	3061.466908	3061.995337	3062.532758	3062.835353	0	 
+TVV	 retrieval	11	0	6	88	86	 banana	3	1	5	 inside_forest	17	1	0	 cross	4.070292	 perceptual	1	1.068636	 semantic_animated	1	0.807038	38	0.973684	 	 	 	 	2997.141868	3064.207688	3068.283322	3071.79333	3072.86728	3073.398923	3074.211282	1	 
+TVV	 retrieval	11	0	7	88	87	 computer mouse	4	2	6	 prison	27	3	0	 grind	1.528293	 semantic_animated	1	0.921669	 perceptual	0	2.35833	38	0.973684	 	 	 	 	2997.141868	3075.973679	3077.507257	3081.012306	3081.939228	3082.479585	3084.843223	1	 
+TVV	 retrieval	11	0	8	88	88	 belt	1	2	8	 flowers	13	1	0	 wipe	4.390636	 perceptual	3	0.61477	 semantic_animated	3	0.585693	38	0.973684	 	 	 	 	2997.141868	3086.023219	3090.419178	3093.927055	3094.547147	3095.076126	3095.667133	0	 
+TVV	 encoding	12	1	0	89	88	 mosquito	12	2	1	 	0	0	6.656589	 push	0	 NO	2	0	 NO	2	0	0	0	3098.738143	3132.104371	3135.564946	3142.226864	 	 	 	 	 	 	 	 	 
+TVV	 encoding	12	2	0	90	88	 camel	5	1	3	 	0	0	0	 match	0	 NO	2	0	 NO	2	0	0	0	3098.738143	3143.316672	3145.89134	3142.226864	 	 	 	 	 	 	 	 	 
+TVV	 encoding	12	3	0	91	88	 beetle	2	1	1	 	0	0	0	 clap	0	 NO	2	0	 NO	2	0	0	0	3098.738143	3154.169497	3157.394265	3142.226864	 	 	 	 	 	 	 	 	 
+TVV	 encoding	12	4	0	92	88	 wolf	16	2	3	 	0	0	0	 compare	0	 NO	2	0	 NO	2	0	0	0	3098.738143	3165.893959	3168.454308	3142.226864	 	 	 	 	 	 	 	 	 
+TVV	 encoding	12	5	0	93	88	 tie	16	1	8	 	0	0	3.910817	 detect	0	 NO	2	0	 NO	2	0	0	0	3098.738143	3176.302809	3179.334447	3183.250604	 	 	 	 	 	 	 	 	 
+TVV	 encoding	12	6	0	94	88	 shirt	12	2	8	 	0	0	3.941045	 smash	0	 NO	2	0	 NO	2	0	0	0	3098.738143	3184.054575	3187.072236	3191.018547	 	 	 	 	 	 	 	 	 
+TVV	 encoding	12	7	0	95	88	 bison	3	2	3	 	0	0	0	 deliver	0	 NO	2	0	 NO	2	0	0	0	3098.738143	3192.000043	3195.045408	3191.018547	 	 	 	 	 	 	 	 	 
+TVV	 encoding	12	8	0	96	88	 aubergine	3	1	7	 	0	0	4.001056	 paint	0	 NO	2	0	 NO	2	0	0	0	3098.738143	3203.267711	3206.756114	3210.762391	 	 	 	 	 	 	 	 	 
+TVV	 retrieval	12	0	1	96	89	 wolf	16	2	3	 cherry_field	5	1	0	 compare	5.250557	 perceptual	1	1.120424	 semantic_animated	1	0.591955	23	0.913043	 	 	 	 	3255.330066	3265.45021	3270.706006	3274.188372	3275.314073	3275.820845	3276.418103	1	 
+TVV	 retrieval	12	0	2	96	90	 mosquito	12	2	1	 home_office	14	4	0	 push	4.726737	 semantic_animated	1	1.789793	 perceptual	1	0.469744	23	0.913043	 	 	 	 	3255.330066	3278.198026	3282.929911	3286.422916	3288.217926	3288.734898	3289.209931	1	 
+TVV	 retrieval	12	0	3	96	91	 camel	5	1	3	 classroom	8	3	0	 match	9.916094	 perceptual	1	1.657947	 semantic_animated	1	1.676906	23	0.913043	 	 	 	 	3255.330066	3290.960605	3300.881793	3304.362603	3306.025811	3306.535694	3308.217895	0	 
+TVV	 retrieval	12	0	4	96	92	 shirt	12	2	8	 two_bed	31	4	0	 smash	6.160144	 perceptual	1	1.221059	 semantic_animated	1	0.689295	23	0.913043	 	 	 	 	3255.330066	3309.772409	3315.937726	3319.423386	3320.649716	3321.155229	3321.849783	1	 
+TVV	 retrieval	12	0	5	96	93	 beetle	2	1	1	 volcano	30	1	0	 clap	11.801181	 semantic_animated	3	0.623027	 perceptual	3	0.271665	23	0.913043	 	 	 	 	3255.330066	3323.227161	3335.033578	3338.525451	3339.15366	3339.660662	3339.937613	0	 
+TVV	 retrieval	12	0	6	96	94	 tie	16	1	8	 desert	7	1	0	 detect	6.766801	 semantic_animated	1	1.263008	 perceptual	1	0.625488	23	0.913043	 	 	 	 	3255.330066	3341.461555	3348.23354	3351.717218	3352.985546	3353.490746	3354.121571	1	 
+TVV	 retrieval	12	0	7	96	95	 aubergine	3	1	7	 vault_bank	32	3	0	 paint	9.574169	 semantic_animated	1	0.896682	 perceptual	1	0.516507	23	0.913043	 	 	 	 	3255.330066	3355.286009	3364.865422	3368.355531	3369.257465	3369.767665	3370.289427	1	 
+TVV	 retrieval	12	0	8	96	96	 bison	3	2	3	 dirty_bathroom	12	4	0	 deliver	4.477652	 semantic_animated	3	0.470051	 perceptual	3	0.303091	23	0.913043	 	 	 	 	3255.330066	3371.39846	3375.881352	3379.374019	3379.849341	3380.35696	3380.665339	0	 
