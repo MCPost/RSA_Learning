@@ -9,7 +9,11 @@ Art_corr = cfg.Art_corr;
 BL_corr = cfg.BL_corr; 
 BL_wind = cfg.BL_wind;
 Data = Data_Struct.Data;
-cfg.Encoding_Data = Data_Struct.Encoding_Data; 
+if(isfield(Data_Struct,'Encoding_Data'))
+    cfg.Encoding_Data = Data_Struct.Encoding_Data;
+else
+    cfg.Retrieval_Data = Data_Struct.Retrieval_Data;
+end
 cfg.TrialInfo = Data_Struct.TrialInfo;
 cfg.TimeVec1024 =  Data_Struct.TimeVec1024;
 
