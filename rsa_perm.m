@@ -77,7 +77,7 @@ for p = 1:nPerms
     else
         max_clust_info_pos(p,:) = [0 0];
     end
-    clear cl clustinfo Num clustmap
+    clear cl Num clustinfo clustmap
     
     waitbar(p/nPerms,h,sprintf('%d of %d Permutation finished!',p,nPerms))
 end
@@ -89,7 +89,7 @@ close(h)
 % Plot significant uncorrected areas
 zmapthresh_pos = Real_T;
 zmapthresh_pos(zmapthresh_pos < tinv(1-thresh_pval, size(Data,1)-1)) = 0;
-[clustmap,Num] = bwlabel(zmapthresh_pos);
+[clustmap,Num] = bwlabel(zmapthresh_pos);  %clustinfo = zeros(Num,3);
 for cl = 1:Num
     clustinfo(cl,1) = cl;
     clustinfo(cl,2) = sum(clustmap(:) == cl);

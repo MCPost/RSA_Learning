@@ -31,6 +31,32 @@ ROI_temp = {'B18','B17','B16','B15','B14','B22','B23','B24','B25','B26','B31','B
 ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'UniformOutput', 0)));
 
 
+ROI = {'OCC','TMP'};
+frqmth = {'FT','WL','FH'};
+frqs = {'theta','alpha','beta','gamma1','gamma2'};
+blnames = {'NoBL','logBL','pctBL'};
+measures = {'LDA','SVM','euclidian'};
 
+for sub = 1:length(Subj_names)
+    for fm = frqmth
+        curData = load(['RSA_DiffFreq/RSA_Power_',Subj_names{sub}], ['RSA_Power_',fm{1}]);
+        for fq = frqs
+            for bl = blnames
+                for m = 1:length(measures)
+                    if(sub == 1)
+                        dims = size(curData.(['RSA_Power_',fm{1}]).(ROI{1}).(fq{1}).(bl{1}).RSA_16{1,m});
+                        RSA_DiffFreq.(ROI{1}).(fm{1}).(fq{1}).(bl{1}){1,m} = nan(dims(3), dims(1), dims(2));
+                        RSA_DiffFreq.(ROI{2}).(fm{1}).(fq{1}).(bl{1}){1,m} = nan(dims(3), dims(1), dims(2));
+                    end
+                    RSA_DiffFreq.(ROI{1}).(fm{1}).(fq{1}).(bl{1}){1,m}(sub,:,:,:) = permute(curData.(['RSA_Power_',fm{1}]).(ROI{1}).(fq{1}).(bl{1}).RSA_16{1,m},[3 1 2]);
+                    RSA_DiffFreq.(ROI{2}).(fm{1}).(fq{1}).(bl{1}){1,m}(sub,:,:,:) = permute(curData.(['RSA_Power_',fm{1}]).(ROI{1}).(fq{1}).(bl{1}).RSA_16{1,m},[3 1 2]);
+                end
+            end
+        end
+    end
+end
+RSA_DiffFreq.TimeVec = curData.(['RSA_Power_',fm{1}]).(ROI{1}).(fq{1}).(bl{1}).TimeVec;
+
+save('RSA_DiffFreq','RSA_DiffFreq','Subj_names','ROI_occ','ROI_temp','ROI','frqmth','frqs','blnames','measures')
 
 
