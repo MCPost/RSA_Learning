@@ -45,8 +45,8 @@ for sub = 1:length(Subj_names)
                 for m = 1:length(measures)
                     if(sub == 1)
                         dims = size(curData.(['RSA_Power_',fm{1}]).(ROI{1}).(fq{1}).(bl{1}).RSA_16{1,m});
-                        RSA_DiffFreq.(ROI{1}).(fm{1}).(fq{1}).(bl{1}){1,m} = nan(dims(3), dims(1), dims(2));
-                        RSA_DiffFreq.(ROI{2}).(fm{1}).(fq{1}).(bl{1}){1,m} = nan(dims(3), dims(1), dims(2));
+                        RSA_DiffFreq.(ROI{1}).(fm{1}).(fq{1}).(bl{1}){1,m} = nan(length(Subj_names), dims(3), dims(1), dims(2));
+                        RSA_DiffFreq.(ROI{2}).(fm{1}).(fq{1}).(bl{1}){1,m} = nan(length(Subj_names), dims(3), dims(1), dims(2));
                     end
                     RSA_DiffFreq.(ROI{1}).(fm{1}).(fq{1}).(bl{1}){1,m}(sub,:,:,:) = permute(curData.(['RSA_Power_',fm{1}]).(ROI{1}).(fq{1}).(bl{1}).RSA_16{1,m},[3 1 2]);
                     RSA_DiffFreq.(ROI{2}).(fm{1}).(fq{1}).(bl{1}){1,m}(sub,:,:,:) = permute(curData.(['RSA_Power_',fm{1}]).(ROI{1}).(fq{1}).(bl{1}).RSA_16{1,m},[3 1 2]);
