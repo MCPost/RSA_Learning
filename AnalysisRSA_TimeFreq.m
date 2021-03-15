@@ -31,6 +31,8 @@ ROI_temp = {'B18','B17','B16','B15','B14','B22','B23','B24','B25','B26','B31','B
 ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'UniformOutput', 0)));
 
 
+%% Load Subject Data
+
 ROI = {'OCC','TMP'};
 frqmth = {'FT','WL','FH'};
 frqs = {'theta','alpha','beta','gamma1','gamma2'};
@@ -56,6 +58,58 @@ for sub = 1:length(Subj_names)
     end
 end
 RSA_DiffFreq.TimeVec = curData.(['RSA_Power_',fm{1}]).(ROI{1}).(fq{1}).(bl{1}).TimeVec;
+
+
+% Create Hypothesis Matrix
+trl_mat = [kron([1;2],ones(64,1)) kron([1;2;1;2],ones(32,1))];
+RSA_DiffFreq.Prcp_Hyp128 = zeros(size(trl_mat,1));
+RSA_DiffFreq.Sem_Hyp128 = zeros(size(trl_mat,1));
+for i = 1:size(trl_mat,1)-1
+    for j = (i+1):size(trl_mat,1)
+        if(j ~= size(trl_mat,1) - (i - 1))
+            if(trl_mat(i,1) == 1 && trl_mat(j,1) == 1)
+                RSA_DiffFreq.Prcp_Hyp128(i,j) = 1;
+            elseif(trl_mat(i,1) == 2 && trl_mat(j,1) == 2)
+                RSA_DiffFreq.Prcp_Hyp128(i,j) = 2;
+            else
+                RSA_DiffFreq.Prcp_Hyp128(i,j) = -1;
+            end
+
+            if(trl_mat(i,2) == 1 && trl_mat(j,2) == 1)
+                RSA_DiffFreq.Sem_Hyp128(i,j) = 1;
+            elseif(trl_mat(i,2) == 2 && trl_mat(j,2) == 2)
+                RSA_DiffFreq.Sem_Hyp128(i,j) = 2;
+            else
+                RSA_DiffFreq.Sem_Hyp128(i,j) = -1;
+            end
+        end
+    end
+end
+
+RSA_DiffFreq.Prcp_Hyp16 = zeros(16);
+RSA_DiffFreq.Sem_Hyp16 = zeros(16);
+for i = 1:16-1
+    for j = (i+1):16
+        if(j ~= 16 - (i - 1))
+            if(trl_mat(8*i,1) == 1 && trl_mat(8*j,1) == 1)
+                RSA_DiffFreq.Prcp_Hyp16(i,j) = 1;
+            elseif(trl_mat(8*i,1) == 2 && trl_mat(8*j,1) == 2)
+                RSA_DiffFreq.Prcp_Hyp16(i,j) = 2;
+            else
+                RSA_DiffFreq.Prcp_Hyp16(i,j) = -1;
+            end
+
+            if(trl_mat(8*i,2) == 1 && trl_mat(8*j,2) == 1)
+                RSA_DiffFreq.Sem_Hyp16(i,j) = 1;
+            elseif(trl_mat(8*i,2) == 2 && trl_mat(8*j,2) == 2)
+                RSA_DiffFreq.Sem_Hyp16(i,j) = 2;
+            else
+                RSA_DiffFreq.Sem_Hyp16(i,j) = -1;
+            end
+        end
+    end
+end
+clear trl_mat
 
 save('RSA_DiffFreq','RSA_DiffFreq','Subj_names','ROI_occ','ROI_temp','ROI','frqmth','frqs','blnames','measures')
 
