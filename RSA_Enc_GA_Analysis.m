@@ -198,9 +198,9 @@ cfg.matshuff = false;
 
 % Plot RSA Time series
 
-ROI = {'OCC','TMP'}; r = 2;
-Cat = {'Perceptual','Semantic'}; c = 2;
-dt = 1:2;
+ROI = {'OCC','TMP'}; r = 1;
+Cat = {'Perceptual','Semantic'}; c = 1;
+dt = 3:4;
 
 figure('Pos', [325 510 650 402]);
 plot([]); hold on
@@ -212,8 +212,8 @@ SEM2 = nanstd(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),0,1)./sqrt(size
 fill([TimeVec fliplr(TimeVec)],[dat1 fliplr(dat1 + SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
 fill([TimeVec fliplr(TimeVec)],[dat1 fliplr(dat1 - SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
 fill([TimeVec fliplr(TimeVec)],[dat2 fliplr(dat2 + SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
-fill([TimeVec fliplr(TimeVec)],[dat'linewidth',22 fliplr(dat2 - SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
-h1 = plot(TimeVec, dat1,'b',);
+fill([TimeVec fliplr(TimeVec)],[dat2 fliplr(dat2 - SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
+h1 = plot(TimeVec, dat1,'b','linewidth',2);
 h2 = plot(TimeVec, dat2,'r','linewidth',2);
 hold off
 ylabel(RSA_Data.meas16{msr}); xlabel('Time (s)'); title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
@@ -283,8 +283,8 @@ sign_mcc_clust_2 = Results2.zmapthresh_pos;
 sign_mcc_clust_2(sign_mcc_clust_2 > 0) = min(get(gca,'ylim'))*0.9;
 plot(TimeVec,sign_mcc_clust_2,'ro','MarkerFaceColor','r')
 hold off
-%saveas(gcf,'Results/OCC_TMP_PerceptualvsSemantic_BT-WI_Dat16_LDA.png')
-%close(gcf)
+saveas(gcf,'Results/Enc_TMP_PerceptualvsSemantic_BT-WI_Dat16_LDA.png')
+close(gcf)
 
 
 

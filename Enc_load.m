@@ -1,11 +1,8 @@
-%% Load in RSA Retrieval Grand Average Data
-
-function RSA_Ret_GA_LoadData(sub)
 
 %% Subject Names
-[~,message,~] = fileattrib('Preproc_EEG_Data/Retrieval_response_locked/*');
+[~,message,~] = fileattrib('Preproc_EEG_Data/Encoding_object_locked/*');
 currentdir = pwd;
-filenames = strrep({message([message.directory] == 0).Name}',[currentdir,'\Preproc_EEG_Data\Retrieval_response_locked\'],'');
+filenames = strrep({message([message.directory] == 0).Name}',[currentdir,'\Preproc_EEG_Data\Encoding_object_locked\'],'');
 Subj_names = cellfun(@(x) x{1}(10:end), regexp(filenames,'_(\w*).mat','tokens','once'),'UniformOutput', 0);
 
 
@@ -36,46 +33,17 @@ ROI_temp = {'B18','B17','B16','B15','B14','B22','B23','B24','B25','B26','B31','B
 ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'UniformOutput', 0)));
 
 
-%% Initialize Mat files
-%save('RSA_Data_Ret', 'Subj_names', 'elecs', 'ROI_all_idx')
+save('RSA_Data_Enc', 'Subj_names', 'elecs', 'ROI_all_idx')
 
-%% Loop over Participants to create RSA Matrices
-%for sub = 1:length(Subj_names)
-    
-    %% Import Data
-    load(['Preproc_EEG_Data/Retrieval_response_locked/Ret_EEG_Data_',Subj_names{sub}])
-    eeg_cfg = [];
-    eeg_cfg.Name = Subj_names{sub};
-    eeg_cfg.chan_label = elecs;
-    eeg_cfg.chan_idx = ROI_occ_idx'; 
-    eeg_cfg.Art_corr = false;
-    eeg_cfg.BL_corr = 'demean';
-    eeg_cfg.BL_wind = [-0.26 -0.05];
-    [Data_EEG] = preproc_EEGData(eeg_cfg, Ret_Data_EEG);
-    
-    
-    %% RSA Function
-    rsa_cfg = Data_EEG;
-    rsa_cfg.slide_window = 0.080; 
-    rsa_cfg.slide_step = 0.008;
-    rsa_cfg.window_average = 'gaussian';
-    rsa_cfg.meas128 = '';
-    rsa_cfg.meas16 = {'LDA', 'SVM', 'euclidian', 'euclidian w.c.c.'};
-    rsa_cfg.MNN = true;
-    rsa_cfg.Cktl_blank_rm = true;
-    rsa_cfg.only16 = true;
-    
-    rsa_cfg.curROI = ROI_occ_idx;
-    rsa_cfg.curROI_name = 'occipital';
-    RSA_Data.(['RSA_Data_',Subj_names{sub}]).OCC = createRSA(rsa_cfg);
-    
-    rsa_cfg.curROI = ROI_temp_idx;
-    rsa_cfg.curROI_name = 'temporal';
-    RSA_Data.(['RSA_Data_',Subj_names{sub}]).TMP = createRSA(rsa_cfg);
-    
-    save('RSA_Data_Ret','-struct','RSA_Data','-append')
-    clear('RSA_Data')
-    
-%end
-
+c = parcluster();
+jobHandles = cell(length(Subj_names),1);
+for sub = 1:length(Subj_names)
+    jobHandles{sub}    = batch(c, @RSA_Enc_GA_LoadData, 0, {sub});
 end
+
+jobHandles{22}
+diary(jobHandles{22})
+
+%for sub = 1:length(Subj_names)
+%    delete(jobHandles{sub})
+%end

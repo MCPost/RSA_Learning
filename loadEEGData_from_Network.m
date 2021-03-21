@@ -19,9 +19,7 @@ filenames = regexprep(filenames,'\','/');
 tok_names = unique(cellfun(@(x) x{1}, regexp(filenames,'_(\w*).','tokens','once'),'UniformOutput', 0));
 Subj_names = tok_names(cellfun(@isempty, regexp(tok_names,'_')));
 
-% leave out Subj 'RW' 
-Subj_names(strcmp(Subj_names,'RW')) = [];
-Subj_names(strcmp(Subj_names,'JLC')) = [];
+% leave out Subj 'TVV' 
 Subj_names(strcmp(Subj_names,'TVV')) = [];
 
 
@@ -36,7 +34,11 @@ for sub = 1:length(Subj_names)
     fprintf('Load Logfile Data for Subject %s!', Name)
     fprintf('\n')
     
-    logfile = importdata(['Logs/resultfile_',Name,'.csv']);
+    if(sub == 20)
+        logfile = importdata(['Logs/resultfile_',Name,'_nocutted.csv']);
+    else
+        logfile = importdata(['Logs/resultfile_',Name,'.csv']);
+    end
     
     logfile.textdata(2:end,find(strcmp(logfile.textdata(find(strcmp(logfile.textdata(:,2),'retrieval'),1,'first'),:),''),1,'first')+(0:size(logfile.data,2)-1)) = num2cell(logfile.data);
     logfile = logfile.textdata;

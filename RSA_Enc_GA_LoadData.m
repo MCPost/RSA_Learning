@@ -1,11 +1,12 @@
 %% Load in RSA Encoding Grand Average Data
 
+function RSA_Enc_GA_LoadData(sub)
 
 %% Subject Names
-[~,message,~] = fileattrib('Preproc_EEG_Data\Encoding_object_locked\*');
+[~,message,~] = fileattrib('Preproc_EEG_Data/Encoding_object_locked/*');
 currentdir = pwd;
 filenames = strrep({message([message.directory] == 0).Name}',[currentdir,'\Preproc_EEG_Data\Encoding_object_locked\'],'');
-Subj_names = cellfun(@(x) x{1}(10:end), regexp(filenames,'_(\w*).','tokens','once'),'UniformOutput', 0);
+Subj_names = cellfun(@(x) x{1}(10:end), regexp(filenames,'_(\w*).mat','tokens','once'),'UniformOutput', 0);
 
 
 %% ROI Electrode positions
@@ -36,10 +37,10 @@ ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'Unif
 
 
 %% Initialize Mat files
-save('RSA_Data_Enc', 'Subj_names', 'elecs', 'ROI_all_idx')
+%save('RSA_Data_Enc', 'Subj_names', 'elecs', 'ROI_all_idx')
 
 %% Loop over Participants to create RSA Matrices
-for sub = 1:length(Subj_names)
+%for sub = 1:length(Subj_names)
     
     %% Import Data
     load(['Preproc_EEG_Data/Encoding_object_locked/Enc_EEG_Data_',Subj_names{sub}])
@@ -79,6 +80,6 @@ for sub = 1:length(Subj_names)
     save('RSA_Data_Enc','-struct','RSA_Data','-append')
     clear('RSA_Data')
     
+%end
+
 end
-
-

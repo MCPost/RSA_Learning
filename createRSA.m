@@ -177,6 +177,8 @@ measures = cell(1,length(meas16));
 for m = 1:length(meas16)
     if(strcmp(meas16(m),'euclidian'))
         measures(1,m) = {'euclidian c.v.'};
+    elseif(strcmp(meas16(m),'euclidian w.c.c.'))
+        measures(1,m) = {'euclidian w.c.c.'};
     elseif(strcmp(meas16(m),'pearson'))
         measures(1,m) = {'pearson c.v.'};
     elseif(strcmp(meas16(m),'LDA'))
@@ -214,7 +216,7 @@ for tp = 1:length(TimeVec)
         mean_pattern = zeros(1,size(all_patterns,2));
     end
     
-    ct_x = 1; ct_y = 1;
+    ct_x = 1; ct_y = 1; within_dist = zeros(16,1);
     for i = 1:8:size(Data,1)-1
         for j = i:8:size(Data,1)
             if(i ~= j)
@@ -238,7 +240,29 @@ for tp = 1:length(TimeVec)
                     for fold = 1:size(diff_crossv,2)
                         dist_crossv(fold,1) = diff_crossv(:,fold)'*mean(diff_crossv(:,[1:fold-1 fold+1:end]),2);
                     end
-                    RSA_Mat_16x16{1,strcmp(RSA_Mat_16x16(2,:),'euclidian c.v.')}(ct_x,ct_y,tp) = mean(dist_crossv(:,1)); 
+                    RSA_Mat_16x16{1,strcmp(RSA_Mat_16x16(2,:),'euclidian c.v.')}(ct_x,ct_y,tp) = mean(dist_crossv(:,1));
+                end
+                
+                if(sum(strcmp(measures,'euclidian w.c.c.')) > 0)
+                    dist_crossv = zeros(size(diff_crossv,1),1);
+                    for fold = 1:size(diff_crossv,2)
+                        dist_crossv(fold) = diff_crossv(:,fold)'*diff_crossv(:,fold);
+                    end
+                    if(within_dist(ct_x) == 0)
+                        for f1 = 1:size(cur_trial1,1)-1
+                            for f2 = f1:size(cur_trial1,1)
+                                within_dist(ct_x) = within_dist(ct_x) + (cur_trial1(1,:)-cur_trial1(2,:))*(cur_trial1(1,:)-cur_trial1(2,:))';
+                            end
+                        end
+                    end
+                    if(within_dist(ct_y) == 0)
+                        for f1 = 1:size(cur_trial2,1)-1
+                            for f2 = f1:size(cur_trial2,1)
+                                within_dist(ct_y) = within_dist(ct_y) + (cur_trial2(1,:)-cur_trial2(2,:))*(cur_trial2(1,:)-cur_trial2(2,:))';
+                            end
+                        end
+                    end
+                    RSA_Mat_16x16{1,strcmp(RSA_Mat_16x16(2,:),'euclidian w.c.c.')}(ct_x,ct_y,tp) = mean(dist_crossv) - sum(within_dist([ct_x ct_y]))/(2*size(cur_trial1,1)*(size(cur_trial2,1)));
                 end
                 
                 if(sum(strcmp(measures,'pearson c.v.')) > 0)

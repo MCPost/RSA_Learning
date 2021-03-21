@@ -1,10 +1,7 @@
 %% RSA Retrieval - All Subjects Analysis
 
 %% Subject Names
-[~,message,~] = fileattrib('Preproc_EEG_Data\Retrieval_response_locked\*');
-currentdir = pwd;
-filenames = strrep({message([message.directory] == 0).Name}',[currentdir,'\Preproc_EEG_Data\Retrieval_response_locked\'],'');
-Subj_names = cellfun(@(x) x{1}(10:end), regexp(filenames,'_(\w*).','tokens','once'),'UniformOutput', 0);
+load('RSA_Data_Ret','Subj_names')
 
 
 %% ROI Electrode positions
@@ -34,8 +31,9 @@ ROI_temp = {'B18','B17','B16','B15','B14','B22','B23','B24','B25','B26','B31','B
 ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'UniformOutput', 0)));
 
 %% Measure
-msr = 1;
+msr = 3;
 
+Subj_names(15) = [];
 
 %% Create Data
 tmp_strct = load('RSA_Data_Ret');
@@ -54,14 +52,14 @@ for sub = 1:length(Subj_names)
         for fn = fieldnames(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC)'
             RSA_Data.(fn{1}) = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.(fn{1});
         end
-        RSA_Data = rmfield(RSA_Data, {'Name','TimeVec1024','RSA_full','MDS_full','RSA_16','Encoding_Data','TrialInfo'...
+        RSA_Data = rmfield(RSA_Data, {'Name','TimeVec1024','RSA_full','MDS_full','RSA_16','Retrieval_Data','TrialInfo'...
                                       'MDS_16','rsa_dim','mds_dim','mds_error_16','curROI','curROI_name'});
-        RSA_Data.Encoding_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.Encoding_Data;
+        RSA_Data.Retrieval_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.Retrieval_Data;
         RSA_Data.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.TrialInfo;
         RSA_Data.OCC_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.curROI; 
         RSA_Data.TMP_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).TMP.curROI;
     else
-        RSA_Data.Encoding_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.Encoding_Data;
+        RSA_Data.Retrieval_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.Retrieval_Data;
         RSA_Data.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.TrialInfo;
     end
     
@@ -181,3 +179,107 @@ for sub = 1:length(Subj_names)
     end
 
 end
+
+
+
+
+cfg = [];
+cfg.nPerms = 1000;
+cfg.thresh_pval = 0.01;
+cfg.mcc_cluster_pval = 0.01;
+cfg.TimeVec = RSA_Data.TimeVec;
+cfg.Hyp_Mat = double(Semantic_Mat_red16>0) + -double(Semantic_Mat_red16<0);
+cfg.matshuff = false;
+%Results = rsa_perm(cfg, RSA_Data.TMP.red16_Data);
+
+
+% Plot RSA Time series
+
+ROI = {'OCC','TMP'}; r = 1;
+Cat = {'Perceptual','Semantic'}; c = 1;
+dt = 3:4;
+
+figure('Pos', [325 510 650 402]);
+plot([]); hold on
+Dat_names = fieldnames(RSA_Time.(ROI{r}).(Cat{c}));
+dat1 = nanmean(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),1);
+dat2 = nanmean(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(2)})(:,:),1);
+SEM1 = nanstd(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),0,1)./sqrt(size(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)}),1));
+SEM2 = nanstd(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),0,1)./sqrt(size(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)}),1));
+fill([TimeVec fliplr(TimeVec)],[dat1 fliplr(dat1 + SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec fliplr(TimeVec)],[dat1 fliplr(dat1 - SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec fliplr(TimeVec)],[dat2 fliplr(dat2 + SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec fliplr(TimeVec)],[dat2,fliplr(dat2 - SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
+h1 = plot(TimeVec, dat1,'b','linewidth',2);
+h2 = plot(TimeVec, dat2,'r','linewidth',2);
+hold off
+ylabel(RSA_Data.meas16{msr}); xlabel('Time (s)'); title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
+xlim([-4 0.2]);lg = legend([h1 h2], {Dat_names{dt(1)},Dat_names{dt(2)}}); legend boxoff; set(lg,'FontSize',14)
+box off; %ylim([0.42 0.6])
+set(gca,'linewidth',2.5,'FontSize',14)
+%saveas(gcf,sprintf('Results/%s_16_%s_LDA_%s.png',ROI{r},Cat{c},datanames{d}))
+%close(gcf)
+
+
+% Plot RSA Difference Time series
+
+r1 = 1; r2 = 2;
+c1 = 1; c2 = 2;
+dt1 = [3 4]; dt2 = [3 4];
+
+if(sum(dt1) == 7)
+    Hyp_Mat_per = double(Perceptual_Mat_red16>0) + -double(Perceptual_Mat_red16<0);
+    Hyp_Mat_sem = double(Semantic_Mat_red16>0) + -double(Semantic_Mat_red16<0);
+else
+    Hyp_Mat_per = double(Perceptual_Mat_red16==1) + -double(Perceptual_Mat_red16==2);
+    Hyp_Mat_sem = double(Semantic_Mat_red16==1) + -double(Semantic_Mat_red16==2);
+end
+
+cfg = [];
+cfg.nPerms = 1000;
+cfg.thresh_pval = 0.05;
+cfg.mcc_cluster_pval = 0.05;
+cfg.TimeVec = RSA_Data.TimeVec;
+cfg.Hyp_Mat = Hyp_Mat_per;
+cfg.matshuff = false;
+Results1 = rsa_perm(cfg, RSA_Data.(ROI{r1}).red16_Data);
+
+cfg.Hyp_Mat = Hyp_Mat_sem;
+Results2 = rsa_perm(cfg, RSA_Data.(ROI{r2}).red16_Data);
+
+figure('Pos', [325 510 650 402]);
+plot([]); hold on
+Dat_names1 = fieldnames(RSA_Time.(ROI{r1}).(Cat{c1}));
+dat1 = RSA_Time.(ROI{r1}).(Cat{c1}).(Dat_names1{dt1(2)}) - RSA_Time.(ROI{r1}).(Cat{c1}).(Dat_names1{dt1(1)});
+Dat_names2 = fieldnames(RSA_Time.(ROI{r2}).(Cat{c2}));
+dat2 = RSA_Time.(ROI{r2}).(Cat{c2}).(Dat_names2{dt2(2)}) - RSA_Time.(ROI{r2}).(Cat{c2}).(Dat_names2{dt2(1)});
+SEM1 = nanstd(dat1,0,1)./sqrt(size(dat1,1)); SEM2 = nanstd(dat2,0,1)./sqrt(size(dat2,1));
+% SEM1 = zeros(1,length(TimeVec)); SEM2 = zeros(1,length(TimeVec));
+% for tp = 1:length(TimeVec)
+%     [~,~,~,stats] = ttest(RSA_Time.(ROI{r1}).(Cat{c1}).(Dat_names{dt(2)})(:,tp), RSA_Time.(ROI{r1}).(Cat{c1}).(Dat_names{dt(1)})(:,tp));
+%     SEM1(1,tp) = tinv(.95,stats.df)*(stats.sd/sqrt(size(dat1,1)));
+%     [~,~,~,stats] = ttest(RSA_Time.(ROI{r2}).(Cat{c2}).(Dat_names{dt(2)})(:,tp), RSA_Time.(ROI{r2}).(Cat{c2}).(Dat_names{dt(1)})(:,tp));
+%     SEM2(1,tp) = tinv(.95,stats.df)*(stats.sd/sqrt(size(dat2,1)));
+% end
+fill([TimeVec fliplr(TimeVec)],[nanmean(dat1,1) fliplr(nanmean(dat1,1) + SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec fliplr(TimeVec)],[nanmean(dat1,1) fliplr(nanmean(dat1,1) - SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec fliplr(TimeVec)],[nanmean(dat2,1) fliplr(nanmean(dat2,1) + SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec fliplr(TimeVec)],[nanmean(dat2,1) fliplr(nanmean(dat2,1) - SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
+xlim([-4 0.2]); %ylim([0.35 0.6]);
+plot([-4 0.2],[0 0],'--k','linewidth',1)
+h1 = plot(TimeVec, nanmean(dat1,1),'b','linewidth',2);
+h2 = plot(TimeVec, nanmean(dat2,1),'r','linewidth',2);
+ylabel(['Diff ',RSA_Data.meas16{msr}]); xlabel('Time (s)'); %title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
+lg = legend([h1 h2], {[ROI{r1},' ',Cat{c1},' ',Dat_names1{dt1(2)},' - ',Dat_names1{dt1(1)}],[ROI{r2},' ',Cat{c2},' ',Dat_names2{dt2(2)},' - ',Dat_names2{dt2(1)}]}); legend boxoff; set(lg,'FontSize',14)
+box off;
+set(gca,'linewidth',2.5,'FontSize',14,'xlim',[-4 0.2])
+sign_mcc_clust_1 = Results1.zmapthresh_pos;
+sign_mcc_clust_1(sign_mcc_clust_1 > 0) = min(get(gca,'ylim'))*0.8;
+plot(TimeVec,sign_mcc_clust_1,'bo','MarkerFaceColor','b')
+sign_mcc_clust_2 = Results2.zmapthresh_pos;
+sign_mcc_clust_2(sign_mcc_clust_2 > 0) = min(get(gca,'ylim'))*0.9;
+plot(TimeVec,sign_mcc_clust_2,'ro','MarkerFaceColor','r')
+hold off
+%saveas(gcf,'Results/Ret_TMP_PerceptualvsSemantic_BT-WI_Dat16_LDA.png')
+%close(gcf)
+
