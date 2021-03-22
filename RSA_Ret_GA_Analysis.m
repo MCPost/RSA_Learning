@@ -31,9 +31,8 @@ ROI_temp = {'B18','B17','B16','B15','B14','B22','B23','B24','B25','B26','B31','B
 ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'UniformOutput', 0)));
 
 %% Measure
-msr = 3;
+msr = 1;
 
-Subj_names(15) = [];
 
 %% Create Data
 tmp_strct = load('RSA_Data_Ret');
@@ -143,15 +142,18 @@ axis square
     
 %% Create RSA Time Courses
 
+% Time window
+time_idx = dsearchn(RSA_Data.TimeVec', [-3 -1]')';
+
 RSA_Time = [];
-TimeVec = RSA_Data.TimeVec;
+TimeVec = RSA_Data.TimeVec(time_idx(1):time_idx(2));
 for sub = 1:length(Subj_names)
     
     cur_data = zeros(size(RSA_Data.OCC.red16_Data,3));
     for tp = 1:length(TimeVec)
         
         % Occipital
-        cur_data = squeeze(RSA_Data.OCC.red16_Data(sub,tp,:,:));
+        cur_data = squeeze(RSA_Data.OCC.red16_Data(sub,tp+(time_idx(1)-1),:,:));
         % Perceptual Dimension
         RSA_Time.OCC.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
         RSA_Time.OCC.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
@@ -164,7 +166,7 @@ for sub = 1:length(Subj_names)
         RSA_Time.OCC.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
         
         % Temporal
-        cur_data = squeeze(RSA_Data.TMP.red16_Data(sub,tp,:,:));
+        cur_data = squeeze(RSA_Data.TMP.red16_Data(sub,tp+(time_idx(1)-1),:,:));
         % Perceptual Dimension
         RSA_Time.TMP.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
         RSA_Time.TMP.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
@@ -187,10 +189,11 @@ cfg = [];
 cfg.nPerms = 1000;
 cfg.thresh_pval = 0.01;
 cfg.mcc_cluster_pval = 0.01;
-cfg.TimeVec = RSA_Data.TimeVec;
+cfg.TimeVec = TimeVec;
 cfg.Hyp_Mat = double(Semantic_Mat_red16>0) + -double(Semantic_Mat_red16<0);
 cfg.matshuff = false;
-%Results = rsa_perm(cfg, RSA_Data.TMP.red16_Data);
+cfg.twoside = true;
+Results = rsa_perm(cfg, RSA_Data.TMP.red16_Data(:,257:end,:,:));
 
 
 % Plot RSA Time series
@@ -214,7 +217,7 @@ h1 = plot(TimeVec, dat1,'b','linewidth',2);
 h2 = plot(TimeVec, dat2,'r','linewidth',2);
 hold off
 ylabel(RSA_Data.meas16{msr}); xlabel('Time (s)'); title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
-xlim([-4 0.2]);lg = legend([h1 h2], {Dat_names{dt(1)},Dat_names{dt(2)}}); legend boxoff; set(lg,'FontSize',14)
+xlim([-2 0.2]);lg = legend([h1 h2], {Dat_names{dt(1)},Dat_names{dt(2)}}); legend boxoff; set(lg,'FontSize',14)
 box off; %ylim([0.42 0.6])
 set(gca,'linewidth',2.5,'FontSize',14)
 %saveas(gcf,sprintf('Results/%s_16_%s_LDA_%s.png',ROI{r},Cat{c},datanames{d}))
@@ -223,7 +226,7 @@ set(gca,'linewidth',2.5,'FontSize',14)
 
 % Plot RSA Difference Time series
 
-r1 = 1; r2 = 2;
+r1 = 2; r2 = 2;
 c1 = 1; c2 = 2;
 dt1 = [3 4]; dt2 = [3 4];
 
@@ -239,13 +242,14 @@ cfg = [];
 cfg.nPerms = 1000;
 cfg.thresh_pval = 0.05;
 cfg.mcc_cluster_pval = 0.05;
-cfg.TimeVec = RSA_Data.TimeVec;
+cfg.TimeVec = TimeVec;
 cfg.Hyp_Mat = Hyp_Mat_per;
 cfg.matshuff = false;
-Results1 = rsa_perm(cfg, RSA_Data.(ROI{r1}).red16_Data);
+cfg.twoside = true;
+Results1 = rsa_perm(cfg, RSA_Data.(ROI{r1}).red16_Data(:,time_idx(1):time_idx(2),:,:));
 
 cfg.Hyp_Mat = Hyp_Mat_sem;
-Results2 = rsa_perm(cfg, RSA_Data.(ROI{r2}).red16_Data);
+Results2 = rsa_perm(cfg, RSA_Data.(ROI{r2}).red16_Data(:,time_idx(1):time_idx(2),:,:));
 
 figure('Pos', [325 510 650 402]);
 plot([]); hold on
@@ -265,18 +269,17 @@ fill([TimeVec fliplr(TimeVec)],[nanmean(dat1,1) fliplr(nanmean(dat1,1) + SEM1)],
 fill([TimeVec fliplr(TimeVec)],[nanmean(dat1,1) fliplr(nanmean(dat1,1) - SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
 fill([TimeVec fliplr(TimeVec)],[nanmean(dat2,1) fliplr(nanmean(dat2,1) + SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
 fill([TimeVec fliplr(TimeVec)],[nanmean(dat2,1) fliplr(nanmean(dat2,1) - SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
-xlim([-4 0.2]); %ylim([0.35 0.6]);
 plot([-4 0.2],[0 0],'--k','linewidth',1)
 h1 = plot(TimeVec, nanmean(dat1,1),'b','linewidth',2);
 h2 = plot(TimeVec, nanmean(dat2,1),'r','linewidth',2);
 ylabel(['Diff ',RSA_Data.meas16{msr}]); xlabel('Time (s)'); %title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
 lg = legend([h1 h2], {[ROI{r1},' ',Cat{c1},' ',Dat_names1{dt1(2)},' - ',Dat_names1{dt1(1)}],[ROI{r2},' ',Cat{c2},' ',Dat_names2{dt2(2)},' - ',Dat_names2{dt2(1)}]}); legend boxoff; set(lg,'FontSize',14)
 box off;
-set(gca,'linewidth',2.5,'FontSize',14,'xlim',[-4 0.2])
-sign_mcc_clust_1 = Results1.zmapthresh_pos;
+set(gca,'linewidth',2.5,'FontSize',14,'xlim',[-3 -1])
+sign_mcc_clust_1 = Results1.zmapthresh;
 sign_mcc_clust_1(sign_mcc_clust_1 > 0) = min(get(gca,'ylim'))*0.8;
 plot(TimeVec,sign_mcc_clust_1,'bo','MarkerFaceColor','b')
-sign_mcc_clust_2 = Results2.zmapthresh_pos;
+sign_mcc_clust_2 = Results2.zmapthresh;
 sign_mcc_clust_2(sign_mcc_clust_2 > 0) = min(get(gca,'ylim'))*0.9;
 plot(TimeVec,sign_mcc_clust_2,'ro','MarkerFaceColor','r')
 hold off

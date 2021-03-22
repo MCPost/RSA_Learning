@@ -8,6 +8,13 @@ mcc_cluster_pval = cfg.mcc_cluster_pval;
 TimeVec = cfg.TimeVec;
 Hyp_Mat = cfg.Hyp_Mat;
 matshuff = cfg.matshuff;
+twoside = cfg.twoside;
+
+if(twoside)
+    ts_os_fac = 0.5;
+else
+    ts_os_fac = 1;
+end
 
 %% Real Data Clusters
 
@@ -22,6 +29,8 @@ Real_T = real_diff./tdenom;
 %% Surrogate Data Cluster
 
 Surr_T = zeros(nPerms,length(TimeVec));
+max_pixel_pvals = zeros(nPerms,2);
+max_clust_info_pos = zeros(nPerms,2); max_clust_info_neg = zeros(nPerms,2);
 h = waitbar(0,'');
 for p = 1:nPerms
     
@@ -59,25 +68,29 @@ for p = 1:nPerms
     
     
     % save maximum pixel values
-    max_pixel_pvals(p,:) = max(Surr_T(p,:));
+    max_pixel_pvals(p,:) = [min(Surr_T(p,:)) max(Surr_T(p,:))];
     
     % Get positive clusters
     pos_clustmap = Surr_T(p,:);
-    pos_clustmap(pos_clustmap < tinv(1-thresh_pval, size(Data,1)-1)) = 0;
+    pos_clustmap(pos_clustmap < tinv(1-thresh_pval*ts_os_fac, size(Data,1)-1)) = 0;
+    neg_clustmap = Surr_T(p,:);
+    neg_clustmap(neg_clustmap > tinv(thresh_pval*ts_os_fac, size(Data,1)-1)) = 0;
 
     % get number of elements in largest supra-threshold cluster
-    [clustmap,Num] = bwlabel(pos_clustmap); clustinfo = zeros(Num,3);
-    if(Num > 0)
-        for cl = 1:Num
-            clustinfo(cl,1) = cl;
-            clustinfo(cl,2) = sum(clustmap(:) == cl);
-            clustinfo(cl,3) = sum(pos_clustmap(clustmap(:) == cl));
-        end
-        max_clust_info_pos(p,:) = [clustinfo(find(clustinfo(:,2) == max(clustinfo(:,2)),1,'first'),2) clustinfo(find(clustinfo(:,3) == max(clustinfo(:,3)),1,'first'),3)];
+    clust_struct_pos = bwconncomp(pos_clustmap);
+    if(~isempty(clust_struct_pos.PixelIdxList))
+        max_clust_info_pos(p,:) = [max(cellfun(@length, clust_struct_pos.PixelIdxList))   sum(pos_clustmap(clust_struct_pos.PixelIdxList{find(cellfun(@length, clust_struct_pos.PixelIdxList) == max(cellfun(@length, clust_struct_pos.PixelIdxList)),1,'first')}))];
     else
         max_clust_info_pos(p,:) = [0 0];
     end
-    clear cl Num clustinfo clustmap
+
+    clust_struct_neg = bwconncomp(neg_clustmap);
+    if(~isempty(clust_struct_neg.PixelIdxList))
+        max_clust_info_neg(p,:) = [max(cellfun(@length, clust_struct_neg.PixelIdxList))   sum(neg_clustmap(clust_struct_neg.PixelIdxList{find(cellfun(@length, clust_struct_neg.PixelIdxList) == max(cellfun(@length, clust_struct_neg.PixelIdxList)),1,'first')}))];
+    else
+        max_clust_info_neg(p,:) = [0 0];
+    end
+    clear clust_struct_pos clust_struct_neg pos_clustmap neg_clustmap
     
     waitbar(p/nPerms,h,sprintf('%d of %d Permutation finished!',p,nPerms))
 end
@@ -88,14 +101,14 @@ close(h)
 
 % Plot significant uncorrected areas
 zmapthresh_pos = Real_T;
-zmapthresh_pos(zmapthresh_pos < tinv(1-thresh_pval, size(Data,1)-1)) = 0;
-[clustmap,Num] = bwlabel(zmapthresh_pos);  %clustinfo = zeros(Num,3);
+zmapthresh_pos(zmapthresh_pos < tinv(1-thresh_pval*ts_os_fac, size(Data,1)-1)) = 0;
+[clustmap,Num] = bwlabel(zmapthresh_pos);  clustinfo = zeros(Num,3);
 for cl = 1:Num
     clustinfo(cl,1) = cl;
     clustinfo(cl,2) = sum(clustmap(:) == cl);
     clustinfo(cl,3) = sum(zmapthresh_pos(clustmap(:) == cl));
 end
-clust_threshold = prctile(max_clust_info_pos(:,2),100-(mcc_cluster_pval)*100);
+clust_threshold = prctile(max_clust_info_pos(:,2),100-(mcc_cluster_pval*ts_os_fac)*100);
 if(Num > 0)
     for i = 1:size(clustinfo)
         if(clustinfo(i,3) < clust_threshold) 
@@ -105,7 +118,26 @@ if(Num > 0)
 end
 clear cl i Num clustmap
 
-zmapthresh_pos(zmapthresh_pos == 0) = NaN;
+zmapthresh_neg = Real_T;
+zmapthresh_neg(zmapthresh_neg > tinv(thresh_pval*ts_os_fac, size(Data,1)-1)) = 0;
+[clustmap,Num] = bwlabel(zmapthresh_neg);  clustinfo = zeros(Num,3);
+for cl = 1:Num
+    clustinfo(cl,1) = cl;
+    clustinfo(cl,2) = sum(clustmap(:) == cl);
+    clustinfo(cl,3) = sum(zmapthresh_neg(clustmap(:) == cl));
+end
+clust_threshold = prctile(max_clust_info_pos(:,2),100-(mcc_cluster_pval*ts_os_fac)*100);
+if(Num > 0)
+    for i = 1:size(clustinfo)
+        if(clustinfo(i,3) < clust_threshold) 
+            zmapthresh_neg(clustmap == clustinfo(i,1)) = 0;
+        end
+    end
+end
+clear cl i Num clustmap
+
+zmapthresh = zmapthresh_pos + zmapthresh_neg;
+zmapthresh(zmapthresh == 0) = NaN;
 
 %% Save into Results
 
@@ -116,7 +148,8 @@ Results.Real_T  = Real_T;
 Results.Surr_T  = Surr_T;
 Results.max_pixel_pvals  = max_pixel_pvals;
 Results.max_clust_info_pos  = max_clust_info_pos;
+Results.max_clust_info_neg  = max_clust_info_neg;
 Results.clustinfo = clustinfo;
-Results.zmapthresh_pos = zmapthresh_pos;
+Results.zmapthresh = zmapthresh;
 
 end

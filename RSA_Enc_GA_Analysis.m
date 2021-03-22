@@ -1,10 +1,7 @@
 %% RSA Encoding - All Subjects Analysis
 
 %% Subject Names
-[~,message,~] = fileattrib('Preproc_EEG_Data\Encoding_object_locked\*');
-currentdir = pwd;
-filenames = strrep({message([message.directory] == 0).Name}',[currentdir,'\Preproc_EEG_Data\Encoding_object_locked\'],'');
-Subj_names = cellfun(@(x) x{1}(10:end), regexp(filenames,'_(\w*).','tokens','once'),'UniformOutput', 0);
+load('RSA_Data_Enc','Subj_names')
 
 
 %% ROI Electrode positions
@@ -193,6 +190,7 @@ cfg.mcc_cluster_pval = 0.01;
 cfg.TimeVec = RSA_Data.TimeVec;
 cfg.Hyp_Mat = double(Semantic_Mat_red16>0) + -double(Semantic_Mat_red16<0);
 cfg.matshuff = false;
+cfg.twoside = true;
 %Results = rsa_perm(cfg, RSA_Data.TMP.red16_Data);
 
 
@@ -226,7 +224,7 @@ set(gca,'linewidth',2.5,'FontSize',14)
 
 % Plot RSA Difference Time series
 
-r1 = 2; r2 = 2;
+r1 = 1; r2 = 2;
 c1 = 1; c2 = 2;
 dt1 = [3 4]; dt2 = [3 4];
 
@@ -245,6 +243,7 @@ cfg.mcc_cluster_pval = 0.05;
 cfg.TimeVec = RSA_Data.TimeVec;
 cfg.Hyp_Mat = Hyp_Mat_per;
 cfg.matshuff = false;
+cfg.twoside = true;
 Results1 = rsa_perm(cfg, RSA_Data.(ROI{r1}).red16_Data);
 
 cfg.Hyp_Mat = Hyp_Mat_sem;
@@ -276,15 +275,15 @@ ylabel(['Diff ',RSA_Data.meas16{msr}]); xlabel('Time (s)'); %title([Cat{c},': ',
 lg = legend([h1 h2], {[ROI{r1},' ',Cat{c1},' ',Dat_names1{dt1(2)},' - ',Dat_names1{dt1(1)}],[ROI{r2},' ',Cat{c2},' ',Dat_names2{dt2(2)},' - ',Dat_names2{dt2(1)}]}); legend boxoff; set(lg,'FontSize',14)
 box off;
 set(gca,'linewidth',2.5,'FontSize',14,'xlim',[-0.2 1])
-sign_mcc_clust_1 = Results1.zmapthresh_pos;
+sign_mcc_clust_1 = Results1.zmapthresh;
 sign_mcc_clust_1(sign_mcc_clust_1 > 0) = min(get(gca,'ylim'))*0.8;
 plot(TimeVec,sign_mcc_clust_1,'bo','MarkerFaceColor','b')
-sign_mcc_clust_2 = Results2.zmapthresh_pos;
+sign_mcc_clust_2 = Results2.zmapthresh;
 sign_mcc_clust_2(sign_mcc_clust_2 > 0) = min(get(gca,'ylim'))*0.9;
 plot(TimeVec,sign_mcc_clust_2,'ro','MarkerFaceColor','r')
 hold off
-saveas(gcf,'Results/Enc_TMP_PerceptualvsSemantic_BT-WI_Dat16_LDA.png')
-close(gcf)
+%saveas(gcf,'Results/Enc_TMP_PerceptualvsSemantic_BT-WI_Dat16_LDA.png')
+%close(gcf)
 
 
 

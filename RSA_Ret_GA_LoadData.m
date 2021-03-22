@@ -1,12 +1,6 @@
 %% Load in RSA Retrieval Grand Average Data
 
-function RSA_Ret_GA_LoadData(sub)
-
-%% Subject Names
-[~,message,~] = fileattrib('Preproc_EEG_Data/Retrieval_response_locked/*');
-currentdir = pwd;
-filenames = strrep({message([message.directory] == 0).Name}',[currentdir,'\Preproc_EEG_Data\Retrieval_response_locked\'],'');
-Subj_names = cellfun(@(x) x{1}(10:end), regexp(filenames,'_(\w*).mat','tokens','once'),'UniformOutput', 0);
+function RSA_Ret_GA_LoadData(sub, Subj_names)
 
 
 %% ROI Electrode positions
@@ -47,7 +41,7 @@ ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'Unif
     eeg_cfg = [];
     eeg_cfg.Name = Subj_names{sub};
     eeg_cfg.chan_label = elecs;
-    eeg_cfg.chan_idx = ROI_occ_idx'; 
+    eeg_cfg.chan_idx = ROI_all_idx; %ROI_occ_idx'; 
     eeg_cfg.Art_corr = false;
     eeg_cfg.BL_corr = 'demean';
     eeg_cfg.BL_wind = [-0.26 -0.05];
@@ -65,15 +59,15 @@ ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'Unif
     rsa_cfg.Cktl_blank_rm = true;
     rsa_cfg.only16 = true;
     
-    rsa_cfg.curROI = ROI_occ_idx;
-    rsa_cfg.curROI_name = 'occipital';
-    RSA_Data.(['RSA_Data_',Subj_names{sub}]).OCC = createRSA(rsa_cfg);
+    rsa_cfg.curROI = ROI_all_idx; %ROI_occ_idx;
+    rsa_cfg.curROI_name = 'whole';
+    RSA_Data.(['RSA_Data_',Subj_names{sub}]).ALL = createRSA(rsa_cfg);
     
-    rsa_cfg.curROI = ROI_temp_idx;
-    rsa_cfg.curROI_name = 'temporal';
-    RSA_Data.(['RSA_Data_',Subj_names{sub}]).TMP = createRSA(rsa_cfg);
+%     rsa_cfg.curROI = ROI_temp_idx;
+%     rsa_cfg.curROI_name = 'temporal';
+%     RSA_Data.(['RSA_Data_',Subj_names{sub}]).TMP = createRSA(rsa_cfg);
     
-    save('RSA_Data_Ret','-struct','RSA_Data','-append')
+    save('RSA_Data_Ret_wholehead','-struct','RSA_Data','-append')
     clear('RSA_Data')
     
 %end

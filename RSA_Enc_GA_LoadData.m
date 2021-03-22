@@ -1,12 +1,6 @@
 %% Load in RSA Encoding Grand Average Data
 
-function RSA_Enc_GA_LoadData(sub)
-
-%% Subject Names
-[~,message,~] = fileattrib('Preproc_EEG_Data/Encoding_object_locked/*');
-currentdir = pwd;
-filenames = strrep({message([message.directory] == 0).Name}',[currentdir,'\Preproc_EEG_Data\Encoding_object_locked\'],'');
-Subj_names = cellfun(@(x) x{1}(10:end), regexp(filenames,'_(\w*).mat','tokens','once'),'UniformOutput', 0);
+function RSA_Enc_GA_LoadData(sub, Subj_names)
 
 
 %% ROI Electrode positions
@@ -64,7 +58,7 @@ ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'Unif
     rsa_cfg.slide_step = 0.004;
     rsa_cfg.window_average = 'gaussian';
     rsa_cfg.meas128 = '';
-    rsa_cfg.meas16 = {'LDA', 'SVM', 'euclidian'};
+    rsa_cfg.meas16 = {'LDA', 'SVM', 'euclidian', 'euclidian w.c.c.'};
     rsa_cfg.MNN = true;
     rsa_cfg.Cktl_blank_rm = true;
     rsa_cfg.only16 = true;

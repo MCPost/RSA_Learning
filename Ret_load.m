@@ -33,12 +33,12 @@ ROI_temp = {'B18','B17','B16','B15','B14','B22','B23','B24','B25','B26','B31','B
 ROI_temp_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_temp)), elecs, 'UniformOutput', 0)));
 
 
-save('RSA_Data_Ret', 'Subj_names', 'elecs', 'ROI_all_idx')
+save('RSA_Data_Ret_wholehead', 'Subj_names', 'elecs', 'ROI_all_idx')
 
 c = parcluster();
 jobHandles = cell(length(Subj_names),1);
 for sub = 1:length(Subj_names)
-    jobHandles{sub}    = batch(c, @RSA_Ret_GA_LoadData, 0, {sub});
+    jobHandles{sub}    = batch(c, @RSA_Ret_GA_LoadData, 0, {sub, Subj_names});
 end
 
 jobHandles{22}
