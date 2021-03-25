@@ -1,6 +1,6 @@
-%% Single Subject RSA Matrix Construction Function
+%% Deprecated createRSA function 
 
-function RSA_Data = createRSA(cfg)
+%function RSA_Data = createRSA(cfg)
 
 % Parameter Settings
 slide_window_s = cfg.slide_window; %s
@@ -21,7 +21,6 @@ meas16  = cfg.meas16;
 MNN = cfg.MNN; 
 Cktl_blank_rm = cfg.Cktl_blank_rm;
 only16 = cfg.only16;
-noMDS = cfg.noMDS;
 Data_EEG = cfg.Data;
 cfg = rmfield(cfg,'Data');
 cfg = rmfield(cfg,'dim');
@@ -104,7 +103,7 @@ if(~only16)
             end
         end
         
-        if(~noMDS && exist('MDS_Mat','var'))
+        if(exist('MDS_Mat','var'))
             for m = 1:length(MDS_Mat(2,:))
                 if(isempty(find(mds_back(m,:) == 1,1,'last')))
                     try
@@ -193,12 +192,10 @@ for m = 1:length(meas16)
     end
 end
 RSA_Mat_16x16 = repmat({repmat(zeros(16),[1 1 length(TimeVec)])},1,length(measures));
-RSA_Mat_16x16(2,:) = measures;
-if(~noMDS)
-    MDS_Mat_16x16 = repmat({zeros(16,2,length(TimeVec))},1,length(measures));
-    MDS_Mat_16x16(2,:) = measures;
-    mds_error_16 = repmat({{}},1,length(measures));
-end
+RSA_Mat_16x16(2,:) = measures;    
+MDS_Mat_16x16 = repmat({zeros(16,2,length(TimeVec))},1,length(measures));
+MDS_Mat_16x16(2,:) = measures;
+mds_error_16 = repmat({{}},1,length(measures));
 Data = Data_EEG_corr;
 cur_trial1 = zeros(8,length(curROI));
 cur_trial2 = zeros(8,length(curROI));
@@ -318,37 +315,36 @@ for tp = 1:length(TimeVec)
         ct_x = ct_x + 1;
         ct_y = ct_x;
     end
-    if(~noMDS)
-        for m = 1:length(measures)
-            RSA_Mat_16x16{1,m}(RSA_Mat_16x16{1,m} < 0) = NaN;
-
-            if(isempty(find(mds_back(m,:) == 1,1,'last')))
-                try
-                    MDS_Mat_16x16{1,m}(:,:,tp) = mdscale(RSA_Mat_16x16{1,m}(:,:,tp) + RSA_Mat_16x16{1,m}(:,:,tp)',2,'Start','random');
-                    mds_back(m,tp) = 1;
-                catch ME
-                    MDS_Mat_16x16{1,m}(:,:,tp) = nan(size(MDS_Mat_16x16{1,m}(:,:,tp)));
-                    mds_error_16{1,m} = [mds_error_16{1,m}; {ME tp}];
-                    mds_back(m,tp) = 0;
-                end
-            else
-                try
-                    MDS_Mat_16x16{1,m}(:,:,tp) = mdscale(RSA_Mat_16x16{1,m}(:,:,tp) + RSA_Mat_16x16{1,m}(:,:,tp)',2,'Start',MDS_Mat_16x16{1,m}(:,:,find(mds_back(m,:) == 1,1,'last')));
-                    mds_back(m,tp) = 1;
-                catch ME
-                    MDS_Mat_16x16{1,m}(:,:,tp) = nan(size(MDS_Mat_16x16{1,m}(:,:,tp)));
-                    mds_error_16{1,m} = [mds_error_16{1,m}; {ME tp}];
-                    mds_back(m,tp) = 0;
-                end
+    for m = 1:length(measures)
+        RSA_Mat_16x16{1,m}(RSA_Mat_16x16{1,m} < 0) = NaN;
+        
+        if(isempty(find(mds_back(m,:) == 1,1,'last')))
+            try
+                MDS_Mat_16x16{1,m}(:,:,tp) = mdscale(RSA_Mat_16x16{1,m}(:,:,tp) + RSA_Mat_16x16{1,m}(:,:,tp)',2,'Start','random');
+                mds_back(m,tp) = 1;
+            catch ME
+                MDS_Mat_16x16{1,m}(:,:,tp) = nan(size(MDS_Mat_16x16{1,m}(:,:,tp)));
+                mds_error_16{1,m} = [mds_error_16{1,m}; {ME tp}];
+                mds_back(m,tp) = 0;
             end
-
-            %[U,S,V] = svd(MDS_Mat_av(:,:,tp-1)'*MDS_Mat_av(:,:,tp));
-            %r = sign(det(V*U'));
-            %R = V*[1 0; 0 r]*U';
-            %MDS_Mat_av(:,:,tp) = MDS_Mat_av(:,:,tp)*R;
-
+        else
+            try
+                MDS_Mat_16x16{1,m}(:,:,tp) = mdscale(RSA_Mat_16x16{1,m}(:,:,tp) + RSA_Mat_16x16{1,m}(:,:,tp)',2,'Start',MDS_Mat_16x16{1,m}(:,:,find(mds_back(m,:) == 1,1,'last')));
+                mds_back(m,tp) = 1;
+            catch ME
+                MDS_Mat_16x16{1,m}(:,:,tp) = nan(size(MDS_Mat_16x16{1,m}(:,:,tp)));
+                mds_error_16{1,m} = [mds_error_16{1,m}; {ME tp}];
+                mds_back(m,tp) = 0;
+            end
         end
+       
+        %[U,S,V] = svd(MDS_Mat_av(:,:,tp-1)'*MDS_Mat_av(:,:,tp));
+        %r = sign(det(V*U'));
+        %R = V*[1 0; 0 r]*U';
+        %MDS_Mat_av(:,:,tp) = MDS_Mat_av(:,:,tp)*R;
+        
     end
+    
     
     fprintf(repmat('\b',1,length(txt)))
     fprintf('Progress 16x16: %3.2f %%',(tp/length(TimeVec))*100)
@@ -360,13 +356,11 @@ fprintf('\n')
 
 
 %% Save Data
-RSA_Data.RSA_16         = RSA_Mat_16x16;
-if(~noMDS)
-    RSA_Data.MDS_16         = MDS_Mat_16x16;
-end
+RSA_Data.RSA_16         = RSA_Mat_16x16; 
+RSA_Data.MDS_16         = MDS_Mat_16x16;
 RSA_Data.rsa_dim        = 'trl_trl_time';
 RSA_Data.mds_dim        = 'trl_component_time';
 RSA_Data.mds_error_16   = mds_error_16;
 
 
-end
+%end

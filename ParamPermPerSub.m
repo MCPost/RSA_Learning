@@ -63,6 +63,7 @@ for art = 1:length(artef_perms)
             rsa_cfg.slide_step = 0.004;
             rsa_cfg.window_average = 'gaussian';
             rsa_cfg.Cktl_blank_rm = cocktail_blank;
+            rsa_cfg.noMDS = false;
 
             rsa_cfg.only16 = false;
             rsa_cfg.MNN = false;

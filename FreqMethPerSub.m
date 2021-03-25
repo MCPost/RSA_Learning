@@ -53,6 +53,7 @@ rsa_cfg.meas128 = '';
 rsa_cfg.meas16 = {'LDA','SVM','euclidian'};
 rsa_cfg.Cktl_blank_rm = false;
 rsa_cfg.only16 = true;
+rsa_cfg.noMDS = true;
 rsa_cfg.MNN = true;
 
 
