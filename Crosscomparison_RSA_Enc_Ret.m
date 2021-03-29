@@ -66,16 +66,16 @@ msr = 1;
 
 %% Cross-correlate RSA time courses for each subject
 
-save('CrossComp_RSA','Subj_names')
-
-c = parcluster();
-jobHandles = cell(4,1);
-for msr = [1 3]
-    jobHandles{msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr});
-end
-
-jobHandles{1}
-diary(jobHandles{1})
+% save('CrossComp_RSA','Subj_names')
+% 
+% c = parcluster();
+% jobHandles = cell(4,1);
+% for msr = [1 3]
+%     jobHandles{msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr});
+% end
+% 
+% jobHandles{1}
+% diary(jobHandles{1})
 
 % cfg = [];
 % cfg.slide_window   = 0.050;
@@ -87,22 +87,24 @@ diary(jobHandles{1})
 % cfg.only16         = true;
 % CrossComp_RSA = create_xcomp_rsa(cfg, RSA_Data_Enc, RSA_Data_Ret);
 
-%load('CrossComp_RSA')
+
+load('CrossComp_RSA')
+
 
 figure
 subplot(1,2,1)
 contourf(RSA_Data_Enc.TimeVec, RSA_Data_Ret.TimeVec, flip(squeeze(nanmean(CrossComp_RSA.OCC(:,2,:,:) - CrossComp_RSA.OCC(:,1,:,:),1)),1), 40,'linestyle','none')
 caxis([-.06 .06]); set(gca,'xlim', [-0.2 1], 'ylim', [-4 0.2])
 hold on
-plot([0 0],[RSA_Data_Ret.TimeVec(1) RSA_Data_Ret.TimeVec(end)],'--k','linewidth',1.5)
-plot([RSA_Data_Enc.TimeVec(1) RSA_Data_Enc.TimeVec(end)],[0 0],'--k','linewidth',1.5)
+plot([0 0],[RSA_Data_Ret.TimeVec(1) RSA_Data_Ret.TimeVec(end)],'--w','linewidth',2)
+plot([RSA_Data_Enc.TimeVec(1) RSA_Data_Enc.TimeVec(end)],[0 0],'--w','linewidth',2)
 hold off
 subplot(1,2,2)
 contourf(RSA_Data_Enc.TimeVec, RSA_Data_Ret.TimeVec, flip(squeeze(nanmean(CrossComp_RSA.TMP(:,4,:,:) - CrossComp_RSA.TMP(:,3,:,:),1)),1), 40,'linestyle','none')
 caxis([-.06 .06]); set(gca,'xlim', [-0.2 1], 'ylim', [-4 0.2])
 hold on
-plot([0 0],[RSA_Data_Ret.TimeVec(1) RSA_Data_Ret.TimeVec(end)],'--k','linewidth',1.5)
-plot([RSA_Data_Enc.TimeVec(1) RSA_Data_Enc.TimeVec(end)],[0 0],'--k','linewidth',1.5)
+plot([0 0],[RSA_Data_Ret.TimeVec(1) RSA_Data_Ret.TimeVec(end)],'--w','linewidth',2)
+plot([RSA_Data_Enc.TimeVec(1) RSA_Data_Enc.TimeVec(end)],[0 0],'--w','linewidth',2)
 hold off
 
 

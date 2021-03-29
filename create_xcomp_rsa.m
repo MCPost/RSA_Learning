@@ -52,9 +52,8 @@ if(~only16)
     sem_ind_bt = Hyp_semantic{1}(:) < 0;
     
     for r = 1:length(curROI)
-    
-        CrossComp_RSA = [];
-        CrossComp_RSA.(curROI{r}) = zeros(size(Data1.(curROI{r}).full_Data,1),4,length(TimeVec2),length(TimeVec1));
+        
+        CrossComp_RSA.RSA_full.(curROI{r}) = zeros(size(Data1.(curROI{r}).full_Data,1),4,length(TimeVec2),length(TimeVec1));
         fprintf('\n')
         nbytes = fprintf('ROI: %s  --  Progress Cross Correlation:  0.0 %%',curROI{r});
         for tp1 = 1:length(TimeVec1)
@@ -65,10 +64,10 @@ if(~only16)
                 
                 time_window2 = max(TimeVec2_idx(tp2) - slide_window_idx2, 1):min(TimeVec2_idx(tp2) + slide_window_idx2, length(TimeVec2));
 
-                CrossComp_RSA.(curROI{r})(:,1,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).full_Data(:,time_window1,per_ind_wi),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).full_Data(:,time_window2,per_ind_wi),2,length(time_window2)))', 'type', 'spearman'));
-                CrossComp_RSA.(curROI{r})(:,2,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).full_Data(:,time_window1,per_ind_bt),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).full_Data(:,time_window2,per_ind_bt),2,length(time_window2)))', 'type', 'spearman'));
-                CrossComp_RSA.(curROI{r})(:,3,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).full_Data(:,time_window1,sem_ind_wi),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).full_Data(:,time_window2,sem_ind_wi),2,length(time_window2)))', 'type', 'spearman'));
-                CrossComp_RSA.(curROI{r})(:,4,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).full_Data(:,time_window1,sem_ind_bt),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).full_Data(:,time_window2,sem_ind_bt),2,length(time_window2)))', 'type', 'spearman'));
+                CrossComp_RSA.RSA_full.(curROI{r})(:,1,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).full_Data(:,time_window1,per_ind_wi),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).full_Data(:,time_window2,per_ind_wi),2,length(time_window2)))', 'type', 'spearman'));
+                CrossComp_RSA.RSA_full.(curROI{r})(:,2,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).full_Data(:,time_window1,per_ind_bt),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).full_Data(:,time_window2,per_ind_bt),2,length(time_window2)))', 'type', 'spearman'));
+                CrossComp_RSA.RSA_full.(curROI{r})(:,3,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).full_Data(:,time_window1,sem_ind_wi),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).full_Data(:,time_window2,sem_ind_wi),2,length(time_window2)))', 'type', 'spearman'));
+                CrossComp_RSA.RSA_full.(curROI{r})(:,4,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).full_Data(:,time_window1,sem_ind_bt),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).full_Data(:,time_window2,sem_ind_bt),2,length(time_window2)))', 'type', 'spearman'));
             
             end
             fprintf(repmat('\b',1,nbytes))
@@ -85,10 +84,11 @@ per_ind_bt = Hyp_perceptual{2}(:) < 0;
 sem_ind_wi = Hyp_semantic{2}(:) > 0;
 sem_ind_bt = Hyp_semantic{2}(:) < 0;
 
+CrossComp_RSA.RSA_red16   = []; 
+
 for r = 1:length(curROI)
 
-    CrossComp_RSA = [];
-    CrossComp_RSA.(curROI{r}) = zeros(size(Data1.(curROI{r}).red16_Data,1),4,length(TimeVec2),length(TimeVec1));
+    CrossComp_RSA.RSA_red16.(curROI{r}) = zeros(size(Data1.(curROI{r}).red16_Data,1),4,length(TimeVec2),length(TimeVec1));
     fprintf('\n')
     nbytes = fprintf('ROI: %s  --  Progress Cross Correlation:  0.0 %%',curROI{r});
     for tp1 = 1:length(TimeVec1)
@@ -99,10 +99,10 @@ for r = 1:length(curROI)
             
             time_window2 = max(TimeVec2_idx(tp2) - slide_window_idx2, 1):min(TimeVec2_idx(tp2) + slide_window_idx2, length(TimeVec2));
             
-            CrossComp_RSA.(curROI{r})(:,1,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,per_ind_wi),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,per_ind_wi),2,length(time_window2)))', 'type', 'spearman'));
-            CrossComp_RSA.(curROI{r})(:,2,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,per_ind_bt),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,per_ind_bt),2,length(time_window2)))', 'type', 'spearman'));
-            CrossComp_RSA.(curROI{r})(:,3,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,sem_ind_wi),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,sem_ind_wi),2,length(time_window2)))', 'type', 'spearman'));
-            CrossComp_RSA.(curROI{r})(:,4,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,sem_ind_bt),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,sem_ind_bt),2,length(time_window2)))', 'type', 'spearman'));
+            CrossComp_RSA.RSA_red16.(curROI{r})(:,1,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,per_ind_wi),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,per_ind_wi),2,length(time_window2)))', 'type', 'spearman'));
+            CrossComp_RSA.RSA_red16.(curROI{r})(:,2,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,per_ind_bt),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,per_ind_bt),2,length(time_window2)))', 'type', 'spearman'));
+            CrossComp_RSA.RSA_red16.(curROI{r})(:,3,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,sem_ind_wi),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,sem_ind_wi),2,length(time_window2)))', 'type', 'spearman'));
+            CrossComp_RSA.RSA_red16.(curROI{r})(:,4,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,sem_ind_bt),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,sem_ind_bt),2,length(time_window2)))', 'type', 'spearman'));
 
             %CrossComp_RSA_Mat(tp_ret,tp_enc) = fast_corr(squeeze(Data1.(ROI{1}).red16_Data(sub,tp_enc,mat_ind)), squeeze(Data2.(ROI{1}).red16_Data(sub,tp_ret,mat_ind)));
             %CrossComp_RSA_Mat(1,tp_ret,tp_enc) = corr(squeeze(Data1.(ROI{2}).red16_Data(sub,tp_enc,mat_ind_wi)), squeeze(Data2.(ROI{2}).red16_Data(sub,tp_ret,mat_ind_wi)), 'type', 'spearman');
