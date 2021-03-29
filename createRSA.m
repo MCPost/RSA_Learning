@@ -79,8 +79,7 @@ if(~only16)
     RSA_Mat = repmat({repmat(eye(size(Data_EEG,1)),[1 1 length(TimeVec)])},1,length(measures));
     RSA_Mat(2,:) = measures;
     fprintf('\n')
-    fprintf('RSA Matrix Computation Progress:  0.0 %%')
-    txt = sprintf('RSA Matrix Computation Progress:  0.0 %%');
+    nbytes = fprintf('RSA Matrix Computation Progress:  0.0 %%');
     for tp = 1:length(TimeVec) 
         time_window = max(TimeVec_idx(tp) - slide_window_idx, 1):min(TimeVec_idx(tp) + slide_window_idx, size(Data_EEG,3));
 
@@ -133,9 +132,8 @@ if(~only16)
             %MDS_Mat_av(:,:,tp) = MDS_Mat_av(:,:,tp)*R;
         end
 
-        fprintf(repmat('\b',1,length(txt)))
-        fprintf('RSA Matrix Computation Progress: %3.2f %%',(tp/length(TimeVec))*100)
-        txt = sprintf('RSA Matrix Computation Progress: %3.2f %%',(tp/length(TimeVec))*100);
+        fprintf(repmat('\b',1,nbytes))
+        nbytes = fprintf('RSA Matrix Computation Progress: %3.2f %%',(tp/length(TimeVec))*100);
     end
     fprintf('\n\n')
     fprintf('Full RSA Matrix for Subject %s created!', Name)
@@ -204,8 +202,7 @@ cur_trial1 = zeros(8,length(curROI));
 cur_trial2 = zeros(8,length(curROI));
 mds_back = zeros(length(measures),length(TimeVec));
 fprintf('\n')
-fprintf('Progress 16x16:  0.0 %%')
-txt = sprintf('Progress 16x16:  0.0 %%');
+nbytes = fprintf('Progress 16x16:  0.0 %%');
 for tp = 1:length(TimeVec) 
     time_window = max(TimeVec_idx(tp) - slide_window_idx, 1):min(TimeVec_idx(tp) + slide_window_idx, size(Data,3));
     
@@ -354,9 +351,8 @@ for tp = 1:length(TimeVec)
         end
     end
     
-    fprintf(repmat('\b',1,length(txt)))
-    fprintf('Progress 16x16: %3.2f %%',(tp/length(TimeVec))*100)
-    txt = sprintf('Progress 16x16: %3.2f %%',(tp/length(TimeVec))*100);
+    fprintf(repmat('\b',1,nbytes))
+    nbytes = fprintf('Progress 16x16: %3.2f %%',(tp/length(TimeVec))*100);
 end
 fprintf('\n\n')
 fprintf('16x16 RSA Matrix for Subject %s created!', Name)
