@@ -14,14 +14,6 @@ msr = 1;
 
 %% Create Data
 tmp_strct = load('RSA_Data_Enc');
-% RSA_Data_OCC_full.TimeVec = RSA_Data.('RSA_Data_OCC_AG').TimeVec;
-% RSA_Data_OCC_16.TimeVec = RSA_Data.('RSA_Data_OCC_AG').TimeVec;
-% RSA_Data_TMP_16.TimeVec = RSA_Data.('RSA_Data_TMP_AG').TimeVec;
-% if(~isempty(RSA_Data.('RSA_Data_OCC_AG').RSA_full)) 
-%     RSA_Data_OCC_full.Data = zeros(size(RSA_Data.('RSA_Data_OCC_AG').RSA_full{1})); RSA_Data_TMP_full.Data = zeros(size(RSA_Data.('RSA_Data_TMP_AG').RSA_full{1})); 
-% end
-% RSA_Data_OCC_16.Data = zeros(size(RSA_Data.('RSA_Data_OCC_AG').RSA_16{1})); RSA_Data_TMP_16.Data = zeros(size(RSA_Data.('RSA_Data_TMP_AG').RSA_16{1}));
-
 RSA_Data = [];
 for sub = 1:length(Subj_names)
     if(sub == 1)
@@ -30,11 +22,14 @@ for sub = 1:length(Subj_names)
             RSA_Data.(fn{1}) = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.(fn{1});
         end
         RSA_Data = rmfield(RSA_Data, {'Name','TimeVec1024','RSA_full','MDS_full','RSA_16','Encoding_Data','TrialInfo'...
-                                      'MDS_16','rsa_dim','mds_dim','mds_error_16','curROI','curROI_name'});
+                                      'rsa_dim','curROI','curROI_name'});
         RSA_Data.Encoding_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.Encoding_Data;
         RSA_Data.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.TrialInfo;
         RSA_Data.OCC_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.curROI; 
         RSA_Data.TMP_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).TMP.curROI;
+        RSA_Data.FRT_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).FRT.curROI;
+        RSA_Data.CNT_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).CNT.curROI;
+        RSA_Data.PRT_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).PRT.curROI;
     else
         RSA_Data.Encoding_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.Encoding_Data;
         RSA_Data.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.TrialInfo;
@@ -43,9 +38,15 @@ for sub = 1:length(Subj_names)
     if(~isempty(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full))
         RSA_Data.OCC.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full{1,msr},[3 1 2]);
         RSA_Data.TMP.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_full{1,msr},[3 1 2]);
+        RSA_Data.FRT.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_full{1,msr},[3 1 2]);
+        RSA_Data.CNT.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_full{1,msr},[3 1 2]);
+        RSA_Data.PRT.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_full{1,msr},[3 1 2]);
     end
     RSA_Data.OCC.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_16{1,msr},[3 1 2]);
     RSA_Data.TMP.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_16{1,msr},[3 1 2]);
+    RSA_Data.FRT.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_16{1,msr},[3 1 2]);
+    RSA_Data.CNT.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_16{1,msr},[3 1 2]);
+    RSA_Data.PRT.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_16{1,msr},[3 1 2]);
 end
 
     
@@ -152,7 +153,46 @@ for sub = 1:length(Subj_names)
         RSA_Time.TMP.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
         RSA_Time.TMP.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
         RSA_Time.TMP.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-    
+        
+        % Frontal
+        cur_data = squeeze(RSA_Data.FRT.red16_Data(sub,tp,:,:));
+        % Perceptual Dimension
+        RSA_Time.FRT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
+        RSA_Time.FRT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
+        RSA_Time.FRT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
+        RSA_Time.FRT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
+        % Semantic Dimension
+        RSA_Time.FRT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
+        RSA_Time.FRT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
+        RSA_Time.FRT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
+        RSA_Time.FRT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
+        
+        % Central
+        cur_data = squeeze(RSA_Data.CNT.red16_Data(sub,tp,:,:));
+        % Perceptual Dimension
+        RSA_Time.CNT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
+        RSA_Time.CNT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
+        RSA_Time.CNT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
+        RSA_Time.CNT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
+        % Semantic Dimension
+        RSA_Time.CNT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
+        RSA_Time.CNT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
+        RSA_Time.CNT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
+        RSA_Time.CNT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
+        
+        % Parietal
+        cur_data = squeeze(RSA_Data.PRT.red16_Data(sub,tp,:,:));
+        % Perceptual Dimension
+        RSA_Time.PRT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
+        RSA_Time.PRT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
+        RSA_Time.PRT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
+        RSA_Time.PRT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
+        % Semantic Dimension
+        RSA_Time.PRT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
+        RSA_Time.PRT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
+        RSA_Time.PRT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
+        RSA_Time.PRT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
+        
     end
 
 end
@@ -174,7 +214,7 @@ cfg.twoside = true;
 
 % Plot RSA Time series
 
-ROI = {'OCC','TMP'}; r = 1;
+ROI = {'OCC','TMP','FRT','CNT','PRT'}; r = 3;
 Cat = {'Perceptual','Semantic'}; c = 1;
 dt = 3:4;
 
@@ -202,7 +242,7 @@ set(gca,'linewidth',2.5,'FontSize',14)
 
 % Plot RSA Difference Time series
 
-r1 = 1; r2 = 2;
+r1 = 5; r2 = 5;
 c1 = 1; c2 = 2;
 dt1 = [3 4]; dt2 = [3 4];
 

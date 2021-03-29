@@ -55,7 +55,9 @@ for p = 1:nPerms
     else
         grp1 = zeros(size(Data,1),size(Data,2)); 
         grp2 = zeros(size(Data,1),size(Data,2));
-        rand_idx = rand(5,1) >= .5;
+        conditions = [ones(floor(0.5*size(Data,1)),1); zeros(ceil(0.5*size(Data,1)),1)];
+        rand_idx = logical(conditions(randperm(length(conditions))));
+        %rand_idx = rand(size(Data,1),1) >= .5;
         grp1( rand_idx,:) = nanmean(Data( rand_idx,:,Hyp_Mat(:) == -1),3);
         grp1(~rand_idx,:) = nanmean(Data(~rand_idx,:,Hyp_Mat(:) ==  1),3);
         grp2( rand_idx,:) = nanmean(Data( rand_idx,:,Hyp_Mat(:) ==  1),3);
@@ -102,17 +104,17 @@ close(h)
 % Plot significant uncorrected areas
 zmapthresh_pos = Real_T;
 zmapthresh_pos(zmapthresh_pos < tinv(1-thresh_pval*ts_os_fac, size(Data,1)-1)) = 0;
-[clustmap,Num] = bwlabel(zmapthresh_pos);  clustinfo = zeros(Num,3);
+[clustmap,Num] = bwlabel(zmapthresh_pos);  clustinfo_pos = zeros(Num,3);
 for cl = 1:Num
-    clustinfo(cl,1) = cl;
-    clustinfo(cl,2) = sum(clustmap(:) == cl);
-    clustinfo(cl,3) = sum(zmapthresh_pos(clustmap(:) == cl));
+    clustinfo_pos(cl,1) = cl;
+    clustinfo_pos(cl,2) = sum(clustmap(:) == cl);
+    clustinfo_pos(cl,3) = sum(zmapthresh_pos(clustmap(:) == cl));
 end
 clust_threshold = prctile(max_clust_info_pos(:,2),100-(mcc_cluster_pval*ts_os_fac)*100);
 if(Num > 0)
-    for i = 1:size(clustinfo)
-        if(clustinfo(i,3) < clust_threshold) 
-            zmapthresh_pos(clustmap == clustinfo(i,1)) = 0;
+    for i = 1:size(clustinfo_pos)
+        if(clustinfo_pos(i,3) < clust_threshold) 
+            zmapthresh_pos(clustmap == clustinfo_pos(i,1)) = 0;
         end
     end
 end
@@ -120,17 +122,17 @@ clear cl i Num clustmap
 
 zmapthresh_neg = Real_T;
 zmapthresh_neg(zmapthresh_neg > tinv(thresh_pval*ts_os_fac, size(Data,1)-1)) = 0;
-[clustmap,Num] = bwlabel(zmapthresh_neg);  clustinfo = zeros(Num,3);
+[clustmap,Num] = bwlabel(zmapthresh_neg);  clustinfo_neg = zeros(Num,3);
 for cl = 1:Num
-    clustinfo(cl,1) = cl;
-    clustinfo(cl,2) = sum(clustmap(:) == cl);
-    clustinfo(cl,3) = sum(zmapthresh_neg(clustmap(:) == cl));
+    clustinfo_neg(cl,1) = cl;
+    clustinfo_neg(cl,2) = sum(clustmap(:) == cl);
+    clustinfo_neg(cl,3) = sum(zmapthresh_neg(clustmap(:) == cl));
 end
-clust_threshold = prctile(max_clust_info_pos(:,2),100-(mcc_cluster_pval*ts_os_fac)*100);
+clust_threshold = prctile(max_clust_info_neg(:,2),(mcc_cluster_pval*ts_os_fac)*100);
 if(Num > 0)
-    for i = 1:size(clustinfo)
-        if(clustinfo(i,3) < clust_threshold) 
-            zmapthresh_neg(clustmap == clustinfo(i,1)) = 0;
+    for i = 1:size(clustinfo_neg)
+        if(clustinfo_neg(i,3) > clust_threshold) 
+            zmapthresh_neg(clustmap == clustinfo_neg(i,1)) = 0;
         end
     end
 end
@@ -148,8 +150,9 @@ Results.Real_T  = Real_T;
 Results.Surr_T  = Surr_T;
 Results.max_pixel_pvals  = max_pixel_pvals;
 Results.max_clust_info_pos  = max_clust_info_pos;
+Results.clustinfo_pos = clustinfo_pos;
 Results.max_clust_info_neg  = max_clust_info_neg;
-Results.clustinfo = clustinfo;
+Results.clustinfo_neg = clustinfo_neg;
 Results.zmapthresh = zmapthresh;
 
 end
