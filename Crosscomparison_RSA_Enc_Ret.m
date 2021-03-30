@@ -91,20 +91,24 @@ msr = 1;
 load('CrossComp_RSA')
 
 
+Data = CrossComp_RSA_LDA.RSA_red16;
+TimeX = CrossComp_RSA_LDA.TimeVec1;
+TimeY = CrossComp_RSA_LDA.TimeVec2;
+
 figure
 subplot(1,2,1)
-contourf(RSA_Data_Enc.TimeVec, RSA_Data_Ret.TimeVec, flip(squeeze(nanmean(CrossComp_RSA.OCC(:,2,:,:) - CrossComp_RSA.OCC(:,1,:,:),1)),1), 40,'linestyle','none')
-caxis([-.06 .06]); set(gca,'xlim', [-0.2 1], 'ylim', [-4 0.2])
+contourf(TimeX, TimeY, squeeze(nanmean(Data.OCC(:,2,:,:) - Data.OCC(:,1,:,:),1)), 40,'linestyle','none')
+caxis([-.06 .06]); set(gca,'xlim', [-0.2 1], 'ylim', [-2 0.2])
 hold on
-plot([0 0],[RSA_Data_Ret.TimeVec(1) RSA_Data_Ret.TimeVec(end)],'--w','linewidth',2)
-plot([RSA_Data_Enc.TimeVec(1) RSA_Data_Enc.TimeVec(end)],[0 0],'--w','linewidth',2)
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
 hold off
 subplot(1,2,2)
-contourf(RSA_Data_Enc.TimeVec, RSA_Data_Ret.TimeVec, flip(squeeze(nanmean(CrossComp_RSA.TMP(:,4,:,:) - CrossComp_RSA.TMP(:,3,:,:),1)),1), 40,'linestyle','none')
-caxis([-.06 .06]); set(gca,'xlim', [-0.2 1], 'ylim', [-4 0.2])
+contourf(TimeX, TimeY, flip(squeeze(nanmean(Data.TMP(:,4,:,:) - Data.TMP(:,3,:,:),1)),1), 40,'linestyle','none')
+caxis([-.06 .06]); set(gca,'xlim', [-0.2 1], 'ylim', [-2 0.2])
 hold on
-plot([0 0],[RSA_Data_Ret.TimeVec(1) RSA_Data_Ret.TimeVec(end)],'--w','linewidth',2)
-plot([RSA_Data_Enc.TimeVec(1) RSA_Data_Enc.TimeVec(end)],[0 0],'--w','linewidth',2)
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
 hold off
 
 

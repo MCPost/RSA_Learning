@@ -14,25 +14,25 @@ else
 end
 Hyp_perceptual = cfg.Hyp_perceptual;
 Hyp_semantic = cfg.Hyp_semantic;
-TimeVec1 = Data1.TimeVec;
-TimeVec2 = Data2.TimeVec; 
+TimeVec_Data1 = Data1.TimeVec;
+TimeVec_Data2 = Data2.TimeVec; 
 curROI = cfg.ROI;
 only16 = cfg.only16;
 
 
 %% Create RSA Matrix
-samplingrate1 = unique(1./diff(TimeVec1)); %Hz
+samplingrate1 = unique(1./diff(TimeVec_Data1)); %Hz
 slide_window_idx1 = round(samplingrate1*(slide_window_s/2));
 slide_step_idx1 = round(samplingrate1*slide_step_s);
-TimeVec1_idx = 1:slide_step_idx1:length(TimeVec1);
-TimeVec1 = TimeVec1(TimeVec1_idx);
+TimeVec1_idx = 1:slide_step_idx1:length(TimeVec_Data1);
+TimeVec1 = TimeVec_Data1(TimeVec1_idx);
 cfg.TimeVec1 = TimeVec1;
 
-samplingrate2 = unique(1./diff(TimeVec2)); %Hz
+samplingrate2 = unique(1./diff(TimeVec_Data2)); %Hz
 slide_window_idx2 = round(samplingrate2*(slide_window_s/2));
 slide_step_idx2 = round(samplingrate2*slide_step_s);
-TimeVec2_idx = 1:slide_step_idx2:length(TimeVec2);
-TimeVec2 = TimeVec2(TimeVec2_idx);
+TimeVec2_idx = 1:slide_step_idx2:length(TimeVec_Data2);
+TimeVec2 = TimeVec_Data2(TimeVec2_idx);
 cfg.TimeVec2 = TimeVec2;
 
 
@@ -58,11 +58,11 @@ if(~only16)
         nbytes = fprintf('ROI: %s  --  Progress Cross Correlation:  0.0 %%',curROI{r});
         for tp1 = 1:length(TimeVec1)
             
-            time_window1 = max(TimeVec1_idx(tp1) - slide_window_idx1, 1):min(TimeVec1_idx(tp1) + slide_window_idx1, length(TimeVec1));
+            time_window1 = max(TimeVec1_idx(tp1) - slide_window_idx1, 1):min(TimeVec1_idx(tp1) + slide_window_idx1, length(TimeVec_Data1));
             
             for tp2 = 1:length(TimeVec2)
                 
-                time_window2 = max(TimeVec2_idx(tp2) - slide_window_idx2, 1):min(TimeVec2_idx(tp2) + slide_window_idx2, length(TimeVec2));
+                time_window2 = max(TimeVec2_idx(tp2) - slide_window_idx2, 1):min(TimeVec2_idx(tp2) + slide_window_idx2, length(TimeVec_Data2));
 
                 CrossComp_RSA.RSA_full.(curROI{r})(:,1,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).full_Data(:,time_window1,per_ind_wi),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).full_Data(:,time_window2,per_ind_wi),2,length(time_window2)))', 'type', 'spearman'));
                 CrossComp_RSA.RSA_full.(curROI{r})(:,2,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).full_Data(:,time_window1,per_ind_bt),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).full_Data(:,time_window2,per_ind_bt),2,length(time_window2)))', 'type', 'spearman'));
@@ -93,11 +93,11 @@ for r = 1:length(curROI)
     nbytes = fprintf('ROI: %s  --  Progress Cross Correlation:  0.0 %%',curROI{r});
     for tp1 = 1:length(TimeVec1)
         
-        time_window1 = max(TimeVec1_idx(tp1) - slide_window_idx1, 1):min(TimeVec1_idx(tp1) + slide_window_idx1, length(TimeVec1));
+        time_window1 = max(TimeVec1_idx(tp1) - slide_window_idx1, 1):min(TimeVec1_idx(tp1) + slide_window_idx1, length(TimeVec_Data1));
         
         for tp2 = 1:length(TimeVec2)
             
-            time_window2 = max(TimeVec2_idx(tp2) - slide_window_idx2, 1):min(TimeVec2_idx(tp2) + slide_window_idx2, length(TimeVec2));
+            time_window2 = max(TimeVec2_idx(tp2) - slide_window_idx2, 1):min(TimeVec2_idx(tp2) + slide_window_idx2, length(TimeVec_Data2));
             
             CrossComp_RSA.RSA_red16.(curROI{r})(:,1,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,per_ind_wi),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,per_ind_wi),2,length(time_window2)))', 'type', 'spearman'));
             CrossComp_RSA.RSA_red16.(curROI{r})(:,2,tp2,tp1) = diag(corr(squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,per_ind_bt),2,length(time_window1)))', squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,per_ind_bt),2,length(time_window2)))', 'type', 'spearman'));
