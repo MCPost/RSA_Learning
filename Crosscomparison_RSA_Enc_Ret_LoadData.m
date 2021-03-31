@@ -139,10 +139,11 @@ cfg = [];
 cfg.slide_window   = 0.050;
 cfg.slide_step     = 0.010;
 cfg.window_average = 'gaussian';
-cfg.Hyp_perceptual = {Perceptual_Mat_full Perceptual_Mat_red16};
+cfg.Hyp_perceptual = {double(Perceptual_Mat_full ~= 0) double(Perceptual_Mat_red16 ~= 0)}; %{triu(ones(128)).*~eye(128) triu(ones(16)).*~eye(16)}; %{Perceptual_Mat_full Perceptual_Mat_red16};
 cfg.Hyp_semantic   = {Semantic_Mat_full   Semantic_Mat_red16};
 cfg.ROI            = {'OCC','TMP','FRT','CNT','PRT'};
 cfg.only16         = true;
+cfg.permtest       = true;
 CrossComp_RSA.(['CrossComp_RSA_',strrep(measures{msr},' ','_')]) = create_xcomp_rsa(cfg, RSA_Data_Enc, RSA_Data_Ret);
 
 save('CrossComp_RSA','-struct','CrossComp_RSA','-append')
