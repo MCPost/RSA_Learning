@@ -20,7 +20,7 @@ curROI = cfg.ROI;
 only16 = cfg.only16;
 permtest = cfg.permtest;
 n_perms = 100;
-voxel_pval = 0.05;
+thresh_pval = 0.05;
 mcc_cluster_pval = 0.05;
 ts_os_fac = 0.5;
 
@@ -148,9 +148,9 @@ for r = 1:length(curROI)
             CrossComp_RSA.max_pixel_pvals(permi,:) = [ min(surr_zdata(permi,:)) max(surr_zdata(permi,:)) ];
 
             pos_clustmap = squeeze(surr_zdata(permi,:,:));
-            pos_clustmap(pos_clustmap < norminv(1-voxel_pval/2,0,1)) = 0;
+            pos_clustmap(pos_clustmap < norminv(1-thresh_pval/2,0,1)) = 0;
             neg_clustmap = squeeze(surr_zdata(permi,:,:));
-            neg_clustmap(neg_clustmap > norminv(voxel_pval/2,0,1)) = 0;
+            neg_clustmap(neg_clustmap > norminv(thresh_pval/2,0,1)) = 0;
 
             % get number of elements in largest supra-threshold cluster
             clust_struct_pos = bwconncomp(pos_clustmap);
