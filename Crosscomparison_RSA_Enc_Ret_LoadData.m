@@ -136,15 +136,22 @@ clear tmp_strct_enc tmp_strct_ret
 %% Cross-correlate RSA time courses for each subject
 
 cfg = [];
-cfg.slide_window   = 0.050;
-cfg.slide_step     = 0.010;
-cfg.window_average = 'gaussian';
-cfg.Hyp_perceptual = {double(Perceptual_Mat_full ~= 0) double(Perceptual_Mat_red16 ~= 0)}; %{triu(ones(128)).*~eye(128) triu(ones(16)).*~eye(16)}; %{Perceptual_Mat_full Perceptual_Mat_red16};
-cfg.Hyp_semantic   = {Semantic_Mat_full   Semantic_Mat_red16};
-cfg.ROI            = {'OCC','TMP','FRT','CNT','PRT'};
-cfg.only16         = true;
-cfg.permtest       = true;
-CrossComp_RSA.(['CrossComp_RSA_',strrep(measures{msr},' ','_')]) = create_xcomp_rsa(cfg, RSA_Data_Enc, RSA_Data_Ret);
+cfg.slide_window     = 0.050;
+cfg.slide_step       = 0.010;
+cfg.window_average   = 'gaussian';
+cfg.Hyp_perceptual   = {double(Perceptual_Mat_full ~= 0) double(Perceptual_Mat_red16 ~= 0)}; %{triu(ones(128)).*~eye(128) triu(ones(16)).*~eye(16)}; %{Perceptual_Mat_full Perceptual_Mat_red16};
+cfg.Hyp_semantic     = {Semantic_Mat_full   Semantic_Mat_red16};
+cfg.ROI              = {'OCC'};%,'TMP','FRT','CNT','PRT'};
+cfg.only16           = true;
+cfg.permtest         = true;
+cfg.n_perms          = 2;
+cfg.thresh_pval      = 0.05;
+cfg.mcc_cluster_pval = 0.05;
+cfg.ts_os_fac        = 0.5;
+cfg.matshuffle       = true;
+cfg.studentized      = false;
+%Data1 = RSA_Data_Enc; Data2 = RSA_Data_Ret;
+CrossComp_RSA.(['CrossComp_RSA_',strrep(strrep(measures{msr},' ','_'),'.','')]) = create_xcomp_rsa(cfg, RSA_Data_Enc, RSA_Data_Ret);
 
 save('CrossComp_RSA','-struct','CrossComp_RSA','-append')
 

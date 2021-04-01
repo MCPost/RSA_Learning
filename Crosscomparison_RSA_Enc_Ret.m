@@ -91,9 +91,9 @@ msr = 1;
 load('CrossComp_RSA')
 
 
-Data = CrossComp_RSA.CrossComp_RSA_LDA.RSA_red16;
-TimeX = CrossComp_RSA.CrossComp_RSA_LDA.TimeVec1;
-TimeY = CrossComp_RSA.CrossComp_RSA_LDA.TimeVec2;
+Data = CrossComp_RSA_euclidian_wcc.RSA_red16;
+TimeX = CrossComp_RSA_euclidian_wcc.TimeVec1;
+TimeY = CrossComp_RSA_euclidian_wcc.TimeVec2;
 
 
 figure

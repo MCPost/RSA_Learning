@@ -19,10 +19,12 @@ TimeVec_Data2 = Data2.TimeVec;
 curROI = cfg.ROI;
 only16 = cfg.only16;
 permtest = cfg.permtest;
-n_perms = 100;
-thresh_pval = 0.05;
-mcc_cluster_pval = 0.05;
-ts_os_fac = 0.5;
+n_perms = cfg.n_perms;
+thresh_pval = cfg.thresh_pval;
+mcc_cluster_pval = cfg.mcc_cluster_pval;
+ts_os_fac = cfg.ts_os_fac;
+matshuffle = cfg.matshuffle;
+studentized = cfg.studentized;
 
 %% Create RSA Matrix
 samplingrate1 = unique(1./diff(TimeVec_Data1)); %Hz
@@ -96,7 +98,7 @@ CrossComp_RSA.RSA_red16   = [];
 for r = 1:length(curROI)
     
     if(permtest)
-        SurCorr = zeros(size(Data1.(curROI{r}).red16_Data,1), n_perms, length(TimeVec2), length(TimeVec1));
+        SurCorr = zeros(n_perms, length(TimeVec2), length(TimeVec1));
     end
     
     CrossComp_RSA.RSA_red16.(curROI{r}) = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
@@ -125,8 +127,29 @@ for r = 1:length(curROI)
             if(permtest)
                 hyp_idx = find(Hyp_perceptual{2}(:) > 0);
                 for permi = 1:n_perms
-                    surData = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,hyp_idx(randperm(length(hyp_idx)))),2,length(time_window2)))',1);
-                    SurCorr(:,permi,tp2,tp1) = fast_corr(curData1,surData)';
+                    if(matshuffle)
+                        Shuff_Mat = zeros(size(Hyp_perceptual{2}));
+                        Ind_Mat = triu(reshape(1:size(Hyp_perceptual{2},1)^2,size(Hyp_perceptual{2},1),size(Hyp_perceptual{2},2)));
+                        rand_idx = randperm(size(Hyp_perceptual{2},1));
+                        for row = 1:size(Hyp_perceptual{2},1)-1
+                            for col = (row+1):size(Hyp_perceptual{2},1)
+                                if(Ind_Mat(rand_idx(row),rand_idx(col)) ~= 0)
+                                    Shuff_Mat(row,col) = Ind_Mat(rand_idx(row),rand_idx(col));
+                                else
+                                    Shuff_Mat(row,col) = Ind_Mat(rand_idx(col),rand_idx(row));
+                                end
+                            end
+                        end
+                        surData = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,Shuff_Mat(Hyp_perceptual{2}(:) > 0)),2,length(time_window2)))',1);
+                    else
+                        surData = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,hyp_idx(randperm(length(hyp_idx)))),2,length(time_window2)))',1);
+                    end
+                    if(studentized)
+                        mu_22 = nanmean((bsxfun(@minus, curData1, nanmean(curData1,1)).^2).*(bsxfun(@minus, surData, nanmean(surData,1)).^2),1);
+                        SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1,surData)'./sqrt(bsxfun(@rdivide, mu_22, (nanvar(curData1,1,1).*nanvar(surData,1,1))))));
+                    else
+                        SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1,surData)));
+                    end
                 end
             end
             
@@ -138,7 +161,17 @@ for r = 1:length(curROI)
     
     if(permtest)
         
-        surr_zdata = squeeze(nanmean(bsxfun(@rdivide, bsxfun(@minus, SurCorr, nanmean(SurCorr,2)), nanstd(SurCorr,0,2)),1));
+        %surr_zdata = bsxfun(@rdivide, bsxfun(@minus, SurCorr, nanmean(SurCorr,1)), nanstd(SurCorr,0,1));
+        %figure 
+        %subplot(2,4,1); a = nanmean(SurCorr,1); hist(a(:), 35);
+        %subplot(2,4,5); b = nanstd(SurCorr,0,1); hist(b(:),35);
+        %subplot(2,4,2); hist(SurCorr(1,:),35);
+        %subplot(2,4,6); hist(SurCorr(1,:),35);
+        %subplot(2,4,3); c = bsxfun(@minus, SurCorr, a); hist(c(:),35);
+        %subplot(2,4,7); d = bsxfun(@rdivide, SurCorr, b); hist(d(:),35);
+        %subplot(2,4,4); e = bsxfun(@rdivide, c, b); hist(e(:),35);
+        
+        surr_zdata = bsxfun(@rdivide, SurCorr, nanstd(SurCorr,0,1));
         CrossComp_RSA.max_pixel_pvals     = zeros(n_perms, 2);
         CrossComp_RSA.max_clust_info_pos  = zeros(n_perms, 2);
         CrossComp_RSA.max_clust_info_neg  = zeros(n_perms, 2);
@@ -148,9 +181,9 @@ for r = 1:length(curROI)
             CrossComp_RSA.max_pixel_pvals(permi,:) = [ min(surr_zdata(permi,:)) max(surr_zdata(permi,:)) ];
 
             pos_clustmap = squeeze(surr_zdata(permi,:,:));
-            pos_clustmap(pos_clustmap < norminv(1-thresh_pval/2,0,1)) = 0;
+            pos_clustmap(pos_clustmap < norminv(1-thresh_pval/2)) = 0;
             neg_clustmap = squeeze(surr_zdata(permi,:,:));
-            neg_clustmap(neg_clustmap > norminv(thresh_pval/2,0,1)) = 0;
+            neg_clustmap(neg_clustmap > norminv(thresh_pval/2)) = 0;
 
             % get number of elements in largest supra-threshold cluster
             clust_struct_pos = bwconncomp(pos_clustmap);
@@ -170,7 +203,7 @@ for r = 1:length(curROI)
             
         end
         
-        real_zdata = squeeze(nanmean(bsxfun(@rdivide, bsxfun(@minus, CrossComp_RSA.RSA_red16.(curROI{r}), squeeze(nanmean(SurCorr,2))), squeeze(nanstd(SurCorr,0,2))),1));
+        real_zdata = squeeze(bsxfun(@rdivide, bsxfun(@minus, nanmean(atanh(CrossComp_RSA.RSA_red16.(curROI{r})),1), nanmean(SurCorr,1)), nanstd(SurCorr,0,1)));
         zmapthresh_pos = real_zdata;
         zmapthresh_pos(zmapthresh_pos < norminv(1-thresh_pval*ts_os_fac)) = 0;
         [clustmap,Num] = bwlabel(zmapthresh_pos);  clustinfo_pos = zeros(Num,3);
