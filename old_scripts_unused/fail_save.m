@@ -1,7 +1,3 @@
-%% Compute Crosscomparison of RSA timecourse
-
-function CrossComp_RSA = create_xcomp_rsa(cfg, Data1, Data2)
-
 % Parameter Settings
 slide_window_s = cfg.slide_window; %s
 slide_step_s = cfg.slide_step; %s
@@ -125,6 +121,33 @@ for r = 1:length(curROI)
             %CrossComp_RSA_Mat(2,tp_ret,tp_enc) = corr(squeeze(Data1.(ROI{2}).red16_Data(sub,tp_enc,mat_ind_bt)), squeeze(Data2.(ROI{2}).red16_Data(sub,tp_ret,mat_ind_bt)), 'type', 'spearman');
             
             if(permtest)
+%                 hyp_idx = find(Hyp_perceptual{2}(:) > 0);
+%                 for permi = 1:n_perms
+%                     if(matshuffle)
+%                         Shuff_Mat = zeros(size(Hyp_perceptual{2}));
+%                         Ind_Mat = triu(reshape(1:size(Hyp_perceptual{2},1)^2,size(Hyp_perceptual{2},1),size(Hyp_perceptual{2},2)));
+%                         rand_idx = randperm(size(Hyp_perceptual{2},1));
+%                         for row = 1:size(Hyp_perceptual{2},1)-1
+%                             for col = (row+1):size(Hyp_perceptual{2},1)
+%                                 if(Ind_Mat(rand_idx(row),rand_idx(col)) ~= 0)
+%                                     Shuff_Mat(row,col) = Ind_Mat(rand_idx(row),rand_idx(col));
+%                                 else
+%                                     Shuff_Mat(row,col) = Ind_Mat(rand_idx(col),rand_idx(row));
+%                                 end
+%                             end
+%                         end
+%                         surData = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,Shuff_Mat(Hyp_perceptual{2}(:) > 0)),2,length(time_window2)))',1);
+%                     else
+%                         surData = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,hyp_idx(randperm(length(hyp_idx)))),2,length(time_window2)))',1);
+%                     end
+%                     if(studentized)
+%                         mu_22 = nanmean((bsxfun(@minus, curData1, nanmean(curData1,1)).^2).*(bsxfun(@minus, surData, nanmean(surData,1)).^2),1);
+%                         SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1,surData)'./sqrt(bsxfun(@rdivide, mu_22, (nanvar(curData1,1,1).*nanvar(surData,1,1))))));
+%                     else
+%                         SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1,surData)));
+%                     end
+%                 end
+
                 %Ind_Mat = triu(reshape(1:size(Hyp_perceptual{2},1)^2,size(Hyp_perceptual{2},1),size(Hyp_perceptual{2},2))).*~eye(16);
                 Ind_Mat = triu(ones(size(Hyp_perceptual{2},1))).*~eye(16).*flip(~eye(16));
                 Ind_Mat(Ind_Mat(:) > 0) = 1:sum(Ind_Mat(:) > 0);
@@ -256,5 +279,3 @@ end
 
 %% Save Data
 CrossComp_RSA.xcomp_dim        = 'sub_rettime_enctime'; %'sub_hyp_rettime_enctime';
-
-end

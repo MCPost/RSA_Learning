@@ -91,24 +91,117 @@ msr = 1;
 load('CrossComp_RSA')
 
 
-Data = CrossComp_RSA_euclidian_wcc.RSA_red16;
-TimeX = CrossComp_RSA_euclidian_wcc.TimeVec1;
-TimeY = CrossComp_RSA_euclidian_wcc.TimeVec2;
+Data = CrossComp_RSA_LDA.RSA_red16;
+zmapthresh1 = CrossComp_RSA_LDA.zmapthresh{1}; zmapthresh1(isnan(zmapthresh1)) = 0;zmapthresh1(zmapthresh1 ~= 0) = 1;
+zmapthresh2 = CrossComp_RSA_LDA.zmapthresh{2}; zmapthresh2(isnan(zmapthresh2)) = 0;zmapthresh2(zmapthresh2 ~= 0) = 1;
+%zmapthresh3 = CrossComp_RSA_LDA.zmapthresh{3}; zmapthresh3(isnan(zmapthresh3)) = 0;zmapthresh3(zmapthresh3 ~= 0) = 1;
+%zmapthresh4 = CrossComp_RSA_LDA.zmapthresh{4}; zmapthresh4(isnan(zmapthresh4)) = 0;zmapthresh4(zmapthresh4 ~= 0) = 1;
+%zmapthresh5 = CrossComp_RSA_LDA.zmapthresh{5}; zmapthresh5(isnan(zmapthresh5)) = 0;zmapthresh5(zmapthresh5 ~= 0) = 1;
+TimeX = CrossComp_RSA_LDA.TimeVec1;
+TimeY = CrossComp_RSA_LDA.TimeVec2;
 
 
 figure
 subplot(1,2,1)
-contourf(TimeX, TimeY, squeeze(nanmean(Data.OCC,1)), 40,'linestyle','none')
-caxis([-.07 .07]); set(gca,'xlim', [-0.2 0.6], 'ylim', [-2.5 0.2]); title('OCCIPITAL'); xlabel('Encoding'); ylabel('Retrieval')
+contourf(TimeX, TimeY, squeeze(nanmean(Data.OCC,1)), 40,'linestyle','none'); colorbar
+caxis([-.07 .07]); set(gca,'xlim', [-0.2 1.5], 'ylim', [-4 0.2]); title('OCCIPITAL'); xlabel('Encoding'); ylabel('Retrieval')
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+contour(TimeX, TimeY,zmapthresh1,1,'linecolor','k','linewidth',1.5)
 hold off
 subplot(1,2,2)
-contourf(TimeX, TimeY, squeeze(nanmean(Data.TMP,1)), 40,'linestyle','none')
-caxis([-.07 .07]); set(gca,'xlim', [-0.2 0.6], 'ylim', [-2.5 0.2]); title('TEMPORAL'); xlabel('Encoding'); ylabel('Retrieval')
+contourf(TimeX, TimeY, squeeze(nanmean(Data.TMP,1)), 40,'linestyle','none'); colorbar
+caxis([-.07 .07]); set(gca,'xlim', [-0.2 1.5], 'ylim', [-4 0.2]); title('TEMPORAL'); xlabel('Encoding'); ylabel('Retrieval')
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+contour(TimeX, TimeY,zmapthresh2,1,'linecolor','k','linewidth',1.5)
 hold off
+
+
+
+TimeX = CrossComp_RSA_euclidian_wcc.TimeVec1;
+TimeY = CrossComp_RSA_euclidian_wcc.TimeVec2;
+enc_win = [-0.2 0.6];
+ret_win = [-2.5 0.2];
+
+figure
+subplot(2,4,1)
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_LDA.RSA_red16.OCC,1)), 40,'linestyle','none'); colorbar
+caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('OCCIPITAL'); xlabel('Encoding'); ylabel('Retrieval')
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+zmapthresh = CrossComp_RSA_LDA.zmapthresh{1}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
+contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+hold off
+subplot(2,4,5)
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_LDA.RSA_red16.TMP,1)), 40,'linestyle','none'); colorbar
+caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('TEMPORAL'); xlabel('Encoding'); ylabel('Retrieval')
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+zmapthresh = CrossComp_RSA_LDA.zmapthresh{2}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
+contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+hold off
+
+subplot(2,4,2)
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_SVM.RSA_red16.OCC,1)), 40,'linestyle','none'); colorbar
+caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('OCCIPITAL'); xlabel('Encoding'); ylabel('Retrieval')
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+zmapthresh = CrossComp_RSA_SVM.zmapthresh{1}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
+contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+hold off
+subplot(2,4,6)
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_SVM.RSA_red16.TMP,1)), 40,'linestyle','none'); colorbar
+caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('TEMPORAL'); xlabel('Encoding'); ylabel('Retrieval')
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+zmapthresh = CrossComp_RSA_SVM.zmapthresh{2}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
+contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+hold off
+
+subplot(2,4,3)
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_euclidian.RSA_red16.OCC,1)), 40,'linestyle','none'); colorbar
+caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('OCCIPITAL'); xlabel('Encoding'); ylabel('Retrieval')
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+zmapthresh = CrossComp_RSA_euclidian.zmapthresh{1}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
+contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+hold off
+subplot(2,4,7)
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_euclidian.RSA_red16.TMP,1)), 40,'linestyle','none'); colorbar
+caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('TEMPORAL'); xlabel('Encoding'); ylabel('Retrieval')
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+zmapthresh = CrossComp_RSA_euclidian.zmapthresh{2}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
+contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+hold off
+
+subplot(2,4,4)
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_euclidian_wcc.RSA_red16.OCC,1)), 40,'linestyle','none'); colorbar
+caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('OCCIPITAL'); xlabel('Encoding'); ylabel('Retrieval')
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+zmapthresh = CrossComp_RSA_euclidian_wcc.zmapthresh{1}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
+contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+hold off
+subplot(2,4,8)
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_euclidian_wcc.RSA_red16.TMP,1)), 40,'linestyle','none'); colorbar
+caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('TEMPORAL'); xlabel('Encoding'); ylabel('Retrieval')
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+zmapthresh = CrossComp_RSA_euclidian_wcc.zmapthresh{2}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
+contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+hold off
+
+
 
