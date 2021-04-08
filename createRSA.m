@@ -2,6 +2,7 @@
 
 function RSA_Data = createRSA(cfg)
 
+warning('off','all')
 % Parameter Settings
 slide_window_s = cfg.slide_window; %s
 slide_step_s = cfg.slide_step; %s
@@ -368,4 +369,5 @@ if(~noMDS)
     RSA_Data.mds_error_16   = mds_error_16;
 end
 
+warning('on','all')
 end
