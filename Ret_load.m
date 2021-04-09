@@ -11,7 +11,8 @@ Subj_names = cellfun(@(x) x{1}(10:end), regexp(filenames,'_(\w*).mat','tokens','
 Electrodes_ROIs
 
 
-save('RSA_Data_Ret_wholehead', 'Subj_names', 'elecs', 'ROI_all_idx')
+%save('RSA_Data_Ret_wholehead', 'Subj_names', 'elecs', 'ROI_all_idx')
+%save('RSA_Data_Ret', 'Subj_names', 'elecs', 'ROI_all_idx')
 
 c = parcluster();
 jobHandles = cell(length(Subj_names),1);

@@ -9,7 +9,7 @@ load('RSA_Data_Enc','Subj_names')
 Electrodes_ROIs
 
 %% Measure
-msr = 1;
+msr = 3;
 
 
 %% Create Data
@@ -242,7 +242,7 @@ set(gca,'linewidth',2.5,'FontSize',14)
 
 % Plot RSA Difference Time series
 
-r1 = 5; r2 = 5;
+r1 = 3; r2 = 5;
 c1 = 1; c2 = 2;
 dt1 = [3 4]; dt2 = [3 4];
 
@@ -302,6 +302,73 @@ plot(TimeVec,sign_mcc_clust_2,'ro','MarkerFaceColor','r')
 hold off
 %saveas(gcf,'Results/Enc_TMP_PerceptualvsSemantic_BT-WI_Dat16_LDA.png')
 %close(gcf)
+
+
+
+%% Plot RSA Matrices Timeseries
+
+
+ROI = {'OCC','TMP','FRT','CNT','PRT'}; 
+
+[a,b] = unique(RSA_Data.TrialInfo{1,1}(1:64,10),'stable');
+Cat_names = strcat(strrep(strrep(RSA_Data.TrialInfo{1,1}([b;b+64],6),'Picture','Pic'),'Drawing','Dr'), {' - '}, [a;a]);
+
+
+% Plot Single GA Matrix
+
+r = 1;
+tp = 0.2; % s
+clim_wi = true;
+
+if(~clim_wi)
+    calc_dat = nanmean(RSA_Data.(ROI{r}).red16_Data(:,:),1);
+    colb_lim = prctile(calc_dat(calc_dat ~= 0), [2.5 97.5]);
+end
+
+figure
+[~,t_idx] = min(abs(RSA_Data.TimeVec - tp));
+cur_data = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,t_idx,:,:),1));
+if(clim_wi)
+    colb_lim = prctile(cur_data(cur_data(:) ~= 0), [2.5 97.5]);
+end
+imagesc(cur_data+cur_data');
+colorbar
+axis square
+set(gca,'clim',colb_lim,'xtick',1:16,'xticklabels',Cat_names,'XTickLabelRotation',55,...
+    'ytick',1:16,'yticklabels',Cat_names, 'TickLength',[0 0])
+
+
+
+% Plot Timeseries GA Matrix
+
+r = 2;
+
+if(~clim_wi)
+    calc_dat = nanmean(RSA_Data.(ROI{r}).red16_Data(:,:),1);
+    colb_lim = prctile(calc_dat(calc_dat ~= 0), [2.5 97.5]);
+end
+
+figure('pos',[202 73 1481 898])
+tps = -0.2:0.1:1.2; %s
+for sbp = 1:length(tps)
+    [~,t_idx] = min(abs(RSA_Data.TimeVec - tps(sbp)));
+    cur_data = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,t_idx,:,:),1));
+    if(clim_wi)
+        colb_lim = prctile(cur_data(cur_data(:) ~= 0), [2.5 97.5]);
+    end
+    subplot(3,5,sbp);
+    imagesc(cur_data+cur_data');
+    axis square
+    set(gca,'clim',colb_lim,'xtick',[],'ytick',[],'TickLength',[0 0])
+    if(sbp == 11)
+        set(gca,'xtick',1:16,'xticklabels',Cat_names,'XTickLabelRotation',55,...
+            'ytick',1:16,'yticklabels',Cat_names, 'TickLength',[0 0])
+    end
+    title(sprintf('%4.0f ms', tps(sbp)*1000))
+end
+cl = colorbar; set(cl,'Pos', [0.9 0.2 0.1 0.1])
+pos_val = get(gca,'Position');
+set(cl,'Pos', [0.92 pos_val(2) 0.0119 pos_val(4)],'Xtick',linspace(colb_lim(1),colb_lim(2),5))
 
 
 

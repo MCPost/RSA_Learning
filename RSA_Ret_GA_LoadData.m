@@ -58,7 +58,7 @@ Electrodes_ROIs
     rsa_cfg.curROI_name = 'parietal';
     RSA_Data.(['RSA_Data_',Subj_names{sub}]).PRT = createRSA(rsa_cfg);
     
-    save('RSA_Data_Ret_wholehead','-struct','RSA_Data','-append')
+    save('RSA_Data_Ret','-struct','RSA_Data','-append')
     clear('RSA_Data')
     
 %end
