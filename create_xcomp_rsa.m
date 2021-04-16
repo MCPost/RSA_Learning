@@ -125,9 +125,9 @@ for r = 1:length(curROI)
     
     CrossComp_RSA.RSA_red16.(curROI{r}).Corr = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
     CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
-    CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_per = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
+    %CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_per = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
     CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
-    CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_sem = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
+    %CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_sem = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
     fprintf('\n')
     nbytes = fprintf('ROI: %s  --  Progress Cross Correlation:  0.0 %%',curROI{r});
     for tp1 = 1:length(TimeVec1)
@@ -144,8 +144,10 @@ for r = 1:length(curROI)
             CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1) = fast_corr(curData1,curData2)';
             
             % Method 1 and 2
-            [CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1), CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_per(:,tp2,tp1)] = Method1_2(curData1,curData2, per_ind);
-            [CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1), CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_sem(:,tp2,tp1)] = Method1_2(curData1,curData2, sem_ind);
+            %[CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1), CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_per(:,tp2,tp1)] = Method1_2(curData1,curData2, per_ind);
+            %[CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1), CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_sem(:,tp2,tp1)] = Method1_2(curData1,curData2, sem_ind);
+            [CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1)] = Method1_2(curData1,curData2, per_ind);
+            [CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1)] = Method1_2(curData1,curData2, sem_ind);
             
             if(permtest)
                 for permi = 1:n_perms
@@ -161,12 +163,12 @@ for r = 1:length(curROI)
                         SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1,surData)'./sqrt(bsxfun(@rdivide, mu_22, (nanvar(curData1,1,1).*nanvar(surData,1,1))))));
                     else
                         SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1,surData)));
-                        [SM1, SM2] = Method1_2(curData1,surData,per_ind);
+                        [SM1] = Method1_2(curData1,surData,per_ind);
                         SurMeth1_per(permi,tp2,tp1) = nanmean(SM1);
-                        SurMeth2_per(permi,tp2,tp1) = nanmean(SM2);
-                        [SM1, SM2] = Method1_2(curData1,surData,sem_ind);
+                        %SurMeth2_per(permi,tp2,tp1) = nanmean(SM2);
+                        [SM1] = Method1_2(curData1,surData,sem_ind);
                         SurMeth1_sem(permi,tp2,tp1) = nanmean(SM1);
-                        SurMeth2_sem(permi,tp2,tp1) = nanmean(SM2);
+                        %SurMeth2_sem(permi,tp2,tp1) = nanmean(SM2);
                     end
                 end
             end
@@ -267,9 +269,9 @@ for r = 1:length(curROI)
 
         CrossComp_RSA.CorrPermTest.(curROI{r})  = get_sign_cluster(SurCorr, CrossComp_RSA.RSA_red16.(curROI{r}).Corr, thresh_pval, ts_os_fac, mcc_cluster_pval);
         CrossComp_RSA.Meth1_per_PermTest.(curROI{r}) = get_sign_cluster(SurMeth1_per, CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per, thresh_pval, ts_os_fac, mcc_cluster_pval);
-        CrossComp_RSA.Meth2_per_PermTest.(curROI{r}) = get_sign_cluster(SurMeth2_per, CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_per, thresh_pval, ts_os_fac, mcc_cluster_pval);
+        %CrossComp_RSA.Meth2_per_PermTest.(curROI{r}) = get_sign_cluster(SurMeth2_per, CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_per, thresh_pval, ts_os_fac, mcc_cluster_pval);
         CrossComp_RSA.Meth1_sem_PermTest.(curROI{r}) = get_sign_cluster(SurMeth1_sem, CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem, thresh_pval, ts_os_fac, mcc_cluster_pval);
-        CrossComp_RSA.Meth2_sem_PermTest.(curROI{r}) = get_sign_cluster(SurMeth2_sem, CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_sem, thresh_pval, ts_os_fac, mcc_cluster_pval);
+        %CrossComp_RSA.Meth2_sem_PermTest.(curROI{r}) = get_sign_cluster(SurMeth2_sem, CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_sem, thresh_pval, ts_os_fac, mcc_cluster_pval);
         
     end
     
@@ -294,14 +296,14 @@ for sub = 1:size(D1,2)
     F = (SS_res1 - SS_res2)/(SS_res2 / (size(D1,1) - 3));
     M1(sub) = abs(f2z_bloc(F,1,size(D1,1) - 3))*atanh(fast_corr(D1(:,sub), D2(:,sub)));
 
-    % Method 2
-    y = D1(:,sub);
-    X = D2(:,sub);
-    pred = X*((X'*X)\X'*y);
-    X = [double(ind > 0), double(ind < 0)];
-    SS_tot = (pred - mean(pred))' * (pred - mean(pred));
-    SS_res = (pred - X*((X'*X)\X'*pred))' * (pred - X*((X'*X)\X'*pred));
-    M2(sub) = atanh(sqrt(1 - min(SS_res/SS_tot,1))) * atanh(fast_corr(D1(:,sub), D2(:,sub)));
+%     % Method 2
+%     y = D1(:,sub);
+%     X = D2(:,sub);
+%     pred = X*((X'*X)\X'*y);
+%     X = [double(ind > 0), double(ind < 0)];
+%     SS_tot = (pred - mean(pred))' * (pred - mean(pred));
+%     SS_res = (pred - X*((X'*X)\X'*pred))' * (pred - X*((X'*X)\X'*pred));
+%     M2(sub) = atanh(sqrt(1 - min(SS_res/SS_tot,1))) * atanh(fast_corr(D1(:,sub), D2(:,sub)));
 end
 
 end
