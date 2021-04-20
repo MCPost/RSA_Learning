@@ -93,13 +93,12 @@ sem_ind = Hyp_semantic{2}(Hyp_semantic{2}(:) ~= 0);
 
 
 CrossComp_RSA.RSA_red16   = [];
-N = 16;
 for r = 1:length(curROI)
     
     if(permtest)
         SurCorr = zeros(n_perms, length(TimeVec2), length(TimeVec1));
-        SurMeth1 = zeros(n_perms, length(TimeVec2), length(TimeVec1));
-        SurMeth2 = zeros(n_perms, length(TimeVec2), length(TimeVec1));
+        SurMeth1_per = zeros(n_perms, length(TimeVec2), length(TimeVec1));
+        SurMeth1_sem = zeros(n_perms, length(TimeVec2), length(TimeVec1));
         
         if(matshuffle)
             %Ind_Mat = triu(reshape(1:size(Hyp_perceptual{2},1)^2,size(Hyp_perceptual{2},1),size(Hyp_perceptual{2},2))).*~eye(16);
@@ -125,9 +124,8 @@ for r = 1:length(curROI)
     
     CrossComp_RSA.RSA_red16.(curROI{r}).Corr = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
     CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
-    %CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_per = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
     CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
-    %CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_sem = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
+    
     fprintf('\n')
     nbytes = fprintf('ROI: %s  --  Progress Cross Correlation:  0.0 %%',curROI{r});
     for tp1 = 1:length(TimeVec1)
@@ -138,37 +136,38 @@ for r = 1:length(curROI)
             
             time_window2 = max(TimeVec2_idx(tp2) - slide_window_idx2, 1):min(TimeVec2_idx(tp2) + slide_window_idx2, length(TimeVec_Data2));
             
-            curData1 = tiedrank_(squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,Hyp_perceptual{2}(:) ~= 0),2,length(time_window1)))',1);
-            curData2 = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,Hyp_perceptual{2}(:) ~= 0),2,length(time_window2)))',1);
+            curData1 = squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,Hyp_perceptual{2}(:) ~= 0),2,length(time_window1)))';
+            curData2 = squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,Hyp_perceptual{2}(:) ~= 0),2,length(time_window2)))';
             
-            CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1) = fast_corr(curData1,curData2)';
+            curData1_tr = tiedrank_(curData1,1);
+            curData2_tr = tiedrank_(curData2,1);
             
-            % Method 1 and 2
-            %[CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1), CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_per(:,tp2,tp1)] = Method1_2(curData1,curData2, per_ind);
-            %[CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1), CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_sem(:,tp2,tp1)] = Method1_2(curData1,curData2, sem_ind);
-            [CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1)] = Method1_2(curData1,curData2, per_ind);
-            [CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1)] = Method1_2(curData1,curData2, sem_ind);
+            CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1) = fast_corr(curData1_tr,curData2_tr)';
+            
+            % Weighted Correlation
+            %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, per_ind);
+            %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, sem_ind);
+            CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1, curData2, per_ind);
+            CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1, curData2, sem_ind);
             
             if(permtest)
                 for permi = 1:n_perms
                     if(matshuffle)
-                        surData = curData2(All_Shuff_Mat(:,permi),:);
+                        surData = curData2_tr(All_Shuff_Mat(:,permi),:);
                         %surData = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,Shuff_Mat(Hyp_perceptual{2}(:) > 0)),2,length(time_window2)))',1);
                     else
-                        surData = curData2(randperm(size(curData2,1)),:);
+                        surData = curData2_tr(randperm(size(curData2_tr,1)),:);
                         %surData = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,hyp_idx(randperm(length(hyp_idx)))),2,length(time_window2)))',1);
                     end
                     if(studentized)
-                        mu_22 = nanmean((bsxfun(@minus, curData1, nanmean(curData1,1)).^2).*(bsxfun(@minus, surData, nanmean(surData,1)).^2),1);
-                        SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1,surData)'./sqrt(bsxfun(@rdivide, mu_22, (nanvar(curData1,1,1).*nanvar(surData,1,1))))));
+                        mu_22 = nanmean((bsxfun(@minus, curData1_tr, nanmean(curData1_tr,1)).^2).*(bsxfun(@minus, surData, nanmean(surData,1)).^2),1);
+                        SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1_tr,surData)'./sqrt(bsxfun(@rdivide, mu_22, (nanvar(curData_tr1,1,1).*nanvar(surData,1,1))))));
                     else
-                        SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1,surData)));
-                        [SM1] = Method1_2(curData1,surData,per_ind);
+                        SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1_tr,surData)));
+                        SM1 = atanh(fast_corr(curData1_tr,surData))' .* weight_corr(curData1,surData,per_ind);
                         SurMeth1_per(permi,tp2,tp1) = nanmean(SM1);
-                        %SurMeth2_per(permi,tp2,tp1) = nanmean(SM2);
-                        [SM1] = Method1_2(curData1,surData,sem_ind);
+                        SM1 = atanh(fast_corr(curData1_tr,surData))' .* weight_corr(curData1,surData,sem_ind);
                         SurMeth1_sem(permi,tp2,tp1) = nanmean(SM1);
-                        %SurMeth2_sem(permi,tp2,tp1) = nanmean(SM2);
                     end
                 end
             end
@@ -269,9 +268,7 @@ for r = 1:length(curROI)
 
         CrossComp_RSA.CorrPermTest.(curROI{r})  = get_sign_cluster(SurCorr, CrossComp_RSA.RSA_red16.(curROI{r}).Corr, thresh_pval, ts_os_fac, mcc_cluster_pval);
         CrossComp_RSA.Meth1_per_PermTest.(curROI{r}) = get_sign_cluster(SurMeth1_per, CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per, thresh_pval, ts_os_fac, mcc_cluster_pval);
-        %CrossComp_RSA.Meth2_per_PermTest.(curROI{r}) = get_sign_cluster(SurMeth2_per, CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_per, thresh_pval, ts_os_fac, mcc_cluster_pval);
         CrossComp_RSA.Meth1_sem_PermTest.(curROI{r}) = get_sign_cluster(SurMeth1_sem, CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem, thresh_pval, ts_os_fac, mcc_cluster_pval);
-        %CrossComp_RSA.Meth2_sem_PermTest.(curROI{r}) = get_sign_cluster(SurMeth2_sem, CrossComp_RSA.RSA_red16.(curROI{r}).Meth2_sem, thresh_pval, ts_os_fac, mcc_cluster_pval);
         
     end
     
@@ -283,27 +280,24 @@ CrossComp_RSA.xcomp_dim        = 'sub_rettime_enctime'; %'sub_hyp_rettime_enctim
 end
 
 
-function [M1,M2] = Method1_2(D1,D2,ind)
+function W = weight_corr(D1,D2,ind)
 
-M1 = zeros(size(D1,2),1); M2 = zeros(size(D1,2),1);
+W = zeros(size(D1,2),1);
 for sub = 1:size(D1,2)
     % Method 1
-    X = [ones(size(D1,1),1), D1(:,sub)];
-    y = D2(:,1);
-    SS_res1 = y'*(eye(size(D1,1)) - X*((X'*X)\X'))*y;
-    X = [ones(size(D1,1),1), D1(:,sub), double(ind > 0)];
-    SS_res2 = y'*(eye(size(D1,1)) - X*((X'*X)\X'))*y;
-    F = (SS_res1 - SS_res2)/(SS_res2 / (size(D1,1) - 3));
-    M1(sub) = abs(f2z_bloc(F,1,size(D1,1) - 3))*atanh(fast_corr(D1(:,sub), D2(:,sub)));
-
-%     % Method 2
-%     y = D1(:,sub);
-%     X = D2(:,sub);
-%     pred = X*((X'*X)\X'*y);
-%     X = [double(ind > 0), double(ind < 0)];
-%     SS_tot = (pred - mean(pred))' * (pred - mean(pred));
-%     SS_res = (pred - X*((X'*X)\X'*pred))' * (pred - X*((X'*X)\X'*pred));
-%     M2(sub) = atanh(sqrt(1 - min(SS_res/SS_tot,1))) * atanh(fast_corr(D1(:,sub), D2(:,sub)));
+    %X = [ones(size(D1,1),1), D1(:,sub)];
+    %y = D2(:,1);
+    %SS_res1 = y'*(eye(size(D1,1)) - X*((X'*X)\X'))*y;
+    %X = [ones(size(D1,1),1), D1(:,sub), double(ind > 0)];
+    %SS_res2 = y'*(eye(size(D1,1)) - X*((X'*X)\X'))*y;
+    %F = (SS_res1 - SS_res2)/(SS_res2 / (size(D1,1) - 3));
+    %W(sub) = abs(f2z_bloc(F,1,size(D1,1) - 3))*atanh(fast_corr(D1(:,sub), D2(:,sub)));
+    
+    y = tiedrank_(D1(:,sub) .* D2(:,sub),1);
+    X = [double(ind > 0), double(ind < 0)];
+    SS_tot = (y - mean(y))' * (y - mean(y));
+    SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
+    W(sub) = atanh(sqrt(1 - SS_res/SS_tot));
 end
 
 end

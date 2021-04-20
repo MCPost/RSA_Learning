@@ -242,7 +242,7 @@ set(gca,'linewidth',2.5,'FontSize',14)
 
 % Plot RSA Difference Time series
 
-r1 = 3; r2 = 5;
+r1 = 1; r2 = 2;
 c1 = 1; c2 = 2;
 dt1 = [3 4]; dt2 = [3 4];
 
@@ -300,8 +300,8 @@ sign_mcc_clust_2 = Results2.zmapthresh;
 sign_mcc_clust_2(sign_mcc_clust_2 > 0) = min(get(gca,'ylim'))*0.9;
 plot(TimeVec,sign_mcc_clust_2,'ro','MarkerFaceColor','r')
 hold off
-%saveas(gcf,'Results/Enc_TMP_PerceptualvsSemantic_BT-WI_Dat16_LDA.png')
-%close(gcf)
+saveas(gcf,'Results/Enc_OCC_TMP_PerceptualvsSemantic_BT-WI_Dat16_eucl.png')
+close(gcf)
 
 
 

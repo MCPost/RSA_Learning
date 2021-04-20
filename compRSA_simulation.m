@@ -640,8 +640,8 @@ end
 
 N = 16;
 
-mus1 = -2:1:2;
-mus2 = 2:-1:-2;
+mus1 = [-3 -1 0 1 3]; %-2:1:2;
+mus2 = [3 1 0 -1 -3]; %2:-1:-2;
 
 mu = [0 0; 0 0];
 sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
@@ -676,7 +676,7 @@ for m2 = 1:length(mus2)
                 %%X = [ones(N*(0.5*N -1),1), kron([1;0], ones(0.5*N*(0.5*N -1),1))];
                 %%X = R_tr(:,2);
                 %y = cur_data_all(:,1);
-                %%SS_tot = (y - mean(y))' * (y - mean(y));
+                %SS_tot = (y - mean(y))' * (y - mean(y));
                 %SS_res1 = y'*(eye(N*(0.5*N -1)) - X*((X'*X)\X'))*y;
                 %%Rsq1 = 1 - SS_res1/SS_tot;
                 %X = [ones(N*(0.5*N -1),1), cur_data_all(:,2), kron([1;0], ones(0.5*N*(0.5*N -1),1))];
@@ -687,41 +687,41 @@ for m2 = 1:length(mus2)
                 %F = (SS_res1 - SS_res2)/(SS_res2 / (N*(0.5*N -1) - 3));
                 %NMeas_Cell{m2,m1}(c2,c1) = abs(f2z_bloc(F,1,N*(0.5*N -1) - 3))*atanh(cor_all);
                 
-                %%y = (cur_data_all(:,1) - mean(cur_data_all(:))) .* (cur_data_all(:,2) - mean(cur_data_all(:)));
-                %y = cur_data_all(:,1) .* cur_data_all(:,2);
-                %X = [kron([1;0], ones(0.5*N*(0.5*N -1),1)) kron([0;1], ones(0.5*N*(0.5*N -1),1))];
-                %SS_tot = (y - mean(y))' * (y - mean(y));
-                %SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
-                %NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(1 - min(SS_res/SS_tot,1))) * atanh(cor_all);
+                %y = (cur_data_all(:,1) - mean(cur_data_all(:))) .* (cur_data_all(:,2) - mean(cur_data_all(:)));
+                y = tiedrank_(R(:,1) .* R(:,2),1);
+                X = [kron([1;0], ones(0.5*N*(0.5*N -1),1)) kron([0;1], ones(0.5*N*(0.5*N -1),1))];
+                SS_tot = (y - mean(y))' * (y - mean(y));
+                SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
+                NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(1 - SS_res/SS_tot)) * atanh(cor_all);
                 
                 %[~,~,stats] = manova1(cur_data_all,[repmat({'sub1'},0.5*N*(0.5*N -1),1); repmat({'sub2'},0.5*N*(0.5*N -1),1)]);
                 %NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(1 - min(stats.lambda,1))) * atanh(cor_all);
                 
-                X = [kron([1;0], ones(0.5*N*(0.5*N -1),1)) kron([0;1], ones(0.5*N*(0.5*N -1),1))];
+                %X = [kron([1;0], ones(0.5*N*(0.5*N -1),1)) kron([0;1], ones(0.5*N*(0.5*N -1),1))];
                 
-                dat1 = R(logical(X(:,1)),:); dat2 = R(logical(X(:,2)),:);
-                y1_m = mean(dat1,1);
-                y2_m = mean(dat2,1);
-                S1 = cov(dat1);
-                S2 = cov(dat2);
-                S = ((0.5*N*(0.5*N -1)-1)*S1 + (0.5*N*(0.5*N -1)-1)*S2)/(N*(0.5*N -1)-2);
+                %dat1 = R(logical(X(:,1)),:); dat2 = R(logical(X(:,2)),:);
+                %y1_m = mean(dat1,1);
+                %y2_m = mean(dat2,1);
+                %S1 = cov(dat1);
+                %S2 = cov(dat2);
+                %S = ((0.5*N*(0.5*N -1)-1)*S1 + (0.5*N*(0.5*N -1)-1)*S2)/(N*(0.5*N -1)-2);
                 
-                T2 = ((y1_m - y2_m)/inv(S)*(y1_m - y2_m)')*((0.5*N*(0.5*N -1)*0.5*N*(0.5*N -1))/(N*(0.5*N -1)));
-                F = T2*((N*(0.5*N -1) - 3) / (2*(N*(0.5*N -1) - 2)));
-                NMeas_Cell{m2,m1}(c2,c1) = f2z_bloc(F,1,N*(0.5*N -1) - 3);%*atanh(cor_all);
+                %T2 = ((y1_m - y2_m)/inv(S)*(y1_m - y2_m)')*((0.5*N*(0.5*N -1)*0.5*N*(0.5*N -1))/(N*(0.5*N -1)));
+                %F = T2*((N*(0.5*N -1) - 3) / (2*(N*(0.5*N -1) - 2)));
+                %NMeas_Cell{m2,m1}(c2,c1) = T2;%f2z_bloc(F,1,N*(0.5*N -1) - 3);%*atanh(cor_all);
                 
             end
         end
         
     end
 end
-prctile(NMeas_Cell{3,5}(:),[1 99])
+prctile(NMeas_Cell{3,3}(:),[1 99])
 
 figure('Pos',[164 67 1504 926])
 Data = NMeas_Cell';
 tmp_max = cell2mat(cellfun(@(x) max(x(:)), Data,'UniformOutput',0));
 tmp_min = cell2mat(cellfun(@(x) min(x(:)), Data,'UniformOutput',0));
-c_limit = [5 8]; %prctile(NMeas_Cell{3,3}(:),[1 99]);%[min(tmp_min(:))+0.9 max(tmp_max(:))-1];
+c_limit = [-0.5 0.5]; %prctile(NMeas_Cell{3,3}(:),[1 99]);%[min(tmp_min(:))+0.9 max(tmp_max(:))-1];
 phase_shift = [1.2 0.6 0 -0.6 -1.2];
 for sbp = 1:25
     h1 = subplot(5,5,sbp);
@@ -766,12 +766,12 @@ end
 
 %% Plot Correlations
 
-mus = [kron(ones(5,1),[-2 -1 0 1 2]') kron([-2 -1 0 1 2]',ones(5,1))];
+mus = [kron(ones(5,1),[-3 -1 0 1 3]') kron([-3 -1 0 1 3]',ones(5,1))];
 
 figure('Pos', [326 71 1291 912])
 
 mu = [0 0; 0 0];
-sigma = cat(3,[1 .6; .6 1], [1 -.2; -.2 1]);
+sigma = cat(3,[1 .9; .9 1], [1 .9; .9 1]);
 for sbp = 1:25
     mu(2,:) = [mus(sbp) mus(sbp)];
     R = [];
@@ -803,12 +803,12 @@ end
 
 N = 56;
 
-mus = [kron(ones(5,1),([-2 -1 0 1 2])') kron(([2 1 0 -1 -2])',ones(5,1))];
+mus = [kron(ones(5,1),([-3 -1 0 1 3])') kron(([3 1 0 -1 -3])',ones(5,1))];
 
 figure('Pos', [326 71 1291 912])
 
 mu = [0 0; 0 0];
-sigma = cat(3,[1 .8; .8 1], [1 -.7; -.7 1]);
+sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
 for sbp = 1:25
     mu(2,:) = [mus(sbp,1) mus(sbp,2)];
     R = [];
@@ -848,7 +848,7 @@ for sbp = 1:25
     %p = fcdf(F,1,2*N - 3,'upper');
     %meas = abs(norminv(p))*atanh(corr(R_tr(:,1), R_tr(:,2)));
     
-    y = (R_tr(:,1) - mean(R_tr(:,1))) .* (R_tr(:,2) - mean(R_tr(:,2)));
+    y = tiedrank_(R(:,1) .* R(:,2),1);
     X = [kron([1;0], ones(N,1)), kron([0;1], ones(N,1))];
     SS_tot = (y - mean(y))' * (y - mean(y));
     SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
@@ -856,10 +856,57 @@ for sbp = 1:25
     
     %[~,p_val] = ttest2(reshape(R(1:N,:),N*2,1), reshape(R(N+1:end,:),N*2,1));
     %meas = (atanh(corr(R_tr_g1(:,1), R_tr_g1(:,2))) - atanh(corr(R_tr_g2(:,1), R_tr_g2(:,2))))*(atanh(corr(R_tr(:,1), R_tr(:,2))))*norminv(1-p_val,0,1);
+    
+    %X = [kron([1;0], ones(N,1)) kron([0;1], ones(N,1))];
+
+    %dat1 = R(logical(X(:,1)),:); dat2 = R(logical(X(:,2)),:);
+    %y1_m = mean(dat1,1);
+    %y2_m = mean(dat2,1);
+    %S1 = cov(dat1);
+    %S2 = cov(dat2);
+    %S = ((0.5*N*(0.5*N -1)-1)*S1 + (0.5*N*(0.5*N -1)-1)*S2)/(N*(0.5*N -1)-2);
+
+    %T2 = ((y1_m - y2_m)/inv(S)*(y1_m - y2_m)')*((0.5*N*(0.5*N -1)*0.5*N*(0.5*N -1))/(N*(0.5*N -1)));
+    %meas = T2;
     title(sprintf('V_{corr} = %1.4f', meas),'fontsize',8)
     axis square
 end
 
+
+
+%% New New Crossproduct Idea
+
+N = 56;
+
+mus = [kron(ones(5,1),([-3 -1 0 1 3])') kron(([3 1 0 -1 -3])',ones(5,1))];
+
+figure('Pos', [326 71 1291 912])
+
+mu = [0 0; 0 0];
+sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
+for sbp = 1:25
+    mu(2,:) = [mus(sbp,1) mus(sbp,2)];
+    R = [];
+    R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
+    R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
+    R_tr = tiedrank_(R,1); 
+    dat = tiedrank_(R(:,1).*R(:,2),1); % R_tr(:,1).*R_tr(:,2); R(:,1).*R(:,2);
+    h1 = subplot(5,5,sbp);
+    hold on
+    histogram(dat(1:N),15)
+    histogram(dat(N+1:end),15)
+    hold off
+    
+    y = dat;
+    X = [kron([1;0], ones(N,1)), kron([0;1], ones(N,1))];
+    SS_tot = (y - mean(y))' * (y - mean(y));
+    SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
+    meas = atanh(sqrt(1 - SS_res/SS_tot)) * atanh(corr(R_tr(:,1), R_tr(:,2)));
+    
+    title(sprintf('V_{corr} = %1.4f', meas),'fontsize',8)
+    set(gca, 'xlim', [-2 130], 'ylim', [0 15])
+    axis square
+end
 
 
 
@@ -1050,7 +1097,7 @@ dat2 = tiedrank_(rand(112,23),1);
 
 N = 16;
 
-X = [ones(112,1) kron(dat1,eye(23)];
+X = [ones(112,1) kron(dat1,eye(23))];
 y = dat2;
 SS_tot = bsxfun(@minus,y,mean(y,1))' * bsxfun(@minus,y,mean(y,1));
 SS_res1_1 = dat2'*(eye(112) - X*((X'*X)\X'))*dat2;
@@ -1066,4 +1113,4 @@ X = [ones(N*(0.5*N -1),1), dat1(:,1), kron([1;0], ones(0.5*N*(0.5*N -1),1))];
 SS_res2_2 = y'*(eye(N*(0.5*N -1)) - X*((X'*X)\X'))*y;
 F2 = (SS_res1_2 - SS_res2_2)/(SS_res2_2 / (N*(0.5*N -1) - 3));
 
-F1(1,1)*2
+F1(1,1)*2;

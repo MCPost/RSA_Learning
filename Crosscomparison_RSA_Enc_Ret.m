@@ -212,7 +212,7 @@ hold off
 load('RSA_Data_Enc','Subj_names')
 
 % Measure
-msr = 2;
+msr = 1;
 
 % Create Data Struct for Encoding
 tmp_strct_enc = load('RSA_Data_Enc');
@@ -433,7 +433,7 @@ end
 measures = {'LDA','SVM','euclidian','euclidian_wcc'};
 
 %tmp_struct = load('CrossComp_RSA')
-%tmp_struct = load('CrossComp_RSA_p01_ts')
+%tmp_struct = load('CrossComp_RSA_p01_ts');
 tmp_struct = load(['CrossComp_RSA_newMeth',num2str(msr)]);
 tmp_fnames = fieldnames(tmp_struct);
 
@@ -486,8 +486,8 @@ ret_lim = [-2.8 0.2];
 figure('Pos',[189 137 1531 782])
 
 h1 = subplot(1,2,1);
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r1}).Meth2_per,1)), 40,'linestyle','none'); colorbar
-caxis([-.005 .005]); set(h1,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r1}).Meth1_per,1)), 40,'linestyle','none'); colorbar
+caxis([-.05 .05]); set(h1,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
 title(ROI_names{r1});
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
@@ -535,8 +535,8 @@ ylabel('Retrieval')
 
 
 h4 = subplot(1,2,2);
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r2}).Meth2_sem,1)), 40,'linestyle','none'); colorbar
-caxis([-.005 .005]); set(h4,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r2}).Meth1_sem,1)), 40,'linestyle','none'); colorbar
+caxis([-.05 .05]); set(h4,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
 title(ROI_names{r2});
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
