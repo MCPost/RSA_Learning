@@ -102,6 +102,9 @@ Xy = kron(eye(length(subs)), ones(length(per_ind),1));
 CrossComp_RSA.RSA_red16   = [];
 for r = 1:length(curROI)
     
+    Cur_Data1 = Data1.(curROI{r}).red16_Data;
+    Cur_Data2 = Data2.(curROI{r}).red16_Data;
+    
     if(permtest)
         SurCorr = zeros(n_perms, length(TimeVec2), length(TimeVec1));
         SurMeth1_per = zeros(n_perms, length(TimeVec2), length(TimeVec1));
@@ -129,9 +132,12 @@ for r = 1:length(curROI)
         end
     end
     
-    CrossComp_RSA.RSA_red16.(curROI{r}).Corr = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
+    %CrossComp_RSA.RSA_red16.(curROI{r}).Corr = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
     %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
     %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
+    Corr = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
+    Meth1_per = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
+    Meth1_sem = zeros(size(Data1.(curROI{r}).red16_Data,1),length(TimeVec2),length(TimeVec1));
     
     fprintf('\n')
     nbytes = fprintf('ROI: %s  --  Progress Cross Correlation:  0.0 %%',curROI{r});
@@ -139,24 +145,24 @@ for r = 1:length(curROI)
         
         time_window1 = max(TimeVec1_idx(tp1) - slide_window_idx1, 1):min(TimeVec1_idx(tp1) + slide_window_idx1, length(TimeVec_Data1));
         
-        for tp2 = 1:length(TimeVec2)
+        parfor tp2 = 1:length(TimeVec2)
             
             time_window2 = max(TimeVec2_idx(tp2) - slide_window_idx2, 1):min(TimeVec2_idx(tp2) + slide_window_idx2, length(TimeVec_Data2));
             
-            curData1 = squeeze(average_kern(Data1.(curROI{r}).red16_Data(:,time_window1,Hyp_perceptual{2}(:) ~= 0),2,length(time_window1)))';
-            curData2 = squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,Hyp_perceptual{2}(:) ~= 0),2,length(time_window2)))';
+            curData1 = squeeze(average_kern(Cur_Data1(:,time_window1,Hyp_perceptual{2}(:) ~= 0),2,length(time_window1)))';
+            curData2 = squeeze(average_kern(Cur_Data2(:,time_window2,Hyp_perceptual{2}(:) ~= 0),2,length(time_window2)))';
             
             curData1_tr = tiedrank_(curData1,1);
             curData2_tr = tiedrank_(curData2,1);
             
-            CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1) = fast_corr(curData1_tr,curData2_tr)';
+            Corr(:,tp2,tp1) = fast_corr(curData1_tr,curData2_tr)';
             
             % Weighted Correlation
             %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, per_ind);
             %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, sem_ind);
             [W_per, W_sem] = weight_corr(curData1, curData2, X1, X2, Xy);
-            CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1) .* W_per;
-            CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1) .* W_sem;
+            Meth1_per(:,tp2,tp1) = Corr(:,tp2,tp1) .* W_per;
+            Meth1_sem(:,tp2,tp1) = Corr(:,tp2,tp1) .* W_sem;
             
             if(permtest)
                 for permi = 1:n_perms
@@ -179,14 +185,18 @@ for r = 1:length(curROI)
                     end
                 end
             end
-            fprintf(repmat('\b',1,nbytes))
-            nbytes = fprintf('ROI: %s  --  Progress Cross Correlation: %3.4f %%',curROI{r},((tp2 + (length(TimeVec2))*(tp1-1)) / (length(TimeVec1)*length(TimeVec2)))*100);
+            %fprintf(repmat('\b',1,nbytes))
+            %nbytes = fprintf('ROI: %s  --  Progress Cross Correlation: %3.4f %%',curROI{r},((tp2 + (length(TimeVec2))*(tp1-1)) / (length(TimeVec1)*length(TimeVec2)))*100);
             
         end
-        %fprintf(repmat('\b',1,nbytes))
-        %nbytes = fprintf('ROI: %s  --  Progress Cross Correlation: %3.2f %%',curROI{r},(tp1 / length(TimeVec1))*100);
+        fprintf(repmat('\b',1,nbytes))
+        nbytes = fprintf('ROI: %s  --  Progress Cross Correlation: %3.2f %%',curROI{r},(tp1 / length(TimeVec1))*100);
     end
     fprintf('\n')
+    
+    CrossComp_RSA.RSA_red16.(curROI{r}).Corr = Corr;
+    CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per = Meth1_per;
+    CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem = Meth1_sem;
     
     if(permtest)
         
