@@ -66,16 +66,21 @@ msr = 1;
 
 %% Cross-correlate RSA time courses for each subject
 
-% save('CrossComp_RSA','Subj_names')
-% 
-% c = parcluster();
-% jobHandles = cell(4,1);
-% for msr = [1 3]
-%     jobHandles{msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr});
-% end
-% 
-% jobHandles{1}
-% diary(jobHandles{1})
+save('CrossComp_RSA_newMeth1','Subj_names')
+save('CrossComp_RSA_newMeth2','Subj_names')
+save('CrossComp_RSA_newMeth3','Subj_names')
+save('CrossComp_RSA_newMeth4','Subj_names')
+
+c = parcluster();
+jobHandles = cell(4,1);
+for msr = 1
+    jobHandles{msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr});
+end
+
+jobHandles{1}
+diary(jobHandles{1})
+
+delete(jobHandles{1})
 
 % cfg = [];
 % cfg.slide_window   = 0.050;
