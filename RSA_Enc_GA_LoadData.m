@@ -19,7 +19,7 @@ Electrodes_ROIs
     eeg_cfg = [];
     eeg_cfg.Name = Subj_names{sub};
     eeg_cfg.chan_label = elecs;
-    eeg_cfg.chan_idx = ROI_occ_idx'; 
+    eeg_cfg.chan_idx = ROI_all_idx'; 
     eeg_cfg.Art_corr = false;
     eeg_cfg.BL_corr = 'minBL';
     eeg_cfg.BL_wind = [-0.26 -0.05];

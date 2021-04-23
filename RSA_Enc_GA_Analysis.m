@@ -373,6 +373,64 @@ set(cl,'Pos', [0.92 pos_val(2) 0.0119 pos_val(4)],'Xtick',linspace(colb_lim(1),c
 
 
 
+%% RDM with Categories
+
+
+ROI = {'OCC','TMP','FRT','CNT','PRT'};
+Dim_names = {};
+
+[a,b] = unique(RSA_Data.TrialInfo{1,1}(1:64,6),'stable');
+Dim_names{1,1} = RSA_Data.TrialInfo{1,1}([b;b+64],6);
+Dim_names{1,2} = [8.5; 8.5];
+[a,b] = unique(RSA_Data.TrialInfo{1,1}(1:64,8),'stable');
+Dim_names{2,1} = RSA_Data.TrialInfo{1,1}([b;b+64],8);
+Dim_names{2,2} = [4.5:4:12.5; 4.5:4:12.5];
+
+
+% Plot Single GA Matrix
+r = 1;
+c = 1;
+tp = 0.2; % s
+clim_wi = true;
+if(~clim_wi)
+    calc_dat = nanmean(RSA_Data.(ROI{r}).red16_Data(:,:),1);
+    colb_lim = prctile(calc_dat(calc_dat ~= 0), [2.5 97.5]);
+end
+
+figure('Units','pixels')
+h1 = axes('Units','pixels','xlim',[0 18],'ylim',[0 18]);
+[~,t_idx] = min(abs(RSA_Data.TimeVec - tp));
+cur_data = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,t_idx,:,:),1));
+if(clim_wi)
+    colb_lim = [min(cur_data(cur_data(:) ~= 0))*.95 prctile(cur_data(cur_data(:) ~= 0), 90)];
+end
+imagesc(cur_data);
+axis square
+grid on
+set(get(gca,'Yruler'),'Minortick',Dim_names{2,2}(1,:))
+set(get(gca,'Xruler'),'Minortick',Dim_names{2,2}(1,:))
+set(gca,'clim',colb_lim,'xtick',Dim_names{1,2}(1,:),'xticklabels',[],...
+        'ytick',Dim_names{1,2}(2,:),'yticklabels',[], 'TickLength',[0 0],'XMinorgrid','on','YMinorgrid','on',...
+        'gridcolor','w','gridalpha',.9,'minorgridlinestyle','--','minorgridalpha',.5,'MinorGridColor','w')
+pos = get(h1,'pos') + [-40 -40 0 0];
+set(h1,'pos',pos)
+text(3,-1.4,Dim_names{1,1}{1},'fontsize',13)
+text(11,-1.4,Dim_names{1,1}{2},'fontsize',13)
+text(18.2,3,Dim_names{1,1}{1},'fontsize',13,'Rotation',-90)
+text(18.2,11,Dim_names{1,1}{2},'fontsize',13,'Rotation',-90)
+text(1,-0.3,Dim_names{2,1}{1},'fontsize',13)
+text(5,-0.3,Dim_names{2,1}{2},'fontsize',13)
+text(9,-0.3,Dim_names{2,1}{3},'fontsize',13)
+text(13,-0.3,Dim_names{2,1}{4},'fontsize',13)
+text(17.2,1,Dim_names{2,1}{1},'fontsize',13,'Rotation',-90)
+text(17.2,5,Dim_names{2,1}{2},'fontsize',13,'Rotation',-90)
+text(17.2,9,Dim_names{2,1}{3},'fontsize',13,'Rotation',-90)
+text(17.2,13,Dim_names{2,1}{4},'fontsize',13,'Rotation',-90)
+set(h1,'Units','normalized')
+
+
+
+
 %% Plot Shuffled Hypotheses Matrices
 % Test_Mat = Semantic_Mat_16;
 % %Test_Mat = logical(Perceptual_Mat_16).*(rand(16)*1000);

@@ -1092,25 +1092,45 @@ end
 
 
 
-dat1 = tiedrank_(rand(112,23),1);
-dat2 = tiedrank_(rand(112,23),1);
+N = 56;
 
-N = 16;
+Dur_Meth = zeros(2,1);
 
-X = [ones(112,1) kron(dat1,eye(23))];
-y = dat2;
-SS_tot = bsxfun(@minus,y,mean(y,1))' * bsxfun(@minus,y,mean(y,1));
-SS_res1_1 = dat2'*(eye(112) - X*((X'*X)\X'))*dat2;
-X = [ones(112,1) dat1, kron([1;0], ones(56,1))];
-SS_res2_1 = y'*(eye(112) - X*((X'*X)\X'))*y;
-F1 = (SS_res1_1 - SS_res2_1)/(SS_res2_1 ./ (112 - 3));
+tic
+X1 = kron(eye(23),[kron([1;0],ones(N,1)) kron([0;1],ones(N,1))]); % ones(length(y2),1)
+for i = 1:10000
+    
+    dat1 = rand(112,23);
+    dat2 = rand(112,23);
+    y = dat1.*dat2;
+    y2 = bsxfun(@times, kron(eye(23),ones(2*N,1)),y(:));
+    SS_tot1 = sum(bsxfun(@minus, y, mean(y)).^2,1);%' * bsxfun(@minus, y, mean(y));
+    %SS_tot1 = bsxfun(@minus, y, mean(y))' * bsxfun(@minus, y, mean(y));
+    SS_res1 = sum((y2 - X1*((X1'*X1)\X1'*y2)).^2,1);
+    %SS_res1 = (y2 - X1*((X1'*X1)\X1'*y2))' * (y2 - X1*((X1'*X1)\X1'*y2));
+    meas1 = atanh(sqrt(1 - SS_res1./SS_tot1))';
+    
+end
+Dur_Meth(1,1) = toc;
 
-X = [ones(N*(0.5*N -1),1), dat1(:,1)];
-y = dat2(:,1);
-SS_tot = (y - mean(y))' * (y - mean(y));
-SS_res1_2 = y'*(eye(N*(0.5*N -1)) - X*((X'*X)\X'))*y;
-X = [ones(N*(0.5*N -1),1), dat1(:,1), kron([1;0], ones(0.5*N*(0.5*N -1),1))];
-SS_res2_2 = y'*(eye(N*(0.5*N -1)) - X*((X'*X)\X'))*y;
-F2 = (SS_res1_2 - SS_res2_2)/(SS_res2_2 / (N*(0.5*N -1) - 3));
+tic
+X2 = [kron([1;0], ones(N,1)), kron([0;1], ones(N,1))];
+for i = 1:10000
+    
+    dat1 = rand(112,23);
+    dat2 = rand(112,23);
+    meas2 = zeros(23,1);
+    SS_tot2 = zeros(23,1);
+    SS_res2 = zeros(23,1);
+    for sub = 1:23
+        y = tiedrank_(dat1(:,sub) .* dat2(:,sub),1);
+        SS_tot2(sub) = sum((y - mean(y)).^2);
+        SS_res2(sub) = sum((y - X2*((X2'*X2)\X2'*y)).^2);
+        meas2(sub,1) = atanh(sqrt(1 - SS_res2(sub)/SS_tot2(sub)));
+    end
+    
+end
+Dur_Meth(2,1) = toc;
 
-F1(1,1)*2;
+
+
