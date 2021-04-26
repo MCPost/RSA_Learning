@@ -442,8 +442,13 @@ measures = {'LDA','SVM','euclidian','euclidian_wcc'};
 tmp_struct = load(['CrossComp_RSA_newMeth',num2str(msr)]);
 tmp_fnames = fieldnames(tmp_struct);
 
+method = {'Corr','Meth1_per','Meth1_sem'};
+mth = 3;
+
 CrossComp_Data.RSA_red16 = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).RSA_red16;
-%CrossComp_Data.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).zmapthresh;
+%CrossComp_Data.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).CorrPermTest;
+%CrossComp_Data.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).Meth1_per_PermTest;
+CrossComp_Data.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).Meth1_sem_PermTest;
 TimeX = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).TimeVec1;
 TimeY = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).TimeVec2;
 
@@ -485,20 +490,20 @@ cfg.TimeVec = RSA_Data_Ret.TimeVec;
 Results4 = rsa_perm(cfg, RSA_Data_Ret.(ROI{r2}).red16_Data);
 
 
-enc_lim = [-0.2 1.2];
-ret_lim = [-2.8 0.2];
+enc_lim = [-0.2 1];
+ret_lim = [-2.5 0.2];
 
 figure('Pos',[189 137 1531 782])
 
 h1 = subplot(1,2,1);
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r1}).Meth1_per,1)), 40,'linestyle','none'); colorbar
-caxis([-.05 .05]); set(h1,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r1}).(method{mth}),1)), 40,'linestyle','none'); colorbar
+caxis([-.005 .005]); set(h1,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
 title(ROI_names{r1});
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-%zmapthresh = CrossComp_Data.zmapthresh{r1}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-%contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+zmapthresh = CrossComp_Data.zmapthresh.(ROI{r1}).zmapthresh; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
+contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
 hold off
 
 aspect = get(h1,'PlotBoxAspectRatio');
@@ -540,14 +545,14 @@ ylabel('Retrieval')
 
 
 h4 = subplot(1,2,2);
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r2}).Meth1_sem,1)), 40,'linestyle','none'); colorbar
-caxis([-.05 .05]); set(h4,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r2}).(method{mth}),1)), 40,'linestyle','none'); colorbar
+caxis([-.005 .005]); set(h4,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
 title(ROI_names{r2});
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-%zmapthresh = CrossComp_Data.zmapthresh{r2}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-%contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+zmapthresh = CrossComp_Data.zmapthresh.(ROI{r2}).zmapthresh; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
+contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
 hold off
 
 aspect = get(h4,'PlotBoxAspectRatio');

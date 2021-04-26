@@ -1,6 +1,6 @@
 %% Crosscompare RSA Enc Ret LoadData
 
-%function Crosscomparison_RSA_Enc_Ret_LoadData(msr)
+function Crosscomparison_RSA_Enc_Ret_LoadData(msr)
 
 % ROI Electrode positions
 % Biosemi 128 Electrodes System Radial ABC
@@ -147,7 +147,7 @@ cfg.timewind1        = [-0.2 1];
 cfg.timewind2        = [-2.5 0.2];
 cfg.only16           = true;
 cfg.permtest         = true;
-cfg.n_perms          = 1000;
+cfg.n_perms          = 100;
 cfg.thresh_pval      = 0.05;
 cfg.mcc_cluster_pval = 0.05;
 cfg.ts_os_fac        = 1;
@@ -158,5 +158,5 @@ CrossComp_RSA.(['CrossComp_RSA_',strrep(strrep(measures{msr},' ','_'),'.','')]) 
 
 %save(['CrossComp_RSA_newMeth',num2str(msr)],'-struct','CrossComp_RSA','-append')
 
-%end
+end
 
