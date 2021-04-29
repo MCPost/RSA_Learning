@@ -23,6 +23,8 @@ MNN = cfg.MNN;
 Cktl_blank_rm = cfg.Cktl_blank_rm;
 only16 = cfg.only16;
 noMDS = cfg.noMDS;
+labelshuffperm = cfg.labelshuffperm;
+n_perms = cfg.n_perms;
 Data_EEG = cfg.Data;
 cfg = rmfield(cfg,'Data');
 cfg = rmfield(cfg,'dim');
@@ -202,6 +204,23 @@ Data = Data_EEG_corr;
 cur_trial1 = zeros(8,length(curROI));
 cur_trial2 = zeros(8,length(curROI));
 mds_back = zeros(length(measures),length(TimeVec));
+% Label Shuffling Permutations
+if(labelshuffperm)
+    ShuffData_16x16 = repmat({zeros(n_perms,120,length(TimeVec))},1,length(measures));
+    ShuffData_16x16(2,:) = measures;
+    n_catg = sum(reshape(~isnan(Data(:,1,1)),8,16),1);
+    Perm_IDX = cell(120,1); ct1 = 1; ct2 = 2;
+    for nc = 1:120
+        for permi = 1:n_perms
+            Perm_IDX{nc}(:,permi) = randperm(sum(n_catg([ct1 ct2])))';
+        end
+        ct2 = ct2 + 1;
+        if(ct2 > length(n_catg))
+            ct1 = ct1 + 1;
+            ct2 = ct1 + 1;
+        end
+    end
+end
 fprintf('\n')
 nbytes = fprintf('Progress 16x16:  0.0 %%');
 for tp = 1:length(TimeVec) 
@@ -217,7 +236,7 @@ for tp = 1:length(TimeVec)
         mean_pattern = zeros(1,size(all_patterns,2));
     end
     
-    ct_x = 1; ct_y = 1; within_dist = zeros(16,1);
+    ct_x = 1; ct_y = 1; ct_p = 1; within_dist = zeros(16,1);
     for i = 1:8:size(Data,1)-1
         for j = i:8:size(Data,1)
             if(i ~= j)
@@ -314,6 +333,108 @@ for tp = 1:length(TimeVec)
                 if(sum(strcmp(meas16,'DistCorr')) > 0)
                     RSA_Mat_16x16{1,strcmp(RSA_Mat_16x16(2,:),'DistCorr')}(ct_x,ct_y,tp) = distCorr(x, y);
                 end
+                
+                
+                % Label Shuffling Permutations
+                if(labelshuffperm)
+                    
+                    for permi = 1:n_perms
+                        Sur_trial = Cur_trial(Perm_IDX{ct_p}(:,permi),:);
+                        sur_trial1 = Sur_trial(1:size(cur_trial1,1),:);
+                        sur_trial2 = Sur_trial(size(cur_trial1,1)+1:end,:);
+                        
+                        % Create all differences
+                        poss_folds = [kron(1:size(sur_trial1,1),ones(1,size(sur_trial2,1)))' kron(ones(1,size(sur_trial1,1)),1:size(sur_trial2,1))'];
+                        diff_crossv = zeros(size(sur_trial1,2), size(poss_folds,1));
+                        for df = 1:size(poss_folds,1)
+                            diff_crossv(:,df) = sur_trial1(poss_folds(df,1),:)' - sur_trial2(poss_folds(df,2),:)';
+                        end
+
+                        % Crossvalidation Folds
+                        if(sum(strcmp(measures,'euclidian c.v.')) > 0)
+                            dist_crossv = zeros(size(diff_crossv,1),2);
+                            for fold = 1:size(diff_crossv,2)
+                                dist_crossv(fold,1) = diff_crossv(:,fold)'*mean(diff_crossv(:,[1:fold-1 fold+1:end]),2);
+                            end
+                            ShuffData_16x16{1,strcmp(ShuffData_16x16(2,:),'euclidian c.v.')}(permi,ct_p,tp) = mean(dist_crossv(:,1));
+                        end
+                        
+                        if(sum(strcmp(measures,'euclidian w.c.c.')) > 0)
+                            dist_crossv = zeros(size(diff_crossv,1),1);
+                            for fold = 1:size(diff_crossv,2)
+                                dist_crossv(fold) = diff_crossv(:,fold)'*diff_crossv(:,fold);
+                            end
+                            if(within_dist(ct_x) == 0)
+                                for f1 = 1:size(sur_trial1,1)-1
+                                    for f2 = f1:size(sur_trial1,1)
+                                        within_dist(ct_x) = within_dist(ct_x) + (sur_trial1(1,:)-sur_trial1(2,:))*(sur_trial1(1,:)-sur_trial1(2,:))';
+                                    end
+                                end
+                            end
+                            if(within_dist(ct_y) == 0)
+                                for f1 = 1:size(sur_trial2,1)-1
+                                    for f2 = f1:size(sur_trial2,1)
+                                        within_dist(ct_y) = within_dist(ct_y) + (sur_trial2(1,:)-sur_trial2(2,:))*(sur_trial2(1,:)-sur_trial2(2,:))';
+                                    end
+                                end
+                            end
+                            ShuffData_16x16{1,strcmp(ShuffData_16x16(2,:),'euclidian w.c.c.')}(permi,ct_p,tp) = mean(dist_crossv) - sum(within_dist([ct_x ct_y]))/(2*size(sur_trial1,1)*(size(sur_trial2,1)));
+                        end
+                        
+                        if(sum(strcmp(measures,'pearson c.v.')) > 0)
+                            dist_crossv = zeros(size(diff_crossv,1),2);
+                            for fold = 1:size(diff_crossv,2)
+                                dist_crossv(fold,1) = diff_crossv(:,fold)'*mean(diff_crossv(:,[1:fold-1 fold+1:end]),2);
+                                %dist_crossv(fold,2) = diff_crossv(:,fold)'*sigma_inv*mean(diff_crossv(:,[1:fold-1 fold+1:end]),2);
+
+                                eps1 = .1 * var(mean(sur_trial1([1:poss_folds(fold,1)-1 poss_folds(fold,1)+1:end],:),1));
+                                eps2 = .1 * var(mean(sur_trial2([1:poss_folds(fold,2)-1 poss_folds(fold,2)+1:end],:),1));
+                                eps3 = .25 * sqrt(var(mean(sur_trial1([1:poss_folds(fold,1)-1 poss_folds(fold,1)+1:end],:),1)) * var(mean(sur_trial2([1:poss_folds(fold,2)-1 poss_folds(fold,2)+1:end],:),1)));
+                                a1 = getfield(cov(sur_trial1(poss_folds(fold,1),:)', mean(sur_trial2([1:poss_folds(fold,2)-1 poss_folds(fold,2)+1:end],:),1)'), {2});
+                                a2 = getfield(cov(sur_trial2(poss_folds(fold,2),:)', mean(sur_trial1([1:poss_folds(fold,1)-1 poss_folds(fold,1)+1:end],:),1)'), {2});
+                                a3 = max(eps1, getfield(cov(sur_trial1(poss_folds(fold,1),:)', mean(sur_trial1([1:poss_folds(fold,1)-1 poss_folds(fold,1)+1:end],:),1)'), {2}));
+                                a4 = max(eps2, getfield(cov(sur_trial2(poss_folds(fold,2),:)', mean(sur_trial2([1:poss_folds(fold,2)-1 poss_folds(fold,2)+1:end],:),1)'), {2}));
+                                dist_crossv(fold,2) = 1 - min(1, max(-1, (0.5*(a1 + a2))/max(eps3, sqrt(a3*a4))));
+                            end
+                            ShuffData_16x16{1,strcmp(ShuffData_16x16(2,:),'pearson c.v.')}(permi,ct_p,tp) = mean(dist_crossv(:,2));
+                        end
+                        
+                        % SVM and LDA
+                        if(sum(strcmp(measures,'LDA')) > 0)
+                            cfg = [];
+                            cfg.metric      = 'acc';
+                            %cfg.cv          = 'holdout';
+                            %cfg.p           = 0.3;
+                            cfg.cv          = 'kfold';
+                            cfg.k           = 4;
+                            cfg.repeat      = 5;
+                            cfg.classifier  = 'lda';
+                            cfg.feedback    = 0;
+                            ShuffData_16x16{1,strcmp(ShuffData_16x16(2,:),'LDA')}(permi,ct_p,tp) = mv_classify(cfg, Sur_trial, [ones(1,size(sur_trial1,1)) 2*ones(1,size(sur_trial2,1))]');
+                        end
+                        if(sum(strcmp(measures,'SVM')) > 0)
+                            cfg = [];
+                            cfg.metric      = 'acc';
+                            %cfg.cv          = 'holdout';
+                            %cfg.p           = 0.3;
+                            cfg.cv          = 'kfold';
+                            cfg.k           = 4;
+                            cfg.repeat      = 5;
+                            cfg.classifier  = 'svm';
+                            cfg.feedback    = 0;
+                            ShuffData_16x16{1,strcmp(ShuffData_16x16(2,:),'SVM')}(permi,ct_p,tp) = mv_classify(cfg, Sur_trial, [ones(1,size(sur_trial1,1)) 2*ones(1,size(sur_trial2,1))]');
+                        end
+
+                        % Distance Correlation (Brownian Correlation)
+%                         if(sum(strcmp(meas16,'DistCorr')) > 0)
+%                             ShuffData_16x16{1,strcmp(ShuffData_16x16(2,:),'DistCorr')}(permi,ct_p,tp) = distCorr(x, y);
+%                         end
+                        
+                    end
+                    
+                end
+                ct_p = ct_p + 1;
+                
             end
             ct_y = ct_y + 1;
         end

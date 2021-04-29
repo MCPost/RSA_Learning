@@ -32,11 +32,13 @@ Electrodes_ROIs
     rsa_cfg.slide_step = 0.008;
     rsa_cfg.window_average = 'gaussian';
     rsa_cfg.meas128 = '';
-    rsa_cfg.meas16 = {'LDA', 'SVM', 'euclidian', 'euclidian w.c.c.'};
+    rsa_cfg.meas16 = {'LDA', 'SVM', 'euclidian'};
     rsa_cfg.MNN = true;
-    rsa_cfg.Cktl_blank_rm = true;
+    rsa_cfg.Cktl_blank_rm = false;
     rsa_cfg.only16 = true;
     rsa_cfg.noMDS = true;
+    rsa_cfg.labelshuffperm = true;
+    rsa_cfg.n_perms = 1000;
     
     rsa_cfg.curROI = ROI_occ_idx;
     rsa_cfg.curROI_name = 'occipital';
@@ -49,10 +51,6 @@ Electrodes_ROIs
     rsa_cfg.curROI = ROI_front_idx;
     rsa_cfg.curROI_name = 'frontal';
     RSA_Data.(['RSA_Data_',Subj_names{sub}]).FRT = createRSA(rsa_cfg);
-    
-    rsa_cfg.curROI = ROI_cent_idx;
-    rsa_cfg.curROI_name = 'central';
-    RSA_Data.(['RSA_Data_',Subj_names{sub}]).CNT = createRSA(rsa_cfg);
     
     rsa_cfg.curROI = ROI_pari_idx;
     rsa_cfg.curROI_name = 'parietal';

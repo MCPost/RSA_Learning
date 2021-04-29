@@ -66,10 +66,10 @@ msr = 1;
 
 %% Cross-correlate RSA time courses for each subject
 
-save('CrossComp_RSA_newMeth1','Subj_names')
-save('CrossComp_RSA_newMeth2','Subj_names')
-save('CrossComp_RSA_newMeth3','Subj_names')
-save('CrossComp_RSA_newMeth4','Subj_names')
+%save('CrossComp_RSA_newMeth1','Subj_names')
+%save('CrossComp_RSA_newMeth2','Subj_names')
+%save('CrossComp_RSA_newMeth3','Subj_names')
+%save('CrossComp_RSA_newMeth4','Subj_names')
 
 c = parcluster();
 jobHandles = cell(4,1);
@@ -236,7 +236,6 @@ for sub = 1:length(Subj_names)
         RSA_Data_Enc.OCC_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.curROI; 
         RSA_Data_Enc.TMP_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).TMP.curROI;
         RSA_Data_Enc.FRT_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).FRT.curROI;
-        RSA_Data_Enc.CNT_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).CNT.curROI;
         RSA_Data_Enc.PRT_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).PRT.curROI;
 
         RSA_Data_Ret.Names   = Subj_names;
@@ -248,7 +247,6 @@ for sub = 1:length(Subj_names)
         RSA_Data_Ret.OCC_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.curROI; 
         RSA_Data_Ret.TMP_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).TMP.curROI;
         RSA_Data_Ret.FRT_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).FRT.curROI;
-        RSA_Data_Ret.CNT_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).CNT.curROI;
         RSA_Data_Ret.PRT_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).PRT.curROI;
 
     end
@@ -257,26 +255,22 @@ for sub = 1:length(Subj_names)
         RSA_Data_Enc.OCC.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Enc.TMP.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Enc.FRT.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_full{1,msr},[3 1 2]);
-        RSA_Data_Enc.CNT.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Enc.PRT.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_full{1,msr},[3 1 2]);
     end
     RSA_Data_Enc.OCC.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Enc.TMP.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Enc.FRT.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_16{1,msr},[3 1 2]);
-    RSA_Data_Enc.CNT.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Enc.PRT.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_16{1,msr},[3 1 2]);
 
     if(~isempty(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full))
         RSA_Data_Ret.OCC.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Ret.TMP.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Ret.FRT.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_full{1,msr},[3 1 2]);
-        RSA_Data_Ret.CNT.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Ret.PRT.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_full{1,msr},[3 1 2]);
     end
     RSA_Data_Ret.OCC.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Ret.TMP.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Ret.FRT.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_16{1,msr},[3 1 2]);
-    RSA_Data_Ret.CNT.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Ret.PRT.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_16{1,msr},[3 1 2]);
 
     RSA_Data_Enc.Encoding_Data{sub} = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.Encoding_Data;
@@ -333,19 +327,6 @@ for sub = 1:length(Subj_names)
         RSA_Time_Enc.FRT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
         RSA_Time_Enc.FRT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
         RSA_Time_Enc.FRT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-        % Central
-        cur_data = squeeze(RSA_Data_Enc.CNT.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time_Enc.CNT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time_Enc.CNT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time_Enc.CNT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time_Enc.CNT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time_Enc.CNT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time_Enc.CNT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time_Enc.CNT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time_Enc.CNT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
         
         % Parietal
         cur_data = squeeze(RSA_Data_Enc.PRT.red16_Data(sub,tp,:,:));
@@ -404,19 +385,6 @@ for sub = 1:length(Subj_names)
         RSA_Time_Ret.FRT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
         RSA_Time_Ret.FRT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
         
-        % Central
-        cur_data = squeeze(RSA_Data_Ret.CNT.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time_Ret.CNT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time_Ret.CNT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time_Ret.CNT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time_Ret.CNT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time_Ret.CNT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time_Ret.CNT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time_Ret.CNT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time_Ret.CNT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
         % Parietal
         cur_data = squeeze(RSA_Data_Ret.PRT.red16_Data(sub,tp,:,:));
         % Perceptual Dimension
@@ -443,12 +411,12 @@ tmp_struct = load(['CrossComp_RSA_newMeth',num2str(msr)]);
 tmp_fnames = fieldnames(tmp_struct);
 
 method = {'Corr','Meth1_per','Meth1_sem'};
-mth = 3;
+mth = 1;
 
 CrossComp_Data.RSA_red16 = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).RSA_red16;
 %CrossComp_Data.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).CorrPermTest;
 %CrossComp_Data.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).Meth1_per_PermTest;
-CrossComp_Data.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).Meth1_sem_PermTest;
+%CrossComp_Data.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).Meth1_sem_PermTest;
 TimeX = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).TimeVec1;
 TimeY = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).TimeVec2;
 
@@ -490,20 +458,31 @@ cfg.TimeVec = RSA_Data_Ret.TimeVec;
 Results4 = rsa_perm(cfg, RSA_Data_Ret.(ROI{r2}).red16_Data);
 
 
-enc_lim = [-0.2 1];
+cfg = [];
+cfg.nPerms = 1000;
+cfg.thresh_pval = 0.05;
+cfg.mcc_cluster_pval = 0.05;
+cfg.twoside = true;
+Results5 = PermTestRNDCP2D(cfg, CrossComp_Data.RSA_red16.(ROI{r1}).(method{2}));
+Results6 = PermTestRNDCP2D(cfg, CrossComp_Data.RSA_red16.(ROI{r2}).(method{3}));
+
+
+enc_lim = [-0.2 1.0];
 ret_lim = [-2.5 0.2];
 
 figure('Pos',[189 137 1531 782])
 
 h1 = subplot(1,2,1);
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r1}).(method{mth}),1)), 40,'linestyle','none'); colorbar
-caxis([-.005 .005]); set(h1,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r1}).(method{1}),1)), 40,'linestyle','none'); colorbar
+caxis([-.05 .05]); set(h1,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
 title(ROI_names{r1});
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-zmapthresh = CrossComp_Data.zmapthresh.(ROI{r1}).zmapthresh; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+if(Results5.H == 1)
+    zmapthresh = Results.zmapthresh; zmapthresh(isnan(zmapthresh)) = 0; zmapthresh(zmapthresh ~= 0) = 1;
+    contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+end
 hold off
 
 aspect = get(h1,'PlotBoxAspectRatio');
@@ -545,14 +524,16 @@ ylabel('Retrieval')
 
 
 h4 = subplot(1,2,2);
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r2}).(method{mth}),1)), 40,'linestyle','none'); colorbar
-caxis([-.005 .005]); set(h4,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.(ROI{r2}).(method{1}),1)), 40,'linestyle','none'); colorbar
+caxis([-.05 .05]); set(h4,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
 title(ROI_names{r2});
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-zmapthresh = CrossComp_Data.zmapthresh.(ROI{r2}).zmapthresh; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+if(Results6.H == 1)
+    zmapthresh = Results6.zmapthresh; zmapthresh(isnan(zmapthresh)) = 0; zmapthresh(zmapthresh ~= 0) = 1;
+    contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+end
 hold off
 
 aspect = get(h4,'PlotBoxAspectRatio');
@@ -593,5 +574,11 @@ set(h6,'xdir','reverse')
 ylabel('Retrieval')
 
 set([h1 h2 h3 h4 h5 h6],'Units','normalized')
+
+
+
+
+
+
 
 

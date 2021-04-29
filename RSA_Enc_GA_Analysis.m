@@ -9,7 +9,7 @@ load('RSA_Data_Enc','Subj_names')
 Electrodes_ROIs
 
 %% Measure
-msr = 3;
+msr = 1;
 
 
 %% Create Data
@@ -28,7 +28,6 @@ for sub = 1:length(Subj_names)
         RSA_Data.OCC_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.curROI; 
         RSA_Data.TMP_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).TMP.curROI;
         RSA_Data.FRT_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).FRT.curROI;
-        RSA_Data.CNT_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).CNT.curROI;
         RSA_Data.PRT_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).PRT.curROI;
     else
         RSA_Data.Encoding_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.Encoding_Data;
@@ -39,13 +38,11 @@ for sub = 1:length(Subj_names)
         RSA_Data.OCC.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full{1,msr},[3 1 2]);
         RSA_Data.TMP.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_full{1,msr},[3 1 2]);
         RSA_Data.FRT.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_full{1,msr},[3 1 2]);
-        RSA_Data.CNT.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_full{1,msr},[3 1 2]);
         RSA_Data.PRT.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_full{1,msr},[3 1 2]);
     end
     RSA_Data.OCC.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_16{1,msr},[3 1 2]);
     RSA_Data.TMP.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_16{1,msr},[3 1 2]);
     RSA_Data.FRT.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_16{1,msr},[3 1 2]);
-    RSA_Data.CNT.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_16{1,msr},[3 1 2]);
     RSA_Data.PRT.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_16{1,msr},[3 1 2]);
 end
 
@@ -167,19 +164,6 @@ for sub = 1:length(Subj_names)
         RSA_Time.FRT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
         RSA_Time.FRT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
         
-        % Central
-        cur_data = squeeze(RSA_Data.CNT.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time.CNT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time.CNT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time.CNT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time.CNT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time.CNT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time.CNT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time.CNT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time.CNT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
         % Parietal
         cur_data = squeeze(RSA_Data.PRT.red16_Data(sub,tp,:,:));
         % Perceptual Dimension
@@ -214,7 +198,7 @@ cfg.twoside = true;
 
 % Plot RSA Time series
 
-ROI = {'OCC','TMP','FRT','CNT','PRT'}; r = 3;
+ROI = {'OCC','TMP','FRT','PRT'}; r = 3;
 Cat = {'Perceptual','Semantic'}; c = 1;
 dt = 3:4;
 
@@ -308,7 +292,37 @@ close(gcf)
 %% Plot RSA Matrices Timeseries
 
 
-ROI = {'OCC','TMP','FRT','CNT','PRT'}; 
+ROI = {'OCC','TMP','FRT','PRT'}; 
+
+[a,b] = unique(RSA_Data.TrialInfo{1,1}(1:64,10),'stable');
+Cat_names = strcat(strrep(strrep(RSA_Data.TrialInfo{1,1}([b;b+64],6),'Picture','Pic'),'Drawing','Dr'), {' - '}, [a;a]);
+
+
+% Plot Single GA Matrix
+
+r = 1;
+tp = 0.2; % s
+
+calc_dat = nanmean(RSA_Data.(ROI{r}).red16_Data(:,:),1);
+calc_dat(calc_dat == 0) = [];
+colb_lim = prctile(calc_dat, [2.5 97.5]);
+
+figure
+[~,t_idx] = min(abs(RSA_Data.TimeVec - tp));
+cur_data = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,t_idx,:,:),1));
+imagesc(cur_data);
+colorbar
+axis square
+set(gca,'clim',colb_lim,'xtick',1:16,'xticklabels',Cat_names,'XTickLabelRotation',55,...
+    'ytick',1:16,'yticklabels',Cat_names, 'TickLength',[0 0])
+title('OCC Encoding at 200 ms')
+
+
+
+
+
+
+ROI = {'OCC','TMP','FRT','PRT'}; 
 
 [a,b] = unique(RSA_Data.TrialInfo{1,1}(1:64,10),'stable');
 Cat_names = strcat(strrep(strrep(RSA_Data.TrialInfo{1,1}([b;b+64],6),'Picture','Pic'),'Drawing','Dr'), {' - '}, [a;a]);
@@ -331,7 +345,7 @@ cur_data = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,t_idx,:,:),1));
 if(clim_wi)
     colb_lim = prctile(cur_data(cur_data(:) ~= 0), [2.5 97.5]);
 end
-imagesc(cur_data+cur_data');
+imagesc(cur_data+cur_data);
 colorbar
 axis square
 set(gca,'clim',colb_lim,'xtick',1:16,'xticklabels',Cat_names,'XTickLabelRotation',55,...
@@ -376,7 +390,7 @@ set(cl,'Pos', [0.92 pos_val(2) 0.0119 pos_val(4)],'Xtick',linspace(colb_lim(1),c
 %% RDM with Categories
 
 
-ROI = {'OCC','TMP','FRT','CNT','PRT'};
+ROI = {'OCC','TMP','FRT','PRT'};
 Dim_names = {};
 
 [a,b] = unique(RSA_Data.TrialInfo{1,1}(1:64,6),'stable');
@@ -427,6 +441,72 @@ text(17.2,5,Dim_names{2,1}{2},'fontsize',13,'Rotation',-90)
 text(17.2,9,Dim_names{2,1}{3},'fontsize',13,'Rotation',-90)
 text(17.2,13,Dim_names{2,1}{4},'fontsize',13,'Rotation',-90)
 set(h1,'Units','normalized')
+
+
+
+
+ROI = {'OCC','TMP','FRT','CNT','PRT'}; r = 1;
+Cat = {'Perceptual','Semantic'}; c = 1;
+dt = 3:4;
+tps = [-0.05 0.05 0.1 0.2 0.4 0.6];
+%tps = [-0.05 0.1 0.3 0.4 0.5 0.6];
+
+figure('Pos', [222 82 1391 898]);
+subplot(4,6,1:18)
+plot([]); hold on
+Dat_names = fieldnames(RSA_Time.(ROI{r}).(Cat{c}));
+dat1 = nanmean(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),1);
+dat2 = nanmean(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(2)})(:,:),1);
+SEM1 = nanstd(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),0,1)./sqrt(size(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)}),1));
+SEM2 = nanstd(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),0,1)./sqrt(size(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)}),1));
+fill([TimeVec fliplr(TimeVec)],[dat1 fliplr(dat1 + SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec fliplr(TimeVec)],[dat1 fliplr(dat1 - SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec fliplr(TimeVec)],[dat2 fliplr(dat2 + SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec fliplr(TimeVec)],[dat2 fliplr(dat2 - SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
+h1 = plot(TimeVec, dat1,'b','linewidth',2);
+h2 = plot(TimeVec, dat2,'r','linewidth',2);
+hold off
+ylabel(RSA_Data.meas16{msr}); title([ROI{r},': ', Cat{c}])
+xlim([-0.1 0.8]);lg = legend([h1 h2], {Dat_names{dt(1)},Dat_names{dt(2)}}); legend boxoff; set(lg,'FontSize',14)
+box off; %ylim([0.42 0.6])
+set(gca,'linewidth',2.5,'FontSize',14)
+for sbp = 1:length(tps)
+    h1 = subplot(4,6,18+sbp,'Units','pixels','xlim',[0 18],'ylim',[0 18]);
+    [~,t_idx] = min(abs(RSA_Data.TimeVec - tps(sbp)));
+    cur_data = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,t_idx,:,:),1));
+    if(clim_wi)
+        colb_lim = [0.45 0.57];
+    end
+    imagesc(cur_data);
+    axis square
+    grid on
+    set(get(gca,'Yruler'),'Minortick',Dim_names{2,2}(1,:))
+    set(get(gca,'Xruler'),'Minortick',Dim_names{2,2}(1,:))
+    set(gca,'clim',colb_lim,'xtick',Dim_names{1,2}(1,:),'xticklabels',[],...
+            'ytick',Dim_names{1,2}(2,:),'yticklabels',[], 'TickLength',[0 0],'XMinorgrid','on','YMinorgrid','on',...
+            'gridcolor','w','gridalpha',.9,'minorgridlinestyle','--','minorgridalpha',.5,'MinorGridColor','w')
+    xlabel(sprintf('%2.0f ms',tps(sbp)*1000))
+end
+%pos = get(h1,'pos');
+%set(h1,'pos',pos)
+text(3,-1.4,Dim_names{1,1}{1}(1:3),'fontsize',9)
+text(11,-1.4,Dim_names{1,1}{2}(1:3),'fontsize',9)
+text(18.2,3,Dim_names{1,1}{1}(1:3),'fontsize',9,'Rotation',-90)
+text(18.2,11,Dim_names{1,1}{2}(1:3),'fontsize',9,'Rotation',-90)
+text(1,-0.3,Dim_names{2,1}{1}(1:3),'fontsize',9)
+text(5,-0.3,Dim_names{2,1}{2}(1:3),'fontsize',9)
+text(9,-0.3,Dim_names{2,1}{3}(1:3),'fontsize',9)
+text(13,-0.3,Dim_names{2,1}{4}(1:3),'fontsize',9)
+text(17.2,1,Dim_names{2,1}{1}(1:3),'fontsize',9,'Rotation',-90)
+text(17.2,5,Dim_names{2,1}{2}(1:3),'fontsize',9,'Rotation',-90)
+text(17.2,9,Dim_names{2,1}{3}(1:3),'fontsize',9,'Rotation',-90)
+text(17.2,13,Dim_names{2,1}{4}(1:3),'fontsize',9,'Rotation',-90)
+%set(h1,'Units','normalized')
+
+
+
+%saveas(gcf,sprintf('Results/%s_16_%s_LDA_%s.png',ROI{r},Cat{c},datanames{d}))
+%close(gcf)
 
 
 

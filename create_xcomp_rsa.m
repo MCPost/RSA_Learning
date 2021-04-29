@@ -155,7 +155,7 @@ for r = 1:length(curROI)
             curData1_tr = tiedrank_(curData1,1);
             curData2_tr = tiedrank_(curData2,1);
             
-            Corr(:,tp2,tp1) = fast_corr(curData1_tr,curData2_tr)';
+            Corr(:,tp2,tp1) = atanh(fast_corr(curData1_tr,curData2_tr)');
             
             % Weighted Correlation
             %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, per_ind);
@@ -199,92 +199,6 @@ for r = 1:length(curROI)
     CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem = Meth1_sem;
     
     if(permtest)
-        
-%         surr_zdata = bsxfun(@rdivide, bsxfun(@minus, SurCorr, nanmean(SurCorr,1)), nanstd(SurCorr,0,1));
-%         %figure 
-%         %subplot(2,4,1); a = nanmean(SurCorr,1); hist(a(:), 35);
-%         %subplot(2,4,5); b = nanstd(SurCorr,0,1); hist(b(:),35);
-%         %subplot(2,4,2); hist(SurCorr(1,:),35);
-%         %subplot(2,4,6); hist(SurCorr(1,:),35);
-%         %subplot(2,4,3); c = bsxfun(@minus, SurCorr, a); hist(c(:),35);
-%         %subplot(2,4,7); d = bsxfun(@rdivide, SurCorr, b); hist(d(:),35);
-%         %subplot(2,4,4); e = bsxfun(@rdivide, c, b); hist(e(:),35);
-%         
-%         %surr_zdata = bsxfun(@rdivide, SurCorr, nanstd(SurCorr,0,1));
-%         max_pixel_pvals     = zeros(n_perms, 2);
-%         max_clust_info_pos  = zeros(n_perms, 2);
-%         max_clust_info_neg  = zeros(n_perms, 2);
-%         for permi = 1:n_perms
-%             
-%             % save maximum pixel values
-%             max_pixel_pvals(permi,:) = [ min(surr_zdata(permi,:)) max(surr_zdata(permi,:)) ];
-% 
-%             pos_clustmap = squeeze(surr_zdata(permi,:,:));
-%             pos_clustmap(pos_clustmap < norminv(1-thresh_pval/2)) = 0;
-%             neg_clustmap = squeeze(surr_zdata(permi,:,:));
-%             neg_clustmap(neg_clustmap > norminv(thresh_pval/2)) = 0;
-% 
-%             % get number of elements in largest supra-threshold cluster
-%             clust_struct_pos = bwconncomp(pos_clustmap);
-%             if(~isempty(clust_struct_pos.PixelIdxList))
-%                 max_clust_info_pos(permi,:) = [max(cellfun(@length, clust_struct_pos.PixelIdxList))   sum(pos_clustmap(clust_struct_pos.PixelIdxList{find(cellfun(@length, clust_struct_pos.PixelIdxList) == max(cellfun(@length, clust_struct_pos.PixelIdxList)),1,'first')}))];
-%             else
-%                 max_clust_info_pos(permi,:) = [0 0];
-%             end
-% 
-%             clust_struct_neg = bwconncomp(neg_clustmap);
-%             if(~isempty(clust_struct_neg.PixelIdxList))
-%                 max_clust_info_neg(permi,:) = [max(cellfun(@length, clust_struct_neg.PixelIdxList))   sum(neg_clustmap(clust_struct_neg.PixelIdxList{find(cellfun(@length, clust_struct_neg.PixelIdxList) == max(cellfun(@length, clust_struct_neg.PixelIdxList)),1,'first')}))];
-%             else
-%                 max_clust_info_neg(permi,:) = [0 0];
-%             end
-%             clear clust_struct_pos clust_struct_neg pos_clustmap neg_clustmap
-%             
-%         end
-%         
-%         real_zdata = squeeze(bsxfun(@rdivide, bsxfun(@minus, nanmean(atanh(CrossComp_RSA.RSA_red16.(curROI{r})),1), nanmean(SurCorr,1)), nanstd(SurCorr,0,1)));
-%         zmapthresh_pos = real_zdata;
-%         zmapthresh_pos(zmapthresh_pos < norminv(1-thresh_pval*ts_os_fac)) = 0;
-%         [clustmap,Num] = bwlabel(zmapthresh_pos);  clustinfo_pos = zeros(Num,3);
-%         for cl = 1:Num
-%             clustinfo_pos(cl,1) = cl;
-%             clustinfo_pos(cl,2) = sum(clustmap(:) == cl);
-%             clustinfo_pos(cl,3) = sum(zmapthresh_pos(clustmap(:) == cl));
-%         end
-%         clust_threshold = prctile(max_clust_info_pos(:,2),100-(mcc_cluster_pval*ts_os_fac)*100);
-%         if(Num > 0)
-%             for i = 1:size(clustinfo_pos)
-%                 if(clustinfo_pos(i,3) < clust_threshold) 
-%                     zmapthresh_pos(clustmap == clustinfo_pos(i,1)) = 0;
-%                 end
-%             end
-%         end
-%         clear cl i Num clustmap
-% 
-%         zmapthresh_neg = real_zdata;
-%         zmapthresh_neg(zmapthresh_neg > norminv(thresh_pval*ts_os_fac)) = 0;
-%         [clustmap,Num] = bwlabel(zmapthresh_neg);  clustinfo_neg = zeros(Num,3);
-%         for cl = 1:Num
-%             clustinfo_neg(cl,1) = cl;
-%             clustinfo_neg(cl,2) = sum(clustmap(:) == cl);
-%             clustinfo_neg(cl,3) = sum(zmapthresh_neg(clustmap(:) == cl));
-%         end
-%         clust_threshold = prctile(max_clust_info_neg(:,2),(mcc_cluster_pval*ts_os_fac)*100);
-%         if(Num > 0)
-%             for i = 1:size(clustinfo_neg)
-%                 if(clustinfo_neg(i,3) > clust_threshold) 
-%                     zmapthresh_neg(clustmap == clustinfo_neg(i,1)) = 0;
-%                 end
-%             end
-%         end
-%         clear cl i Num clustmap
-%         
-%         CrossComp_RSA.real_zdata{r}          = real_zdata;
-%         CrossComp_RSA.max_pixel_pvals{r}     = max_pixel_pvals;
-%         CrossComp_RSA.max_clust_info_pos{r}  = max_clust_info_pos;
-%         CrossComp_RSA.max_clust_info_neg{r}  = max_clust_info_neg;
-%         CrossComp_RSA.zmapthresh{r} = zmapthresh_pos + zmapthresh_neg;
-%         CrossComp_RSA.zmapthresh{r}(CrossComp_RSA.zmapthresh{r} == 0) = NaN;
 
         CrossComp_RSA.CorrPermTest.(curROI{r})       = get_sign_cluster(SurCorr, CrossComp_RSA.RSA_red16.(curROI{r}).Corr, thresh_pval, ts_os_fac, mcc_cluster_pval);
         CrossComp_RSA.Meth1_per_PermTest.(curROI{r}) = get_sign_cluster(SurMeth1_per, CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per, thresh_pval, ts_os_fac, mcc_cluster_pval);
@@ -370,7 +284,7 @@ for permi = 1:size(SurData,1)
 
 end
 
-real_zdata = squeeze(bsxfun(@rdivide, bsxfun(@minus, nanmean(atanh(RealData),1), nanmean(SurData,1)), nanstd(SurData,0,1)));
+real_zdata = squeeze(bsxfun(@rdivide, bsxfun(@minus, nanmean(RealData,1), nanmean(SurData,1)), nanstd(SurData,0,1)));
 zmapthresh_pos = real_zdata;
 zmapthresh_pos(zmapthresh_pos < norminv(1-thresh_pval*ts_os_fac)) = 0;
 [clustmap,Num] = bwlabel(zmapthresh_pos);  clustinfo_pos = zeros(Num,3);

@@ -687,41 +687,41 @@ for m2 = 1:length(mus2)
                 %F = (SS_res1 - SS_res2)/(SS_res2 / (N*(0.5*N -1) - 3));
                 %NMeas_Cell{m2,m1}(c2,c1) = abs(f2z_bloc(F,1,N*(0.5*N -1) - 3))*atanh(cor_all);
                 
-                %%y = (cur_data_all(:,1) - mean(cur_data_all(:))) .* (cur_data_all(:,2) - mean(cur_data_all(:)));
-                %y = tiedrank_(R(:,1) .* R(:,2),1);
-                %X = [kron([1;0], ones(0.5*N*(0.5*N -1),1)) kron([0;1], ones(0.5*N*(0.5*N -1),1))];
-                %SS_tot = (y - mean(y))' * (y - mean(y));
-                %SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
-                %NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(1 - SS_res/SS_tot)) * atanh(cor_all);
+                %y = (cur_data_all(:,1) - mean(cur_data_all(:))) .* (cur_data_all(:,2) - mean(cur_data_all(:)));
+                y = tiedrank_(R(:,1) .* R(:,2),1);
+                X = [kron([1;0], ones(0.5*N*(0.5*N -1),1)) kron([0;1], ones(0.5*N*(0.5*N -1),1))];
+                SS_tot = (y - mean(y))' * (y - mean(y));
+                SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
+                NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(max(1 - SS_res/SS_tot,0))) * atanh(cor_all);
                 
                 %[~,~,stats] = manova1(cur_data_all,[repmat({'sub1'},0.5*N*(0.5*N -1),1); repmat({'sub2'},0.5*N*(0.5*N -1),1)]);
                 %NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(1 - min(stats.lambda,1))) * atanh(cor_all);
                 
-                X = [kron([1;0], ones(0.5*N*(0.5*N -1),1)) kron([0;1], ones(0.5*N*(0.5*N -1),1))];
+                %X = [kron([1;0], ones(0.5*N*(0.5*N -1),1)) kron([0;1], ones(0.5*N*(0.5*N -1),1))];
                 
-                dat1 = R(logical(X(:,1)),:); dat2 = R(logical(X(:,2)),:);
-                y1_m = mean(dat1,1);
-                y2_m = mean(dat2,1);
-                S1 = cov(dat1);
-                S2 = cov(dat2);
-                S = ((0.5*N*(0.5*N -1)-1)*S1 + (0.5*N*(0.5*N -1)-1)*S2)/(N*(0.5*N -1)-2);
+                %dat1 = R(logical(X(:,1)),:); dat2 = R(logical(X(:,2)),:);
+                %y1_m = mean(dat1,1);
+                %y2_m = mean(dat2,1);
+                %S1 = cov(dat1);
+                %S2 = cov(dat2);
+                %S = ((0.5*N*(0.5*N -1)-1)*S1 + (0.5*N*(0.5*N -1)-1)*S2)/(N*(0.5*N -1)-2);
                 
-                T2 = ((y1_m - y2_m)/inv(S)*(y1_m - y2_m)')*((0.5*N*(0.5*N -1)*0.5*N*(0.5*N -1))/(N*(0.5*N -1)));
-                F = T2*((N*(0.5*N -1) - 3) / (2*(N*(0.5*N -1) - 2)));
-                NMeas_Cell{m2,m1}(c2,c1) = f2z_bloc(F,1,N*(0.5*N -1) - 3);%*atanh(cor_all);
+                %T2 = ((y1_m - y2_m)/inv(S)*(y1_m - y2_m)')*((0.5*N*(0.5*N -1)*0.5*N*(0.5*N -1))/(N*(0.5*N -1)));
+                %F = T2*((N*(0.5*N -1) - 3) / (2*(N*(0.5*N -1) - 2)));
+                %NMeas_Cell{m2,m1}(c2,c1) = f2z_bloc(F,1,N*(0.5*N -1) - 3);%*atanh(cor_all);
                 
             end
         end
         
     end
 end
-prctile(NMeas_Cell{5,1}(:),[1 99])
+prctile(NMeas_Cell{3,3}(:),[1 99])
 
 figure('Pos',[164 67 1504 926])
 Data = NMeas_Cell';
 tmp_max = cell2mat(cellfun(@(x) max(x(:)), Data,'UniformOutput',0));
 tmp_min = cell2mat(cellfun(@(x) min(x(:)), Data,'UniformOutput',0));
-c_limit = [-8 8]; %prctile(NMeas_Cell{3,3}(:),[1 99]);%[min(tmp_min(:))+0.9 max(tmp_max(:))-1];
+c_limit = [-0.3 0.3]; %prctile(NMeas_Cell{3,3}(:),[1 99]);%[min(tmp_min(:))+0.9 max(tmp_max(:))-1];
 phase_shift = [1.2 0.6 0 -0.6 -1.2];
 for sbp = 1:25
     h1 = subplot(5,5,sbp);
@@ -1131,6 +1131,36 @@ for i = 1:10000
     
 end
 Dur_Meth(2,1) = toc;
+
+
+
+
+
+N = 56;
+
+mu = [0 0; 3 3];
+sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
+%rng('default')  % For reproducibility
+R = [];
+R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
+R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
+
+figure('Pos', [326   500   619   483])
+scatter(R(1:56,1),R(1:56,2),'ro','MarkerFaceColor','r','MarkerEdgeColor','r');
+hold on
+scatter(R(57:end,1),R(57:end,2),'go','MarkerFaceColor','g','MarkerEdgeColor','g')
+set(gca,'xlim',[-3.5 6.5], 'ylim',[-3.5 6.5])
+B = polyfit(R(:,1), R(:,2),1);
+ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
+text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
+B = polyfit(R(1:N,1), R(1:N,2),1);
+ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
+text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
+B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
+ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
+text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
+hold off
+
 
 
 
