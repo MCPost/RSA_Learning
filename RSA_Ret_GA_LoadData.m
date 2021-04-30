@@ -37,7 +37,7 @@ Electrodes_ROIs
     rsa_cfg.Cktl_blank_rm = false;
     rsa_cfg.only16 = true;
     rsa_cfg.noMDS = true;
-    rsa_cfg.labelshuffperm = true;
+    rsa_cfg.labelshuffperm = false;
     rsa_cfg.n_perms = 1000;
     
     rsa_cfg.curROI = ROI_occ_idx;

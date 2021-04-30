@@ -484,6 +484,9 @@ fprintf('\n')
 %% Save Data
 RSA_Data.RSA_16         = RSA_Mat_16x16;
 RSA_Data.rsa_dim        = 'trl_trl_time';
+if(labelshuffperm)
+    RSA_Data.ShuffData  = ShuffData_16x16;
+end
 if(~noMDS)
     RSA_Data.MDS_16         = MDS_Mat_16x16;
     RSA_Data.mds_dim        = 'trl_component_time';
