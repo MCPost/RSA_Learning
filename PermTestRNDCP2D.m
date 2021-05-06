@@ -29,7 +29,7 @@ for permi = 1:nPerms
     
     waitbar(permi/nPerms,h,sprintf('%d of %d Permutation finished!',permi,nPerms))
 end
-
+close(h)
 
 %% Get Surrogate Clusters
 surr_zdata = bsxfun(@rdivide, bsxfun(@minus, SurData, nanmean(SurData,1)), nanstd(SurData,0,1));
@@ -82,6 +82,8 @@ if(Num > 0)
         if(clustinfo_pos(i,3) < clust_threshold) 
             zmapthresh_pos(clustmap == clustinfo_pos(i,1)) = 0;
         end
+        clustinfo_pos(i,4) = mean(max_clust_info_pos(:,1) > clustinfo_pos(i,2));
+        clustinfo_pos(i,5) = mean(max_clust_info_pos(:,2) > clustinfo_pos(i,3));
     end
 end
 clear cl i Num clustmap
@@ -100,6 +102,8 @@ if(Num > 0)
         if(clustinfo_neg(i,3) > clust_threshold) 
             zmapthresh_neg(clustmap == clustinfo_neg(i,1)) = 0;
         end
+        clustinfo_neg(i,4) = mean(max_clust_info_neg(:,1) > clustinfo_neg(i,2));
+        clustinfo_neg(i,5) = mean(max_clust_info_neg(:,2) < clustinfo_neg(i,3));
     end
 end
 clear cl i Num clustmap
@@ -108,9 +112,11 @@ Results.real_zdata          = real_zdata;
 Results.max_pixel_pvals     = max_pixel_pvals;
 Results.max_clust_info_pos  = max_clust_info_pos;
 Results.max_clust_info_neg  = max_clust_info_neg;
+Results.clustinfo_pos       = clustinfo_pos;
+Results.clustinfo_neg       = clustinfo_neg;
 Results.zmapthresh = zmapthresh_pos + zmapthresh_neg;
 Results.zmapthresh(Results.zmapthresh == 0) = NaN;
-if(isempty(~isnan(Results.zmapthresh)))
+if(sum(~isnan(Results.zmapthresh(:))) > 0)
     Results.H = 1;
 else
     Results.H = 0;

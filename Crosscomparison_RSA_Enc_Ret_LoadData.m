@@ -131,17 +131,18 @@ clear tmp_strct_enc tmp_strct_ret
 
 cfg = [];
 cfg.subs             = Subj_names;
-cfg.slide_window     = 0.050;
+cfg.slide_window     = 0.080;
 cfg.slide_step       = 0.010;
+cfg.fwhm             = 0.040;
 cfg.window_average   = 'gaussian';
 cfg.Hyp_perceptual   = {Perceptual_Mat_full Perceptual_Mat_red16}; %{triu(ones(128)).*~eye(128) triu(ones(16)).*~eye(16)}; %{Perceptual_Mat_full Perceptual_Mat_red16};
 cfg.Hyp_semantic     = {Semantic_Mat_full   Semantic_Mat_red16};
-cfg.ROI              = {'OCC','TMP','FRT','PRT'};
-cfg.timewind1        = [-0.2 1];
+cfg.ROI              = {'OCC';'TMP';'FRT';'PRT'};
+cfg.timewind1        = [-0.2 1.5];
 cfg.timewind2        = [-2.5 0.2];
 cfg.only16           = true;
-cfg.permtest         = true;
-cfg.n_perms          = 100;
+cfg.permtest         = false;
+cfg.n_perms          = 1000;
 cfg.thresh_pval      = 0.05;
 cfg.mcc_cluster_pval = 0.05;
 cfg.ts_os_fac        = 1;
@@ -151,6 +152,7 @@ cfg.studentized      = false;
 CrossComp_RSA.(['CrossComp_RSA_',strrep(strrep(measures{msr},' ','_'),'.','')]) = create_xcomp_rsa(cfg, RSA_Data_Enc, RSA_Data_Ret);
 
 %save(['CrossComp_RSA_newMeth',num2str(msr)],'-struct','CrossComp_RSA','-append')
+save(['CrossComp_RSA_sw5'],'-struct','CrossComp_RSA','-append')
 
 end
 

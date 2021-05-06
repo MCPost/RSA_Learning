@@ -63,10 +63,10 @@ text(0,data(index1)*.85,sprintf('FWHM = %2.0f ms',time_scale2(index2) - time_sca
 
 
 
-srate = 1024;
-time_wind = 50;
-full_std = 2.4;
-time_scale = -time_wind/2:1:time_wind/2;
+srate = 128;
+time_wind = 11;
+full_std = 2.9;
+time_scale = 1000*(-(time_wind/2)/srate:(1/srate):(time_wind/2)/srate); % ms
 
 figure('Pos',[649 391 620 513])
 data = gausswin(length(time_scale),full_std)'./sum(gausswin(length(time_scale),full_std)); halfMax = (min(data) + max(data)) / 2;
@@ -75,7 +75,7 @@ index2 = find(data >= halfMax, 1, 'last');
 plot(time_scale, data,'k','linewidth',2)
 hold on
 patch(time_scale([index1 index2 index2 index1]),[0 0 data([index2 index2])],'m','FaceAlpha',0.1,'EdgeColor','r','LineStyle','--','LineWidth',1);
-ylabel('Weight'); xlabel('ms'); title(sprintf('Time Window %i ms; alpha = %2.2f',time_wind,full_std)); ylim([0 0.06]); xlim([time_scale(1) time_scale(end)]);
-text(0,data(index1)*.85,sprintf('FWHM = %2.0f ms',time_scale(index2) - time_scale(index1) + 1),'FontSize',13,'HorizontalAlignment','center')
+ylabel('Weight'); xlabel('ms'); title(sprintf('Time Window %i ms; alpha = %2.2f',time_wind,full_std)); ylim([0 max(data)*1.1]); xlim([time_scale(1) time_scale(end)]);
+text(0,data(index1)*.85,sprintf('FWHM = %6.0f ms',(time_scale(index2) - time_scale(index1))),'FontSize',13,'HorizontalAlignment','center')
 plot([time_scale(1) time_scale(end)],[1/length(time_scale) 1/length(time_scale)], '-b','linewidth',2)
 hold off

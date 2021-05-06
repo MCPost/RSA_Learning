@@ -463,7 +463,7 @@ plotpictures = true;
 
 add_centroid = true;
 
-r = 2;
+r = 1;
 
 TimeVec = RSA_Data.TimeVec;
 CurRSA = RSA_Data.(ROI{r}).red16_Data;
@@ -480,12 +480,12 @@ end
 mds_x_limits = [min(min(squeeze(MDS_Mat(:,1,:)))) max(max(squeeze(MDS_Mat(:,1,:))))];
 mds_y_limits = [min(min(squeeze(MDS_Mat(:,2,:)))) max(max(squeeze(MDS_Mat(:,2,:))))];
 
-chi2_95perc = chi2inv(0.80,2);
+chi2_95perc = chi2inv(0.60,2);
 t = linspace(0, 2*pi, 50);
 mds_dim1 = 1;
 mds_dim2 = 2;
 
-Hyp_Mat = cat(3, Semantic_Mat_red16 > 0, Semantic_Mat_red16 < 0);
+Hyp_Mat = cat(3, Perceptual_Mat_red16 > 0, Perceptual_Mat_red16 < 0);
 
 ts_data = zeros(size(CurRSA,1), size(CurRSA,2), size(Hyp_Mat,3));
 for ts = 1:size(Hyp_Mat,3)
@@ -493,7 +493,7 @@ for ts = 1:size(Hyp_Mat,3)
     ts_data(:,:,ts) = mean(CurRSA(:,:,tmp_hyp(:)),3);
 end
 
-X = kron([1;2;1;2], ones(4,1));
+X = kron([1;2], ones(8,1)); %kron([1;2;1;2], ones(4,1));
 
 posfig = [200 70 1300 900];
 h = figure('Pos', posfig);

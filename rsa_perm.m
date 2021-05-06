@@ -116,6 +116,8 @@ if(Num > 0)
         if(clustinfo_pos(i,3) < clust_threshold) 
             zmapthresh_pos(clustmap == clustinfo_pos(i,1)) = 0;
         end
+        clustinfo_pos(i,4) = mean(max_clust_info_pos(:,1) > clustinfo_pos(i,2));
+        clustinfo_pos(i,5) = mean(max_clust_info_pos(:,2) > clustinfo_pos(i,3));
     end
 end
 clear cl i Num clustmap
@@ -134,6 +136,8 @@ if(Num > 0)
         if(clustinfo_neg(i,3) > clust_threshold) 
             zmapthresh_neg(clustmap == clustinfo_neg(i,1)) = 0;
         end
+        clustinfo_neg(i,4) = mean(max_clust_info_neg(:,1) > clustinfo_neg(i,2));
+        clustinfo_neg(i,5) = mean(max_clust_info_neg(:,2) < clustinfo_neg(i,3));
     end
 end
 clear cl i Num clustmap
