@@ -66,32 +66,134 @@ msr = 1;
 
 %% Cross-correlate RSA time courses for each subject
 
-%save('CrossComp_RSA_newMeth1','Subj_names')
-%save('CrossComp_RSA_newMeth2','Subj_names')
-%save('CrossComp_RSA_newMeth3','Subj_names')
-%save('CrossComp_RSA_newMeth4','Subj_names')
-%save('CrossComp_RSA_sw1','Subj_names')
+% cfg Struct
+cfg = [];
+cfg.subs             = Subj_names;
+cfg.slide_window     = 0.080;
+cfg.slide_step       = 0.010;
+cfg.fwhm             = 0.040;
+cfg.window_average   = 'gaussian';
+cfg.Hyp_perceptual   = {Perceptual_Mat_full Perceptual_Mat_red16}; %{triu(ones(128)).*~eye(128) triu(ones(16)).*~eye(16)}; %{Perceptual_Mat_full Perceptual_Mat_red16};
+cfg.Hyp_semantic     = {Semantic_Mat_full   Semantic_Mat_red16};
+cfg.ROI              = {};
+cfg.timewind1        = [-0.2 1.5];
+cfg.timewind2        = [-2.5 0.2];
+cfg.only16           = true;
+cfg.permtest         = false;
+cfg.n_perms          = 1000;
+cfg.thresh_pval      = 0.05;
+cfg.mcc_cluster_pval = 0.05;
+cfg.ts_os_fac        = 1;
+cfg.matshuffle       = true;
+cfg.studentized      = false;
+
+jobHandles = {};
 
 
-save('CrossComp_RSA_Enc_Ret_diffROI','Subj_names')
+% Encoding to Retrieval, Between ROI, No PermTest
+cfg.permtest         = false;
+cfg.ROI              = {'OCC','TMP';'OCC','FRT';'OCC','PRT';...
+                        'TMP','OCC';'TMP','FRT';'TMP','PRT';...
+                        'FRT','OCC';'FRT','TMP';'FRT','PRT';...
+                        'PRT','OCC';'PRT','TMP';'PRT','FRT'};
+pair = 'Enc - Ret';
+save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_btROI_noperm_msr';
 c = parcluster();
-jobHandles1 = cell(4,1);
+%jobHandles = {};
 for msr = 1:3
-    jobHandles{msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr},'Pool',5);
+    jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
 end
 
 jobHandles{1}
 diary(jobHandles{1})
-
 %delete(jobHandles{1})
 
-save('CrossComp_RSA_Enc_Ret_perm','Subj_names')
+
+% Encoding to Encoding, Within ROI, No PermTest
+cfg.permtest         = false;
+cfg.timewind2        = [-0.2 1.5];
+cfg.ROI              = {'OCC';...
+                        'TMP';...
+                        'FRT';...
+                        'PRT'};
+pair = 'Enc - Enc';
+save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Enc_wiROI_noperm_msr';
+c = parcluster();
+%jobHandles = {};
 for msr = 1:3
-    jobHandles{msr+3} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr},'Pool',5);
+    jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
 end
 
-jobHandles{4}
-diary(jobHandles{4})
+
+% Encoding to Encoding, Between ROI, No PermTest
+cfg.permtest         = false;
+cfg.timewind2        = [-0.2 1.5];
+cfg.ROI              = {'OCC','TMP';'OCC','FRT';'OCC','PRT';...
+                        'TMP','FRT';'TMP','PRT';...
+                        'FRT','PRT'};
+pair = 'Enc - Enc';
+save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Enc_btROI_noperm_msr';
+c = parcluster();
+%jobHandles = {};
+for msr = 1:3
+    jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+end
+
+jobHandles{1}
+diary(jobHandles{1})
+%delete(jobHandles{1})
+
+
+% Retrieval to Retrieval, Within ROI, No PermTest
+cfg.permtest         = false;
+cfg.timewind2        = [-0.2 1.5];
+cfg.ROI              = {'OCC';...
+                        'TMP';...
+                        'FRT';...
+                        'PRT'};
+pair = 'Ret - Ret';
+save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Ret_Ret_wiROI_noperm_msr';
+c = parcluster();
+%jobHandles = {};
+for msr = 1:3
+    jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+end
+
+
+% Retrieval to Retrieval, Between ROI, No PermTest
+cfg.permtest         = false;
+cfg.timewind2        = [-0.2 1.5];
+cfg.ROI              = {'OCC','TMP';'OCC','FRT';'OCC','PRT';...
+                        'TMP','FRT';'TMP','PRT';...
+                        'FRT','PRT'};
+pair = 'Ret - Ret';
+save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Ret_Ret_btROI_noperm_msr';
+c = parcluster();
+%jobHandles = {};
+for msr = 1:3
+    jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+end
+
+jobHandles{1}
+diary(jobHandles{1})
+%delete(jobHandles{1})
+
+
+% % Encoding to Retrieval, Within ROI, PermTest
+% cfg.permtest         = true;
+% cfg.timewind2        = [-2.5 0.2];
+% cfg.ROI              = {'OCC';...
+%                         'TMP';...
+%                         'FRT';...
+%                         'PRT'};
+% pair = 'Enc - Ret';
+% save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_perm_msr';
+% for msr = 1:3
+%     jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+% end
+% 
+% jobHandles{4}
+% diary(jobHandles{4})
 
 
 
@@ -639,3 +741,36 @@ hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
 hold off
+
+
+
+
+
+
+tmp_struct = load('CrossComp_RSA_Enc_Ret_diffROI',['CrossComp_RSA_',measures{msr}]);
+
+Data = tmp_struct.(['CrossComp_RSA_',measures{msr}]).RSA_red16;
+TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
+TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
+
+enc_lim = [-0.1  1.3];
+ret_lim = [-3 -0.8];
+
+figure
+subplot(1,2,1)
+curdat = squeeze(nanmean(Data.OCC_PRT.Corr,1));
+contourf(TimeX, TimeY, curdat, 40,'linestyle','none'); colorbar
+caxis(prctile(curdat(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim); title('OCCIPITAL to PARIETAL'); xlabel('Encoding'); ylabel('Retrieval')
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+hold off
+subplot(1,2,2)
+curdat = squeeze(nanmean(Data.TMP_PRT.Corr,1));
+contourf(TimeX, TimeY, curdat, 40,'linestyle','none'); colorbar
+caxis(prctile(curdat(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim); title('TEMPORAL to PARIETAL'); xlabel('Encoding'); ylabel('Retrieval')
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+hold off
+
