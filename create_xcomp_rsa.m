@@ -181,39 +181,49 @@ for r = 1:size(curROI,1)
 
                 curData1_tr = tiedrank_(curData1,1);
                 curData2_tr = tiedrank_(curData2,1);
+                
+                if(sum(curData1_tr(:,1) ~= curData2_tr(:,1)) ~= 0)
+                    Corr(:,tp2,tp1) = atanh(fast_corr(curData1_tr,curData2_tr)');
 
-                Corr(:,tp2,tp1) = atanh(fast_corr(curData1_tr,curData2_tr)');
-
-                % Weighted Correlation
-                %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, per_ind);
-                %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, sem_ind);
-                [W1_per, W1_sem, W2_per, W2_sem] = weight_corr(curData1, curData2, X1, X2, Xy,Xt1,Xt2,Xd1,Xd2,Xm1,Xm2,Xcv);
-                Meth1_per(:,tp2,tp1) = Corr(:,tp2,tp1) .* W1_per;
-                Meth1_sem(:,tp2,tp1) = Corr(:,tp2,tp1) .* W1_sem;
-                Meth2_per(:,tp2,tp1) = Corr(:,tp2,tp1) .* W2_per;
-                Meth2_sem(:,tp2,tp1) = Corr(:,tp2,tp1) .* W2_sem;
+                    % Weighted Correlation
+                    %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, per_ind);
+                    %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, sem_ind);
+                    [W1_per, W1_sem, W2_per, W2_sem] = weight_corr(curData1, curData2, X1, X2, Xy,Xt1,Xt2,Xd1,Xd2,Xm1,Xm2,Xcv);
+                    Meth1_per(:,tp2,tp1) = Corr(:,tp2,tp1) .* W1_per;
+                    Meth1_sem(:,tp2,tp1) = Corr(:,tp2,tp1) .* W1_sem;
+                    Meth2_per(:,tp2,tp1) = Corr(:,tp2,tp1) .* W2_per;
+                    Meth2_sem(:,tp2,tp1) = Corr(:,tp2,tp1) .* W2_sem;
 
 
-                for permi = 1:n_perms
-                    if(matshuffle)
-                        surData = curData2(All_Shuff_Mat(:,permi),:); % This makes it consistent shuffling between time points
-                        surData_tr = curData2_tr(All_Shuff_Mat(:,permi),:);
-                        %surData = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,Shuff_Mat(Hyp_perceptual{2}(:) > 0)),2,length(time_window2)))',1);
-                    else
-                        surData = curData2_tr(randperm(size(curData2_tr,1)),:);
-                        %surData = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,hyp_idx(randperm(length(hyp_idx)))),2,length(time_window2)))',1);
+                    for permi = 1:n_perms
+                        if(matshuffle)
+                            surData = curData2(All_Shuff_Mat(:,permi),:); % This makes it consistent shuffling between time points
+                            surData_tr = curData2_tr(All_Shuff_Mat(:,permi),:);
+                            %surData = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,Shuff_Mat(Hyp_perceptual{2}(:) > 0)),2,length(time_window2)))',1);
+                        else
+                            surData = curData2_tr(randperm(size(curData2_tr,1)),:);
+                            %surData = tiedrank_(squeeze(average_kern(Data2.(curROI{r}).red16_Data(:,time_window2,hyp_idx(randperm(length(hyp_idx)))),2,length(time_window2)))',1);
+                        end
+                        if(studentized)
+                            mu_22 = nanmean((bsxfun(@minus, curData1_tr, nanmean(curData1_tr,1)).^2).*(bsxfun(@minus, surData, nanmean(surData,1)).^2),1);
+                            SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1_tr,surData)'./sqrt(bsxfun(@rdivide, mu_22, (nanvar(curData_tr1,1,1).*nanvar(surData,1,1))))));
+                        else
+                            SurCorr(permi,tp2,tp1) = mean(atanh(fast_corr(curData1_tr,surData_tr)));
+                            [W1_per, W1_sem, W2_per, W2_sem] = weight_corr(curData1,surData,X1,X2,Xy,Xt1,Xt2,Xd1,Xd2,Xm1,Xm2,Xcv);
+                            SurMeth1_per(permi,tp2,tp1) = mean(atanh(fast_corr(curData1_tr,surData_tr))' .* W1_per);
+                            SurMeth1_sem(permi,tp2,tp1) = mean(atanh(fast_corr(curData1_tr,surData_tr))' .* W1_sem);
+                            SurMeth2_per(permi,tp2,tp1) = mean(atanh(fast_corr(curData1_tr,surData_tr))' .* W2_per);
+                            SurMeth2_sem(permi,tp2,tp1) = mean(atanh(fast_corr(curData1_tr,surData_tr))' .* W2_sem);
+                        end
                     end
-                    if(studentized)
-                        mu_22 = nanmean((bsxfun(@minus, curData1_tr, nanmean(curData1_tr,1)).^2).*(bsxfun(@minus, surData, nanmean(surData,1)).^2),1);
-                        SurCorr(permi,tp2,tp1) = nanmean(atanh(fast_corr(curData1_tr,surData)'./sqrt(bsxfun(@rdivide, mu_22, (nanvar(curData_tr1,1,1).*nanvar(surData,1,1))))));
-                    else
-                        SurCorr(permi,tp2,tp1) = mean(atanh(fast_corr(curData1_tr,surData_tr)));
-                        [W1_per, W1_sem, W2_per, W2_sem] = weight_corr(curData1,surData,X1,X2,Xy,Xt1,Xt2,Xd1,Xd2,Xm1,Xm2,Xcv);
-                        SurMeth1_per(permi,tp2,tp1) = mean(atanh(fast_corr(curData1_tr,surData_tr))' .* W1_per);
-                        SurMeth1_sem(permi,tp2,tp1) = mean(atanh(fast_corr(curData1_tr,surData_tr))' .* W1_sem);
-                        SurMeth2_per(permi,tp2,tp1) = mean(atanh(fast_corr(curData1_tr,surData_tr))' .* W2_per);
-                        SurMeth2_sem(permi,tp2,tp1) = mean(atanh(fast_corr(curData1_tr,surData_tr))' .* W2_sem);
-                    end
+                else
+                    Corr(:,tp2,tp1) = NaN;
+
+                    % Weighted Correlation
+                    Meth1_per(:,tp2,tp1) = NaN;
+                    Meth1_sem(:,tp2,tp1) = NaN;
+                    Meth2_per(:,tp2,tp1) = NaN;
+                    Meth2_sem(:,tp2,tp1) = NaN;
                 end
                 %fprintf(repmat('\b',1,nbytes))
                 %nbytes = fprintf('ROI: %s  --  Progress Cross Correlation: %3.4f %%',ROI_name{r,1},((tp2 + (length(TimeVec2))*(tp1-1)) / (length(TimeVec1)*length(TimeVec2)))*100);
@@ -231,17 +241,25 @@ for r = 1:size(curROI,1)
 
                 curData1_tr = tiedrank_(curData1,1);
                 curData2_tr = tiedrank_(curData2,1);
+                
+                if(sum(curData1_tr(:,1) ~= curData2_tr(:,1)) ~= 0)
+                    Corr(:,tp2,tp1) = atanh(fast_corr(curData1_tr,curData2_tr)');
 
-                Corr(:,tp2,tp1) = atanh(fast_corr(curData1_tr,curData2_tr)');
-
-                % Weighted Correlation
-                %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, per_ind);
-                %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, sem_ind);
-                [W1_per, W1_sem, W2_per, W2_sem] = weight_corr(curData1, curData2, X1, X2, Xy,Xt1,Xt2,Xd1,Xd2,Xm1,Xm2,Xcv);
-                Meth1_per(:,tp2,tp1) = Corr(:,tp2,tp1) .* W1_per;
-                Meth1_sem(:,tp2,tp1) = Corr(:,tp2,tp1) .* W1_sem;
-                Meth2_per(:,tp2,tp1) = Corr(:,tp2,tp1) .* W2_per;
-                Meth2_sem(:,tp2,tp1) = Corr(:,tp2,tp1) .* W2_sem;
+                    % Weighted Correlation
+                    %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_per(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, per_ind);
+                    %CrossComp_RSA.RSA_red16.(curROI{r}).Meth1_sem(:,tp2,tp1) = CrossComp_RSA.RSA_red16.(curROI{r}).Corr(:,tp2,tp1).*weight_corr(curData1_tr, curData2_tr, sem_ind);
+                    [W1_per, W1_sem, W2_per, W2_sem] = weight_corr(curData1, curData2, X1, X2, Xy,Xt1,Xt2,Xd1,Xd2,Xm1,Xm2,Xcv);
+                    Meth1_per(:,tp2,tp1) = Corr(:,tp2,tp1) .* W1_per;
+                    Meth1_sem(:,tp2,tp1) = Corr(:,tp2,tp1) .* W1_sem;
+                    Meth2_per(:,tp2,tp1) = Corr(:,tp2,tp1) .* W2_per;
+                    Meth2_sem(:,tp2,tp1) = Corr(:,tp2,tp1) .* W2_sem;
+                else
+                    Corr(:,tp2,tp1) = NaN;
+                    Meth1_per(:,tp2,tp1) = NaN;
+                    Meth1_sem(:,tp2,tp1) = NaN;
+                    Meth2_per(:,tp2,tp1) = NaN;
+                    Meth2_sem(:,tp2,tp1) = NaN;
+                end
 
             end
             

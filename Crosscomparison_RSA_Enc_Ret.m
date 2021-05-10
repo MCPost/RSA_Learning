@@ -699,9 +699,9 @@ set([h1 h2 h3 h4 h5 h6],'Units','normalized')
 
 %% Plot all ROIs and Methods
 
-msr = 1;
+msr = 3;
 
-tmp_struct = load('CrossComp_RSA_sw5',['CrossComp_RSA_',measures{msr}]);
+tmp_struct = load(['Crosscompare_RSA_Matfiles/CrossComp_RSA_Ret_Ret_btROI_noperm_msr',num2str(msr)],['CrossComp_RSA_',measures{msr}]);
 
 method = {'Corr','Meth1_per','Meth1_sem','Meth2_per','Meth2_sem'};
 ROI = {'OCC','PRT','TMP','FRT'};
