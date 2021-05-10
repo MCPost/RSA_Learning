@@ -100,8 +100,9 @@ pair = 'Enc - Ret';
 save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_btROI_noperm_msr';
 c = parcluster();
 %jobHandles = {};
+end_ind = length(jobHandles);
 for msr = 1:3
-    jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+    jobHandles{end_ind+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
 end
 
 jobHandles{1}
@@ -120,8 +121,9 @@ pair = 'Enc - Enc';
 save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Enc_wiROI_noperm_msr';
 c = parcluster();
 %jobHandles = {};
+end_ind = length(jobHandles);
 for msr = 1:3
-    jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+    jobHandles{end_ind+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
 end
 
 
@@ -135,8 +137,9 @@ pair = 'Enc - Enc';
 save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Enc_btROI_noperm_msr';
 c = parcluster();
 %jobHandles = {};
+end_ind = length(jobHandles);
 for msr = 1:3
-    jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+    jobHandles{end_ind+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
 end
 
 jobHandles{1}
@@ -146,7 +149,7 @@ diary(jobHandles{1})
 
 % Retrieval to Retrieval, Within ROI, No PermTest
 cfg.permtest         = false;
-cfg.timewind2        = [-0.2 1.5];
+cfg.timewind2        = [-2.5 0.2];
 cfg.ROI              = {'OCC';...
                         'TMP';...
                         'FRT';...
@@ -155,14 +158,15 @@ pair = 'Ret - Ret';
 save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Ret_Ret_wiROI_noperm_msr';
 c = parcluster();
 %jobHandles = {};
+end_ind = length(jobHandles);
 for msr = 1:3
-    jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+    jobHandles{end_ind+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
 end
 
 
 % Retrieval to Retrieval, Between ROI, No PermTest
 cfg.permtest         = false;
-cfg.timewind2        = [-0.2 1.5];
+cfg.timewind2        = [-2.5 0.2];
 cfg.ROI              = {'OCC','TMP';'OCC','FRT';'OCC','PRT';...
                         'TMP','FRT';'TMP','PRT';...
                         'FRT','PRT'};
@@ -170,8 +174,9 @@ pair = 'Ret - Ret';
 save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Ret_Ret_btROI_noperm_msr';
 c = parcluster();
 %jobHandles = {};
+end_ind = length(jobHandles);
 for msr = 1:3
-    jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+    jobHandles{end_ind+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
 end
 
 jobHandles{1}
@@ -188,8 +193,9 @@ diary(jobHandles{1})
 %                         'PRT'};
 % pair = 'Enc - Ret';
 % save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_perm_msr';
+% end_ind = length(jobHandles);
 % for msr = 1:3
-%     jobHandles{end+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+%     jobHandles{end_ind+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
 % end
 % 
 % jobHandles{4}
@@ -699,9 +705,9 @@ set([h1 h2 h3 h4 h5 h6],'Units','normalized')
 
 %% Plot all ROIs and Methods
 
-msr = 3;
+msr = 1;
 
-tmp_struct = load(['Crosscompare_RSA_Matfiles/CrossComp_RSA_Ret_Ret_btROI_noperm_msr',num2str(msr)],['CrossComp_RSA_',measures{msr}]);
+tmp_struct = load(['Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Enc_wiROI_noperm_msr',num2str(msr)],['CrossComp_RSA_',measures{msr}]);
 
 method = {'Corr','Meth1_per','Meth1_sem','Meth2_per','Meth2_sem'};
 ROI = {'OCC','PRT','TMP','FRT'};
@@ -714,16 +720,16 @@ TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
 %time_wind_ret = [-1.6 -0.8];
 
 enc_lim = [-0.2  1.5];
-ret_lim = [-2.5 0.2];
+ret_lim = [-0.2  1.5];
 
 figure('Pos',[484 44 885 952])
 ct = 1;
 for m = 1:length(method)
     for r = 1:length(ROI)
-        curData = squeeze(nanmean(Data.(ROI{r}).(method{m}),1));
+        curData = squeeze(nanmean(Data.(ROI{r}).(method{m}),1)); prctile(curData(:),[1 99]);
         subplot(length(method),length(ROI),ct)
         contourf(TimeX, TimeY, curData, 40,'linestyle','none'); %colorbar
-        caxis(prctile(curData(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+        caxis([0 prctile(curData(:),60)]); set(gca,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
         hold on
         plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
         plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
@@ -734,9 +740,9 @@ end
 
 
 figure
-curData = squeeze(nanmean(Data.(ROI{2}).(method{1}),1));
+curData = squeeze(nanmean(Data.(ROI{3}).(method{1}),1)); prctile(curData(:),[1 99]);
 contourf(TimeX, TimeY, curData, 40,'linestyle','none'); %colorbar
-caxis(prctile(curData(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+caxis([0 1]); set(gca,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)

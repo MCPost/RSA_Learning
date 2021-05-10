@@ -217,13 +217,13 @@ for r = 1:size(curROI,1)
                         end
                     end
                 else
-                    Corr(:,tp2,tp1) = NaN;
+                    Corr(:,tp2,tp1) = nan(size(curData1_tr,2),1);
 
                     % Weighted Correlation
-                    Meth1_per(:,tp2,tp1) = NaN;
-                    Meth1_sem(:,tp2,tp1) = NaN;
-                    Meth2_per(:,tp2,tp1) = NaN;
-                    Meth2_sem(:,tp2,tp1) = NaN;
+                    Meth1_per(:,tp2,tp1) = nan(size(curData1_tr,2),1);
+                    Meth1_sem(:,tp2,tp1) = nan(size(curData1_tr,2),1);
+                    Meth2_per(:,tp2,tp1) = nan(size(curData1_tr,2),1);
+                    Meth2_sem(:,tp2,tp1) = nan(size(curData1_tr,2),1);
                 end
                 %fprintf(repmat('\b',1,nbytes))
                 %nbytes = fprintf('ROI: %s  --  Progress Cross Correlation: %3.4f %%',ROI_name{r,1},((tp2 + (length(TimeVec2))*(tp1-1)) / (length(TimeVec1)*length(TimeVec2)))*100);
@@ -254,11 +254,11 @@ for r = 1:size(curROI,1)
                     Meth2_per(:,tp2,tp1) = Corr(:,tp2,tp1) .* W2_per;
                     Meth2_sem(:,tp2,tp1) = Corr(:,tp2,tp1) .* W2_sem;
                 else
-                    Corr(:,tp2,tp1) = NaN;
-                    Meth1_per(:,tp2,tp1) = NaN;
-                    Meth1_sem(:,tp2,tp1) = NaN;
-                    Meth2_per(:,tp2,tp1) = NaN;
-                    Meth2_sem(:,tp2,tp1) = NaN;
+                    Corr(:,tp2,tp1) = nan(size(curData1_tr,2),1);
+                    Meth1_per(:,tp2,tp1) = nan(size(curData1_tr,2),1);
+                    Meth1_sem(:,tp2,tp1) = nan(size(curData1_tr,2),1);
+                    Meth2_per(:,tp2,tp1) = nan(size(curData1_tr,2),1);
+                    Meth2_sem(:,tp2,tp1) = nan(size(curData1_tr,2),1);
                 end
 
             end
