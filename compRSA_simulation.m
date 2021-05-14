@@ -1,644 +1,10 @@
 %% Compare RSA Matrices Simulation
 
-N = 16;
-
-figure('Pos', [326 71 1291 912])
-
-mu = [-5 -5; 5 5];
-sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,1)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-10 10], 'ylim',[-10 10])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-1 -1; 1 1];
-sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,2)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [0 0; 0 0];
-sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,3)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,2)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-1 1; 1 -1];
-sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,4)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-5 5; 5 -5];
-sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,5)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-10 10], 'ylim',[-10 10])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-5 -5; 5 5];
-sigma = cat(3,[1 .9; .9 1], [1 0; 0 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,6)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-10 10], 'ylim',[-10 10])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-1 -1; 1 1];
-sigma = cat(3,[1 .9; .9 1], [1 0; 0 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,7)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [0 0; 0 0];
-sigma = cat(3,[1 .9; .9 1], [1 0; 0 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,8)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-1 1; 1 -1];
-sigma = cat(3,[1 .9; .9 1], [1 0; 0 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,9)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-5 5; 5 -5];
-sigma = cat(3,[1 .9; .9 1], [1 0; 0 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,10)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-10 10], 'ylim',[-10 10])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-5 -5; 5 5];
-sigma = cat(3,[1 .9; .9 1], [1 -.9; -.9 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,11)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-10 10], 'ylim',[-10 10])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,2)), max(R(:,2)),N),B(2) + linspace(min(R(:,2)), max(R(:,2)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,2)), max(R(1:N,2)),N),B(2) + linspace(min(R(1:N,2)), max(R(1:N,2)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,2)), max(R(N+1:end,2)),N),B(2) + linspace(min(R(N+1:end,2)), max(R(N+1:end,2)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-1 -1; 1 1];
-sigma = cat(3,[1 .9; .9 1], [1 -.9; -.9 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,12)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [0 0; 0 0];
-sigma = cat(3,[1 .9; .9 1], [1 -.9; -.9 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,13)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-1 1; 1 -1];
-sigma = cat(3,[1 .9; .9 1], [1 -.9; -.9 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,14)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-5 5; 5 -5];
-sigma = cat(3,[1 .9; .9 1], [1 -.9; -.9 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,15)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-10 10], 'ylim',[-10 10])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-5 -5; 5 5];
-sigma = cat(3,[1 -.9; -.9 1], [1 -.9; -.9 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,16)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-10 10], 'ylim',[-10 10])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,2)), max(R(:,2)),N),B(2) + linspace(min(R(:,2)), max(R(:,2)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,2)), max(R(1:N,2)),N),B(2) + linspace(min(R(1:N,2)), max(R(1:N,2)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,2)), max(R(N+1:end,2)),N),B(2) + linspace(min(R(N+1:end,2)), max(R(N+1:end,2)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-1 -1; 1 1];
-sigma = cat(3,[1 -.9; -.9 1], [1 -.9; -.9 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,17)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [0 0; 0 0];
-sigma = cat(3,[1 -.9; -.9 1], [1 -.9; -.9 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,18)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-1 1; 1 -1];
-sigma = cat(3,[1 -.9; -.9 1], [1 -.9; -.9 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,19)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-5 5], 'ylim',[-5 5])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-mu = [-5 5; 5 -5];
-sigma = cat(3,[1 -.9; -.9 1], [1 -.9; -.9 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-
-subplot(4,5,20)
-plot(R(:,1),R(:,2),'+')
-set(gca,'xlim',[-10 10], 'ylim',[-10 10])
-hold on
-B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
-hold off
-title(sprintf('V_{corr} = %1.4f', (atanh(corr(R(1:N,1), R(1:N,2))) - atanh(corr(R(N+1:end,1), R(N+1:end,2))))*(atanh(corr(R(:,1), R(:,2))))))
-
-
-
-%% Matrix 
-
-
-N = 16;
-
-%figure('Pos', [326 71 1291 912])
-
-mu = [0 0; 0 0];
-sigma = cat(3,[1 0.99; 0.99 1], [1 0; 0 1]);
-%rng('default')  % For reproducibility
-R = [];
-R = [R; mvnrnd(mu(1,:),sigma(:,:,1),0.5*N*(0.5*N -1))];
-R = [R; mvnrnd(mu(2,:),sigma(:,:,2),0.5*N*(0.5*N -1))];
-
-fast_corr(tiedrank_(R(:,1),1), tiedrank_(R(:,2),1));
-ICC(tiedrank_(R,1), 'A-k');
-ICC(tiedrank_(R,1), 'C-k');
-
-
-corrs1 = -0.9:0.05:0.9;
-corrs2 = -0.9:0.05:0.9;
-
-mu = [0 0; 0 0];
-sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
-Cor_Mat = zeros(length(corrs1),length(corrs2));
-ICC_C_Mat = zeros(length(corrs1),length(corrs2));
-ICC_A_Mat = zeros(length(corrs1),length(corrs2));
-for c1 = 1:length(corrs1)
-    for c2 = 1:length(corrs2)
-        sigma(1,2,1) = corrs1(c1); sigma(2,1,1) = corrs1(c1);
-        sigma(1,2,2) = corrs2(c2); sigma(2,1,2) = corrs2(c2);
-        R = [];
-        R = [R; mvnrnd(mu(1,:),sigma(:,:,1),0.5*N*(0.5*N -1))];
-        R = [R; mvnrnd(mu(2,:),sigma(:,:,2),0.5*N*(0.5*N -1))];
-
-        Cor_Mat(c1,c2) = fast_corr(tiedrank_(R(:,1),1), tiedrank_(R(:,2),1));
-        %ICC_A_Mat(c1,c2) = ICC([R(1:56,1:2) R(57:112,1:2)], 'A-1');
-        %ICC_C_Mat(c1,c2) = ICC([R(1:56,1:2) R(57:112,1:2)], 'C-1');
-        tr_data = tiedrank_(R,1);
-        ICC_A_Mat(c1,c2) = ICC([tr_data(1:56,1:2) tr_data(57:112,1:2)], 'A-k');
-        ICC_C_Mat(c1,c2) = ICC([tr_data(1:56,1:2) tr_data(57:112,1:2)], 'C-k');
-    end
-end
-
-figure
-subplot(1,3,1)
-surf(corrs1, corrs2, Cor_Mat)
-title('Correlation'), xlabel('x'), ylabel('y')
-subplot(1,3,2)
-surf(corrs1, corrs2, ICC_A_Mat)
-%set(gca,'zlim',[-3 1.2])
-title('ICC Agreement'), xlabel('x'), ylabel('y')
-subplot(1,3,3)
-surf(corrs1, corrs2, ICC_C_Mat)
-%set(gca,'zlim',[-3 1.2])
-title('ICC Consistency'), xlabel('x'), ylabel('y')
-
-figure
-surf(corrs1, corrs2, ICC_A_Mat./ICC_C_Mat)
-title('ICC Agreement/Consistency'), xlabel('x'), ylabel('y')
-
-
-mus1 = -3:0.2:3;
-mus2 = -3:0.2:3;
-
-mu = [0 0; 0 0];
-sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
-Cor_Mat = zeros(length(mus1),length(mus2));
-ICC_C_Mat = zeros(length(mus1),length(mus2));
-ICC_A_Mat = zeros(length(mus1),length(mus2));
-for m1 = 1:length(mus1)
-    for m2 = 1:length(mus2) 
-        mu(2,:) = [mus1(m1) mus2(m2)];
-        R = [];
-        R = [R; mvnrnd(mu(1,:),sigma(:,:,1),0.5*N*(0.5*N -1))];
-        R = [R; mvnrnd(mu(2,:),sigma(:,:,2),0.5*N*(0.5*N -1))];
-
-        Cor_Mat(m1,m2) = fast_corr(tiedrank_(R(:,1),1), tiedrank_(R(:,2),1));
-        %ICC_A_Mat(m1,m2) = ICC([R(1:56,1:2) R(57:112,1:2)], 'A-1');
-        %ICC_C_Mat(m1,m2) = ICC([R(1:56,1:2) R(57:112,1:2)], 'C-1');
-        tr_data = tiedrank_(R,1);
-        ICC_A_Mat(m1,m2) = ICC([tr_data(1:56,1:2) tr_data(57:112,1:2)], 'A-k');
-        ICC_C_Mat(m1,m2) = ICC([tr_data(1:56,1:2) tr_data(57:112,1:2)], 'C-k');
-    end
-end
-
-figure
-subplot(1,3,1)
-surf(mus1, mus2, Cor_Mat)
-title('Correlation'), xlabel('x'), ylabel('y')
-subplot(1,3,2)
-surf(mus1, mus2, ICC_A_Mat)
-%set(gca,'zlim',[-3 1.2])
-title('ICC Agreement'), xlabel('x'), ylabel('y')
-subplot(1,3,3)
-surf(mus1, mus2, ICC_C_Mat)
-%set(gca,'zlim',[-3 1.2])
-title('ICC Consistency'), xlabel('x'), ylabel('y')
-
-
-figure
-surf(mus1, mus2, ICC_A_Mat./ICC_C_Mat)
-title('ICC Agreement/Consistency'), xlabel('x'), ylabel('y')
-
-
-
-mus1 = -2:1:2;
-mus2 = -2:1:2;
-
-mu = [0 0; 0 0];
-sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
-Cor_Cell = cell(length(mus1),length(mus2));
-ICC_C_Cell = cell(length(mus1),length(mus2));
-ICC_A_Cell = cell(length(mus1),length(mus2));
-for m1 = 1:length(mus1)
-    for m2 = 1:length(mus2) 
-
-        corrs1 = -0.9:0.1:0.9;
-        corrs2 = -0.9:0.1:0.9;
-
-        Cor_Cell{m1,m2} = zeros(length(corrs1),length(corrs2));
-        ICC_C_Cell{m1,m2} = zeros(length(corrs1),length(corrs2));
-        ICC_A_Cell{m1,m2} = zeros(length(corrs1),length(corrs2));
-        for c1 = 1:length(corrs1)
-            for c2 = 1:length(corrs2)
-                mu(2,:) = [mus1(m1) mus2(m2)];
-                sigma(1,2,1) = corrs1(c1); sigma(2,1,1) = corrs1(c1);
-                sigma(1,2,2) = corrs2(c2); sigma(2,1,2) = corrs2(c2);
-                R = [];
-                R = [R; mvnrnd(mu(1,:),sigma(:,:,1),0.5*N*(0.5*N -1))];
-                R = [R; mvnrnd(mu(2,:),sigma(:,:,2),0.5*N*(0.5*N -1))];
-
-                Cor_Cell{m1,m2}(c1,c2) = fast_corr(tiedrank_(R(:,1),1), tiedrank_(R(:,2),1));
-                ICC_C_Cell{m1,m2}(c1,c2) = ICC([R(1:56,1:2) R(57:112,1:2)], 'A-1');
-                ICC_A_Cell{m1,m2}(c1,c2) = ICC([R(1:56,1:2) R(57:112,1:2)], 'C-1');
-                %tr_data = tiedrank_(R,1);
-                %ICC_C_Cell{m1,m2}(c1,c2) = ICC([tr_data(1:56,1:2) tr_data(57:112,1:2)], 'A-1');
-                %ICC_A_Cell{m1,m2}(c1,c2) = ICC([tr_data(1:56,1:2) tr_data(57:112,1:2)], 'C-1');
-            end
-        end
-        
-    end
-end
-
-
-figure
-Data = ICC_C_Cell';
-tmp_max = cell2mat(cellfun(@(x) max(x(:)), Data,'UniformOutput',0));
-tmp_min = cell2mat(cellfun(@(x) min(x(:)), Data,'UniformOutput',0));
-c_limit = [min(tmp_min(:)) max(tmp_max(:))];
-for sbp = 1:25
-    subplot(5,5,sbp)
-    imagesc(Data{sbp})
-    set(gca,'clim',c_limit, 'xtick',[], 'ytick',[])
-    axis square
-end 
-
-figure
-Data1 = ICC_C_Cell';
-Data2 = ICC_A_Cell';
-tmp_max = cell2mat(cellfun(@(x,y) max(x(:)./y(:)), Data1, Data2,'UniformOutput',0));
-tmp_min = cell2mat(cellfun(@(x,y) min(x(:)./y(:)), Data1, Data2,'UniformOutput',0));
-c_limit = [min(tmp_min(:)) max(tmp_max(:))];
-for sbp = 1:25
-    subplot(5,5,sbp)
-    cur_data = Data1{sbp}./Data2{sbp};
-    imagesc(cur_data)
-    set(gca,'clim',c_limit,'xtick',[], 'ytick',[])
-    axis square
-end 
-
-
-N = 16;
+mat_dim = 16;
+n = 0.5*mat_dim*(0.5*mat_dim -1);
+N = 2*n;
+
+method = 1;
 
 mus1 = [-3 -1 0 1 3]; %-2:1:2;
 mus2 = [3 1 0 -1 -3]; %2:-1:-2;
@@ -658,74 +24,55 @@ for m2 = 1:length(mus2)
                 mu(2,:) = [mus1(m1) mus2(m2)];
                 sigma(1,2,1) = corrs1(c1); sigma(2,1,1) = corrs1(c1);
                 sigma(1,2,2) = corrs2(c2); sigma(2,1,2) = corrs2(c2);
-                R = [];
-                R = [R; mvnrnd(mu(1,:),sigma(:,:,1),0.5*N*(0.5*N -1))];
-                R = [R; mvnrnd(mu(2,:),sigma(:,:,2),0.5*N*(0.5*N -1))];
+                Rnd_Data = [];
+                Rnd_Data = [Rnd_Data; mvnrnd(mu(1,:),sigma(:,:,1),n)];
+                Rnd_Data = [Rnd_Data; mvnrnd(mu(2,:),sigma(:,:,2),n)];
                 
-                cur_data_all = tiedrank_(R,1);
-                cor_all = fast_corr(cur_data_all(:,1), cur_data_all(:,2));
-                cur_data = tiedrank_(R(1:56,:),1);
-                cor_wi  = fast_corr(cur_data(:,1), cur_data(:,2));
-                cur_data = tiedrank_(R(57:112,:),1);
-                cor_bt  = fast_corr(cur_data(:,1), cur_data(:,2));
-                %NMeas_Cell{m2,m1}(c2,c1) = (atanh(cor_wi) - atanh(cor_bt))*atanh(cor_all);
-                %[~,p_val] = ttest2(reshape(R(1:56,:),56*2,1), reshape(R(56+1:end,:),56*2,1));
-                %NMeas_Cell{m2,m1}(c2,c1) = (abs(norminv(p_val,0,1))/abs(atanh(cor_wi) - atanh(cor_bt)))*atanh(cor_all);
+                Rnd_Data_tr = tiedrank_(Rnd_Data,1);
+                cor_all = fast_corr(Rnd_Data(:,1), Rnd_Data(:,2));
                 
-                %X = [ones(N*(0.5*N -1),1), cur_data_all(:,2)];
-                %%X = [ones(N*(0.5*N -1),1), kron([1;0], ones(0.5*N*(0.5*N -1),1))];
-                %%X = R_tr(:,2);
-                %y = cur_data_all(:,1);
-                %SS_tot = (y - mean(y))' * (y - mean(y));
-                %SS_res1 = y'*(eye(N*(0.5*N -1)) - X*((X'*X)\X'))*y;
-                %%Rsq1 = 1 - SS_res1/SS_tot;
-                %X = [ones(N*(0.5*N -1),1), cur_data_all(:,2), kron([1;0], ones(0.5*N*(0.5*N -1),1))];
-                %%X = [ones(N*(0.5*N -1),1), cur_data_all(:,2), kron([1;0], ones(0.5*N*(0.5*N -1),1)).*cur_data_all(:,2)];
-                %%X = [R_tr(:,2), kron([1;0], ones(0.5*N*(0.5*N -1),1)), kron([0;1], ones(0.5*N*(0.5*N -1),1))];
-                %SS_res2 = y'*(eye(N*(0.5*N -1)) - X*((X'*X)\X'))*y;
-                %%Rsq2 = 1 - SS_res2/SS_tot;
-                %F = (SS_res1 - SS_res2)/(SS_res2 / (N*(0.5*N -1) - 3));
-                %NMeas_Cell{m2,m1}(c2,c1) = abs(f2z_bloc(F,1,N*(0.5*N -1) - 3))*atanh(cor_all);
+                if(method == 1)
+                    
+                    %y = (Rnd_Data_tr(:,1) - mean(Rnd_Data_tr(:))) .* (Rnd_Data_tr(:,2) - mean(Rnd_Data_tr(:)));
+                    y = tiedrank_(Rnd_Data(:,1) .* Rnd_Data(:,2),1);
+                    X = [kron([1;0], ones(n,1)) kron([0;1], ones(n,1))];
+                    SS_tot = (y - mean(y))' * (y - mean(y));
+                    SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
+                    NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(max(1 - SS_res/SS_tot,0))) * atanh(cor_all);
                 
-                %y = (cur_data_all(:,1) - mean(cur_data_all(:))) .* (cur_data_all(:,2) - mean(cur_data_all(:)));
-                %y = tiedrank_(R(:,1) .* R(:,2),1);
-                %X = [kron([1;0], ones(0.5*N*(0.5*N -1),1)) kron([0;1], ones(0.5*N*(0.5*N -1),1))];
-                %SS_tot = (y - mean(y))' * (y - mean(y));
-                %SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
-                %NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(max(1 - SS_res/SS_tot,0))) * atanh(cor_all);
+                else
                 
-                %[~,~,stats] = manova1(cur_data_all,[repmat({'sub1'},0.5*N*(0.5*N -1),1); repmat({'sub2'},0.5*N*(0.5*N -1),1)]);
-                %NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(1 - min(stats.lambda,1))) * atanh(cor_all);
-                
-                X = [kron([1;0], ones(0.5*N*(0.5*N -1),1)) kron([0;1], ones(0.5*N*(0.5*N -1),1))];
-                
-                dat1 = R(logical(X(:,1)),:); dat2 = R(logical(X(:,2)),:);
-                y1_m = mean(dat1,1);
-                y2_m = mean(dat2,1);
-                S1 = cov(dat1);
-                S2 = cov(dat2);
-                S = (((0.5*N*(0.5*N -1)-1)*S1 + (0.5*N*(0.5*N -1)-1)*S2)/(N*(0.5*N -1)-2))*((0.5*N*(0.5*N -1)*0.5*N*(0.5*N -1))/(N*(0.5*N -1)));
-                
-                T2 = (y1_m - y2_m)/inv(S)*(y1_m - y2_m)';
-                F = T2*((N*(0.5*N -1) - 3) / (2*(N*(0.5*N -1) - 2)));
-                %Rsq = sqrt(F/(2*N))/(1+sqrt(F/(2*N)));
-                %R_OP = 1 - ((2*N - 3)/(2*N - 1 - 1))*(1 - Rsq)*(1 + (2*(1 - Rsq))/(2*N - 1 - 1));
-                %NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(max(0,R_OP)))*atanh(cor_all);
-                NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(sqrt(F/(2*N))/(1+sqrt(F/(2*N)))))*atanh(cor_all);
-                %NMeas_Cell{m2,m1}(c2,c1) = f2z_bloc(F,1,N*(0.5*N -1) - 3)*atanh(cor_all);
+                    X = [kron([1;0], ones(n,1)) kron([0;1], ones(n,1))];
+
+                    group1 = Rnd_Data(logical(X(:,1)),:); group2 = Rnd_Data(logical(X(:,2)),:);
+                    y1_m = mean(group1,1);
+                    y2_m = mean(group2,1);
+                    S1 = cov(group1);
+                    S2 = cov(group2);
+                    S = (((n-1)*S1 + (n-1)*S2)/(N-2))*((n*n)/(n + n));
+
+                    T2 = (y1_m - y2_m)/inv(S)*(y1_m - y2_m)';
+                    F = T2*((N - 3) / (2*(N - 2)));
+                    %Rsq = sqrt(F/N)/(1+sqrt(F/N));
+                    %R_OP = 1 - ((N - 3)/(N - 1 - 1))*(1 - Rsq)*(1 + (2*(1 - Rsq))/(N - 1 - 1));
+                    %NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(max(0,R_OP)))*atanh(cor_all);
+                    NMeas_Cell{m2,m1}(c2,c1) = atanh(sqrt(sqrt(F/N)/(1+sqrt(F/N))))*atanh(cor_all);
+                    %NMeas_Cell{m2,m1}(c2,c1) = f2z_bloc(F,1,N - 3)*atanh(cor_all);
+                    
+                end
                 
             end
         end
         
     end
 end
-prctile(NMeas_Cell{1,1}(:),[1 99])
+prctile(NMeas_Cell{3,3}(:),[1 99])
 
 figure('Pos',[164 67 1504 926])
 Data = NMeas_Cell';
 tmp_max = cell2mat(cellfun(@(x) max(x(:)), Data,'UniformOutput',0));
 tmp_min = cell2mat(cellfun(@(x) min(x(:)), Data,'UniformOutput',0));
-c_limit = [-1.4 1.4]; %prctile(NMeas_Cell{3,3}(:),[1 99]);%[min(tmp_min(:))+0.9 max(tmp_max(:))-1];
+c_limit = [-0.3 0.3]; %prctile(NMeas_Cell{3,3}(:),[1 99]);%[min(tmp_min(:))+0.9 max(tmp_max(:))-1];
 phase_shift = [1.2 0.6 0 -0.6 -1.2];
 for sbp = 1:25
     h1 = subplot(5,5,sbp);
@@ -768,44 +115,16 @@ for sbp = 1:25
 end 
 
 
+weightedCorrSim(method)
+
+
 %% Plot Correlations
 
-mus = [kron(ones(5,1),[-3 -1 0 1 3]') kron([-3 -1 0 1 3]',ones(5,1))];
+mat_dim = 16;
+n = 0.5*mat_dim*(0.5*mat_dim -1);
+N = 2*n;
 
-figure('Pos', [326 71 1291 912])
-
-mu = [0 0; 0 0];
-sigma = cat(3,[1 .9; .9 1], [1 .9; .9 1]);
-for sbp = 1:25
-    mu(2,:) = [mus(sbp) mus(sbp)];
-    R = [];
-    R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-    R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-    R_tr = tiedrank_(R,1); R_tr_g1 = tiedrank_(R(1:N,:),1); R_tr_g2 = tiedrank_(R(N+1:end,:),1);
-    h1 = subplot(5,5,sbp);
-    plot(R_tr(1:N,1),R_tr(1:N,2),'+r')
-    hold on
-    plot(R_tr(N+1:end,1),R_tr(N+1:end,2),'+g')
-    set(gca,'xlim',[-5 40], 'ylim',[-5 40], 'xtick', [],'ytick',[]) %set(gca,'xlim',[-5 5], 'ylim',[-5 5], 'xtick', [],'ytick',[])
-    B = polyfit(R_tr(:,1), R_tr(:,2),1);
-    ls1 = plot(linspace(min(R_tr(:,1)), max(R_tr(:,1)),N),B(2) + linspace(min(R_tr(:,1)), max(R_tr(:,1)),N)*B(1),'--m','linewidth',1.5);
-    text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R_tr(:,1), R_tr(:,2))),'0.','.'),'Color','m')
-    B = polyfit(R_tr(1:N,1), R_tr(1:N,2),1);
-    ls2 = plot(linspace(min(R_tr(1:N,1)), max(R_tr(1:N,1)),N),B(2) + linspace(min(R_tr(1:N,1)), max(R_tr(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-    text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R_tr(1:N,1), R_tr(1:N,2))),'0.','.'),'Color','r')
-    B = polyfit(R_tr(N+1:end,1), R_tr(N+1:end,2),1);
-    ls3 = plot(linspace(min(R_tr(N+1:end,1)), max(R_tr(N+1:end,1)),N),B(2) + linspace(min(R_tr(N+1:end,1)), max(R_tr(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-    text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R_tr(N+1:end,1), R_tr(N+1:end,2))),'0.','.'),'Color','g')
-    hold off
-    
-    title(sprintf('V_{corr} = %1.4f', (atanh(corr(R_tr_g1(:,1), R_tr_g1(:,2))) - atanh(corr(R_tr_g2(:,1), R_tr_g2(:,2))))*(atanh(corr(R_tr(:,1), R_tr(:,2))))),'fontsize',8)
-    axis square
-end
-
-
-%% New Idea
-
-N = 56;
+method = 1;
 
 mus = [kron(ones(5,1),([-3 -1 0 1 3])') kron(([3 1 0 -1 -3])',ones(5,1))];
 
@@ -815,106 +134,162 @@ mu = [0 0; 0 0];
 sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
 for sbp = 1:25
     mu(2,:) = [mus(sbp,1) mus(sbp,2)];
-    R = [];
-    R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-    R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-    R_tr = tiedrank_(R,1); R_tr_g1 = tiedrank_(R(1:N,:),1); R_tr_g2 = tiedrank_(R(N+1:end,:),1);
-    %R_tr = R;
+    Rnd_Data = [];
+    Rnd_Data = [Rnd_Data; mvnrnd(mu(1,:),sigma(:,:,1),n)];
+    Rnd_Data = [Rnd_Data; mvnrnd(mu(2,:),sigma(:,:,2),n)];
+
+    Rnd_Data_tr = tiedrank_(Rnd_Data,1);
+    cor_all = fast_corr(Rnd_Data(:,1), Rnd_Data(:,2));
+    
     h1 = subplot(5,5,sbp);
-    plot(R_tr(1:N,1),R_tr(1:N,2),'+r')
+    s1 = plot(Rnd_Data_tr(1:n,1),Rnd_Data_tr(1:n,2),'o','Color',[1 0 0]);
     hold on
-    plot(R_tr(N+1:end,1),R_tr(N+1:end,2),'+g')
-    set(gca,'xlim',[min(R_tr(:))-20 max(R_tr(:))+13], 'ylim',[min(R_tr(:))-20 max(R_tr(:))+13], 'xtick', [],'ytick',[]) %set(gca,'xlim',[-5 5], 'ylim',[-5 5], 'xtick', [],'ytick',[])
-    B = polyfit(R_tr(:,1), R_tr(:,2),1);
-    ls1 = plot(linspace(min(R_tr(:,1)), max(R_tr(:,1)),N),B(2) + linspace(min(R_tr(:,1)), max(R_tr(:,1)),N)*B(1),'--m','linewidth',1.5);
-    text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R_tr(:,1), R_tr(:,2))),'0.','.'),'Color','m')
-    B = polyfit(R_tr(1:N,1), R_tr(1:N,2),1);
-    ls2 = plot(linspace(min(R_tr(1:N,1)), max(R_tr(1:N,1)),N),B(2) + linspace(min(R_tr(1:N,1)), max(R_tr(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-    text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R_tr(1:N,1), R_tr(1:N,2))),'0.','.'),'Color','r')
-    B = polyfit(R_tr(N+1:end,1), R_tr(N+1:end,2),1);
-    ls3 = plot(linspace(min(R_tr(N+1:end,1)), max(R_tr(N+1:end,1)),N),B(2) + linspace(min(R_tr(N+1:end,1)), max(R_tr(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-    text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R_tr(N+1:end,1), R_tr(N+1:end,2))),'0.','.'),'Color','g')
+    s2 = plot(Rnd_Data_tr(n+1:end,1),Rnd_Data_tr(n+1:end,2),'o','Color',[0 1 0]);
+    set(gca,'xlim',[min(Rnd_Data_tr(:))-29 max(Rnd_Data_tr(:))+22], 'ylim',[min(Rnd_Data_tr(:))-29 max(Rnd_Data_tr(:))+22], 'xtick', [],'ytick',[]) %set(gca,'xlim',[-5 5], 'ylim',[-5 5], 'xtick', [],'ytick',[])
+    B = polyfit(Rnd_Data_tr(:,1), Rnd_Data_tr(:,2),1);
+    ls1 = plot(linspace(min(Rnd_Data_tr(:,1)), max(Rnd_Data_tr(:,1)),n),B(2) + linspace(min(Rnd_Data_tr(:,1)), max(Rnd_Data_tr(:,1)),n)*B(1),'--m','linewidth',1.5);
+    %annotation('textbox',[h1.Position(1)+h1.Position(3)*ls1.XData(end)/diff(get(gca,'xlim')) h1.Position(2)+h1.Position(4)*ls1.YData(end)/diff(get(gca,'ylim')) 0.06 0.03],'String',strrep(sprintf('r = %1.3f',corr(Rnd_Data_tr(:,1), Rnd_Data_tr(:,2))),'0.','.'),'Color','m','LineStyle','none')
+    t1 = text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(Rnd_Data_tr(:,1), Rnd_Data_tr(:,2))),'0.','.'),'Color','m');
+    B = polyfit(Rnd_Data_tr(1:n,1), Rnd_Data_tr(1:n,2),1);
+    ls2 = plot(linspace(min(Rnd_Data_tr(1:n,1)), max(Rnd_Data_tr(1:n,1)),n),B(2) + linspace(min(Rnd_Data_tr(1:n,1)), max(Rnd_Data_tr(1:n,1)),n)*B(1),'--r','linewidth',1.5);
+    %annotation('textbox',[h1.Position(1)+h1.Position(3)*ls2.XData(end)/diff(get(gca,'xlim')) h1.Position(2)+h1.Position(4)*ls2.YData(end)/diff(get(gca,'ylim')) 0.06 0.03],'String',strrep(sprintf('r = %1.3f',corr(Rnd_Data_tr(1:n,1), Rnd_Data_tr(1:n,2))),'0.','.'),'Color','r','LineStyle','none')
+    t2 = text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(Rnd_Data_tr(1:n,1), Rnd_Data_tr(1:n,2))),'0.','.'),'Color','r');
+    if(((t2.Extent(1) >= t1.Extent(1) &  t2.Extent(1) <= sum(t1.Extent([1 3]))) | (sum(t2.Extent([1 3])) >= t1.Extent(1) &  sum(t2.Extent([1 3])) <= sum(t1.Extent([1 3])))) && ((t2.Extent(2) >= t1.Extent(2) &  t2.Extent(2) <= sum(t1.Extent([2 4])))))
+        t2.Position(2) = t1.Position(2) + t1.Extent(4);
+    elseif(((t2.Extent(1) >= t1.Extent(1) &  t2.Extent(1) <= sum(t1.Extent([1 3]))) | (sum(t2.Extent([1 3])) >= t1.Extent(1) &  sum(t2.Extent([1 3])) <= sum(t1.Extent([1 3])))) && ((sum(t2.Extent([2 4])) >= t1.Extent(2) &  sum(t2.Extent([2 4])) <= sum(t1.Extent([2 4])))))
+        t2.Position(2) = t1.Position(2) - t2.Extent(4);
+    end
+    B = polyfit(Rnd_Data_tr(n+1:end,1), Rnd_Data_tr(n+1:end,2),1);
+    ls3 = plot(linspace(min(Rnd_Data_tr(n+1:end,1)), max(Rnd_Data_tr(n+1:end,1)),n),B(2) + linspace(min(Rnd_Data_tr(n+1:end,1)), max(Rnd_Data_tr(n+1:end,1)),n)*B(1),'--g','linewidth',1.5);
+    %annotation('textbox',[h1.Position(1)+h1.Position(3)*ls3.XData(end)/diff(get(gca,'xlim')) h1.Position(2)+h1.Position(4)*ls3.YData(end)/diff(get(gca,'ylim')) 0.06 0.03],'String',strrep(sprintf('r = %1.3f',corr(Rnd_Data_tr(n+1:end,1), Rnd_Data_tr(n+1:end,2))),'0.','.'),'Color','g','LineStyle','none')
+    t3 = text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(Rnd_Data_tr(n+1:end,1), Rnd_Data_tr(n+1:end,2))),'0.','.'),'Color','g');
+    if(((t3.Extent(1) >= t1.Extent(1) &  t3.Extent(1) <= sum(t1.Extent([1 3]))) | (sum(t3.Extent([1 3])) >= t1.Extent(1) &  sum(t3.Extent([1 3])) <= sum(t1.Extent([1 3])))) && ((t3.Extent(2) >= t1.Extent(2) &  t3.Extent(2) <= sum(t1.Extent([2 4])))))
+        t3.Position(2) = t1.Position(2) + t1.Extent(4);
+    elseif(((t3.Extent(1) >= t1.Extent(1) &  t3.Extent(1) <= sum(t1.Extent([1 3]))) | (sum(t3.Extent([1 3])) >= t1.Extent(1) &  sum(t3.Extent([1 3])) <= sum(t1.Extent([1 3])))) && ((sum(t3.Extent([2 4])) >= t1.Extent(2) &  sum(t3.Extent([2 4])) <= sum(t1.Extent([2 4])))))
+        t3.Position(2) = t1.Position(2) - t3.Extent(4);
+    end
+    if(((t3.Extent(1) >= t2.Extent(1) &  t3.Extent(1) <= sum(t2.Extent([1 3]))) | (sum(t3.Extent([1 3])) >= t2.Extent(1) &  sum(t3.Extent([1 3])) <= sum(t2.Extent([1 3])))) && ((t3.Extent(2) >= t2.Extent(2) &  t3.Extent(2) <= sum(t2.Extent([2 4])))))
+        t3.Position(2) = t2.Position(2) + t2.Extent(4);
+    elseif(((t3.Extent(1) >= t2.Extent(1) &  t3.Extent(1) <= sum(t2.Extent([1 3]))) | (sum(t3.Extent([1 3])) >= t2.Extent(1) &  sum(t3.Extent([1 3])) <= sum(t2.Extent([1 3])))) && ((sum(t3.Extent([2 4])) >= t2.Extent(2) &  sum(t3.Extent([2 4])) <= sum(t2.Extent([2 4])))))
+        t3.Position(2) = t2.Position(2) - t3.Extent(4);
+    end
     hold off
+    pause(.1)
+    set(s1.MarkerHandle,'FaceColorData',uint8(255*[1;0;0;0.2]),'EdgeColorData',uint8(255*[0;0;0;0]))
+    set(s2.MarkerHandle,'FaceColorData',uint8(255*[0;1;0;0.2]),'EdgeColorData',uint8(255*[0;0;0;0]))
     
-    %X = [ones(2*N,1), R_tr(:,2)];
-    %%X = [ones(2*N,1), kron([1;0], ones(N,1))];
-    %%X = R_tr(:,2);
-    %y = R_tr(:,1);
-    %SS_tot = (y - mean(y))' * (y - mean(y));
-    %SS_res1 = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
-    %%Rsq1 = 1 - SS_res1/SS_tot;
-    %X = [ones(2*N,1), R_tr(:,2), kron([1;0], ones(N,1))];
-    %%X = [ones(2*N,1), R_tr(:,2), kron([1;0], ones(N,1)).*R_tr(:,2)];
-    %%X = [R_tr(:,2), kron([1;0], ones(16,1)), kron([0;1], ones(16,1))];
-    %SS_res2 = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
-    %%Rsq2 = 1 - SS_res2/SS_tot;
-    %F = (SS_res1 - SS_res2)/(SS_res2 / (2*N - 3));
-    %p = fcdf(F,1,2*N - 3,'upper');
-    %meas = abs(norminv(p))*atanh(corr(R_tr(:,1), R_tr(:,2)));
     
-    %y = tiedrank_(R(:,1) .* R(:,2),1);
-    %X = [kron([1;0], ones(N,1)), kron([0;1], ones(N,1))];
-    %SS_tot = (y - mean(y))' * (y - mean(y));
-    %SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
-    %meas = atanh(sqrt(1 - SS_res/SS_tot)) * atanh(corr(R_tr(:,1), R_tr(:,2)));
-    
-    %[~,p_val] = ttest2(reshape(R(1:N,:),N*2,1), reshape(R(N+1:end,:),N*2,1));
-    %meas = (atanh(corr(R_tr_g1(:,1), R_tr_g1(:,2))) - atanh(corr(R_tr_g2(:,1), R_tr_g2(:,2))))*(atanh(corr(R_tr(:,1), R_tr(:,2))))*norminv(1-p_val,0,1);
-    
-    X = [kron([1;0], ones(N,1)) kron([0;1], ones(N,1))];
+    if(method == 1)
 
-    dat1 = R(logical(X(:,1)),:); dat2 = R(logical(X(:,2)),:);
-    y1_m = mean(dat1,1);
-    y2_m = mean(dat2,1);
-    S1 = cov(dat1);
-    S2 = cov(dat2);
-    S = ((0.5*N*(0.5*N -1)-1)*S1 + (0.5*N*(0.5*N -1)-1)*S2)/(N*(0.5*N -1)-2);
+        %y = (Rnd_Data_tr(:,1) - mean(Rnd_Data_tr(:))) .* (Rnd_Data_tr(:,2) - mean(Rnd_Data_tr(:)));
+        y = tiedrank_(Rnd_Data(:,1) .* Rnd_Data(:,2),1);
+        X = [kron([1;0], ones(n,1)) kron([0;1], ones(n,1))];
+        SS_tot = (y - mean(y))' * (y - mean(y));
+        SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
+        meas = atanh(sqrt(max(1 - SS_res/SS_tot,0))) * atanh(cor_all);
 
-    T2 = ((y1_m - y2_m)/inv(S)*(y1_m - y2_m)')*((0.5*N*(0.5*N -1)*0.5*N*(0.5*N -1))/(N*(0.5*N -1)));
-    %meas = T2;
-    F = T2*((N*(0.5*N -1) - 3) / (2*(N*(0.5*N -1) - 2)));
-    Rsq = sqrt(F/(2*N))/(1+sqrt(F/(2*N)));
-    R_OP = 1 - ((2*N - 3)/(2*N - 1 - 1))*(1 - Rsq)*(1 + (2*(1 - Rsq))/(2*N - 1 - 1));
-    meas = atanh(sqrt(R_OP));
+    else
+
+        X = [kron([1;0], ones(n,1)) kron([0;1], ones(n,1))];
+
+        group1 = Rnd_Data(logical(X(:,1)),:); group2 = Rnd_Data(logical(X(:,2)),:);
+        y1_m = mean(group1,1);
+        y2_m = mean(group2,1);
+        S1 = cov(group1);
+        S2 = cov(group2);
+        S = (((n-1)*S1 + (n-1)*S2)/(N-2))*((n*n)/(n + n));
+
+        T2 = (y1_m - y2_m)/inv(S)*(y1_m - y2_m)';
+        F = T2*((N - 3) / (2*(N - 2)));
+        %Rsq = sqrt(F/N)/(1+sqrt(F/N));
+        %R_OP = 1 - ((N - 3)/(N - 1 - 1))*(1 - Rsq)*(1 + (2*(1 - Rsq))/(N - 1 - 1));
+        %meas =  atanh(sqrt(max(0,R_OP)))*atanh(cor_all);
+        meas =  atanh(sqrt(sqrt(F/N)/(1+sqrt(F/N))))*atanh(cor_all);
+        %meas =  f2z_bloc(F,1,N - 3)*atanh(cor_all);
+
+    end
     title(sprintf('V_{corr} = %1.4f', meas),'fontsize',8)
     axis square
 end
 
 
 
-%% New New Crossproduct Idea
 
-N = 56;
+%% Plot Parameter Distributions
 
-mus = [kron(ones(5,1),([-3 -1 0 1 3])') kron(([3 1 0 -1 -3])',ones(5,1))];
+mat_dim = 16;
+n = 0.5*mat_dim*(0.5*mat_dim -1);
+N = 2*n;
 
-figure('Pos', [326 71 1291 912])
+method = 1;
+
+n_perms = 1000;
+mus1 = [-3 -1 0 1 3]; %-2:1:2;
+mus2 = [3 1 0 -1 -3]; %2:-1:-2;
 
 mu = [0 0; 0 0];
-sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
+sigma = cat(3,[1 -.2; -.2 1], [1 -.4; -.4 1]);
+NMeas_Cell = cell(length(mus2),length(mus1));
+for m2 = 1:length(mus2)
+    for m1 = 1:length(mus1) 
+        
+        mu(2,:) = [mus1(m1) mus2(m2)];
+        NMeas_Cell{m2,m1} = zeros(n_perms,1);
+        for p = 1:n_perms
+            Rnd_Data = [];
+            Rnd_Data = [Rnd_Data; mvnrnd(mu(1,:),sigma(:,:,1),n)];
+            Rnd_Data = [Rnd_Data; mvnrnd(mu(2,:),sigma(:,:,2),n)];
+            
+            Rnd_Data_tr = tiedrank_(Rnd_Data,1);
+            cor_all = fast_corr(Rnd_Data(:,1), Rnd_Data(:,2));
+            
+            if(method == 1)
+
+                %y = (Rnd_Data_tr(:,1) - mean(Rnd_Data_tr(:))) .* (Rnd_Data_tr(:,2) - mean(Rnd_Data_tr(:)));
+                y = tiedrank_(Rnd_Data(:,1) .* Rnd_Data(:,2),1);
+                X = [kron([1;0], ones(n,1)) kron([0;1], ones(n,1))];
+                SS_tot = (y - mean(y))' * (y - mean(y));
+                SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
+                NMeas_Cell{m2,m1}(p) = atanh(sqrt(max(1 - SS_res/SS_tot,0))) * atanh(cor_all);
+
+            else
+
+                X = [kron([1;0], ones(n,1)) kron([0;1], ones(n,1))];
+
+                group1 = Rnd_Data(logical(X(:,1)),:); group2 = Rnd_Data(logical(X(:,2)),:);
+                y1_m = mean(group1,1);
+                y2_m = mean(group2,1);
+                S1 = cov(group1);
+                S2 = cov(group2);
+                S = (((n-1)*S1 + (n-1)*S2)/(N-2))*((n*n)/(n + n));
+
+                T2 = (y1_m - y2_m)/inv(S)*(y1_m - y2_m)';
+                F = T2*((N - 3) / (2*(N - 2)));
+                %Rsq = sqrt(F/N)/(1+sqrt(F/N));
+                %R_OP = 1 - ((N - 3)/(N - 1 - 1))*(1 - Rsq)*(1 + (2*(1 - Rsq))/(N - 1 - 1));
+                %NMeas_Cell{m2,m1}(p) =  atanh(sqrt(max(0,R_OP)))*atanh(cor_all);
+                NMeas_Cell{m2,m1}(p) =  atanh(sqrt(sqrt(F/N)/(1+sqrt(F/N))))*atanh(cor_all);
+                %NMeas_Cell{m2,m1}(p) =  f2z_bloc(F,1,N - 3)*atanh(cor_all);
+
+            end
+            
+        end
+        
+    end
+end
+
+
+figure('Pos', [326 71 1291 912])
+Data = NMeas_Cell';
 for sbp = 1:25
-    mu(2,:) = [mus(sbp,1) mus(sbp,2)];
-    R = [];
-    R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
-    R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
-    R_tr = tiedrank_(R,1); 
-    dat = tiedrank_(R(:,1).*R(:,2),1); % R_tr(:,1).*R_tr(:,2); R(:,1).*R(:,2);
+    
     h1 = subplot(5,5,sbp);
-    hold on
-    histogram(dat(1:N),15)
-    histogram(dat(N+1:end),15)
-    hold off
-    
-    y = dat;
-    X = [kron([1;0], ones(N,1)), kron([0;1], ones(N,1))];
-    SS_tot = (y - mean(y))' * (y - mean(y));
-    SS_res = (y - X*((X'*X)\X'*y))' * (y - X*((X'*X)\X'*y));
-    meas = atanh(sqrt(1 - SS_res/SS_tot)) * atanh(corr(R_tr(:,1), R_tr(:,2)));
-    
-    title(sprintf('V_{corr} = %1.4f', meas),'fontsize',8)
-    set(gca, 'xlim', [-2 130], 'ylim', [0 15])
+    hist(Data{sbp},35)
+    set(gca,'xlim',[-2 2])
+    title(sprintf('M = %1.4f / SD = %1.4f', mean(Data{sbp}), std(Data{sbp})),'fontsize',8)
     axis square
 end
+
 
 
 
@@ -998,7 +373,6 @@ for sub = 1:length(Subj_names)
         RSA_Data_Enc.OCC_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.curROI; 
         RSA_Data_Enc.TMP_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).TMP.curROI;
         RSA_Data_Enc.FRT_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).FRT.curROI;
-        RSA_Data_Enc.CNT_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).CNT.curROI;
         RSA_Data_Enc.PRT_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).PRT.curROI;
 
         RSA_Data_Ret.Names   = Subj_names;
@@ -1010,7 +384,6 @@ for sub = 1:length(Subj_names)
         RSA_Data_Ret.OCC_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.curROI; 
         RSA_Data_Ret.TMP_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).TMP.curROI;
         RSA_Data_Ret.FRT_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).FRT.curROI;
-        RSA_Data_Ret.CNT_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).CNT.curROI;
         RSA_Data_Ret.PRT_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).PRT.curROI;
 
     end
@@ -1019,26 +392,22 @@ for sub = 1:length(Subj_names)
         RSA_Data_Enc.OCC.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Enc.TMP.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Enc.FRT.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_full{1,msr},[3 1 2]);
-        RSA_Data_Enc.CNT.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Enc.PRT.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_full{1,msr},[3 1 2]);
     end
     RSA_Data_Enc.OCC.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Enc.TMP.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Enc.FRT.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_16{1,msr},[3 1 2]);
-    RSA_Data_Enc.CNT.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Enc.PRT.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_16{1,msr},[3 1 2]);
 
     if(~isempty(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full))
         RSA_Data_Ret.OCC.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Ret.TMP.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Ret.FRT.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_full{1,msr},[3 1 2]);
-        RSA_Data_Ret.CNT.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_full{1,msr},[3 1 2]);
         RSA_Data_Ret.PRT.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_full{1,msr},[3 1 2]);
     end
     RSA_Data_Ret.OCC.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Ret.TMP.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Ret.FRT.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_16{1,msr},[3 1 2]);
-    RSA_Data_Ret.CNT.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).CNT.RSA_16{1,msr},[3 1 2]);
     RSA_Data_Ret.PRT.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_16{1,msr},[3 1 2]);
 
     RSA_Data_Enc.Encoding_Data{sub} = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.Encoding_Data;
@@ -1049,6 +418,9 @@ for sub = 1:length(Subj_names)
 
 end
 clear tmp_strct_enc tmp_strct_ret
+
+TimeVec_Enc = RSA_Data_Enc.TimeVec;
+TimeVec_Ret = RSA_Data_Ret.TimeVec;
 
 
 % Plot Scattergrams of Real Data
@@ -1108,9 +480,9 @@ tic
 X1 = kron(eye(23),[kron([1;0],ones(N,1)) kron([0;1],ones(N,1))]); % ones(length(y2),1)
 for i = 1:10000
     
-    dat1 = rand(112,23);
-    dat2 = rand(112,23);
-    y = dat1.*dat2;
+    group1 = rand(112,23);
+    group2 = rand(112,23);
+    y = group1.*group2;
     y2 = bsxfun(@times, kron(eye(23),ones(2*N,1)),y(:));
     SS_tot1 = sum(bsxfun(@minus, y, mean(y)).^2,1);%' * bsxfun(@minus, y, mean(y));
     %SS_tot1 = bsxfun(@minus, y, mean(y))' * bsxfun(@minus, y, mean(y));
@@ -1125,13 +497,13 @@ tic
 X2 = [kron([1;0], ones(N,1)), kron([0;1], ones(N,1))];
 for i = 1:10000
     
-    dat1 = rand(112,23);
-    dat2 = rand(112,23);
+    group1 = rand(112,23);
+    group2 = rand(112,23);
     meas2 = zeros(23,1);
     SS_tot2 = zeros(23,1);
     SS_res2 = zeros(23,1);
     for sub = 1:23
-        y = tiedrank_(dat1(:,sub) .* dat2(:,sub),1);
+        y = tiedrank_(group1(:,sub) .* group2(:,sub),1);
         SS_tot2(sub) = sum((y - mean(y)).^2);
         SS_res2(sub) = sum((y - X2*((X2'*X2)\X2'*y)).^2);
         meas2(sub,1) = atanh(sqrt(1 - SS_res2(sub)/SS_tot2(sub)));
@@ -1168,6 +540,98 @@ B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
 ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
 text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
 hold off
+
+
+
+
+%% Correlations of Real Data
+
+measures = {'LDA','SVM','euclidian','euclidian_wcc'};
+msr = 1;
+r = 1;
+
+tmp_struct = load(['Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_wiROI_noperm_msr1'],['CrossComp_RSA_',measures{msr}]);
+Data = tmp_struct.(['CrossComp_RSA_',measures{msr}]).RSA_red16;
+TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
+TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
+ROI = tmp_struct.(['CrossComp_RSA_',measures{msr}]).ROI;
+
+Corr_Data = squeeze(nanmean(Data.(ROI{r}).Corr,1));
+Meth1_per_Data = squeeze(nanmean(Data.(ROI{r}).Meth1_per,1));
+Meth1_sem_Data = squeeze(nanmean(Data.(ROI{r}).Meth1_sem,1));
+
+interest_vals_corr = prctile(Corr_Data(:),[0.5 20 50 80 99.5]);
+interest_vals_m1p = prctile(Meth1_per_Data(:),[0.5 20 50 80 99.5]);
+interest_vals_m1s = prctile(Meth1_sem_Data(:),[0.5 20 50 80 99.5]);
+
+min_vals_c = dsearchn(Corr_Data(:),interest_vals_corr');
+min_vals_mp = dsearchn(Meth1_per_Data(:),interest_vals_m1p');
+min_vals_ms = dsearchn(Meth1_sem_Data(:),interest_vals_m1s');
+ScatterData = cell(5,3);
+for i = 1:5
+    [ind2, ind1] = find(Corr_Data == Corr_Data(min_vals_c(i)));
+    ScatterData{i,1} = [squeeze(nanmean(RSA_Data_Enc.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Enc', TimeX(ind1)),Perceptual_Mat_red16(:) > 0),1))...
+                        squeeze(nanmean(RSA_Data_Ret.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Ret', TimeY(ind2)),Perceptual_Mat_red16(:) > 0),1));...
+                        squeeze(nanmean(RSA_Data_Enc.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Enc', TimeX(ind1)),Perceptual_Mat_red16(:) < 0),1))...
+                        squeeze(nanmean(RSA_Data_Ret.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Ret', TimeY(ind2)),Perceptual_Mat_red16(:) < 0),1))];
+    [ind2,ind1] = find(Meth1_per_Data == Meth1_per_Data(min_vals_mp(i)));
+    ScatterData{i,2} = [squeeze(nanmean(RSA_Data_Enc.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Enc', TimeX(ind1)),Perceptual_Mat_red16(:) > 0),1))...
+                        squeeze(nanmean(RSA_Data_Ret.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Ret', TimeY(ind2)),Perceptual_Mat_red16(:) > 0),1));...
+                        squeeze(nanmean(RSA_Data_Enc.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Enc', TimeX(ind1)),Perceptual_Mat_red16(:) < 0),1))...
+                        squeeze(nanmean(RSA_Data_Ret.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Ret', TimeY(ind2)),Perceptual_Mat_red16(:) < 0),1))];
+    [ind2,ind1] = find(Meth1_sem_Data == Meth1_sem_Data(min_vals_ms(i)));
+    ScatterData{i,3} = [squeeze(nanmean(RSA_Data_Enc.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Enc', TimeX(ind1)),Perceptual_Mat_red16(:) > 0),1))...
+                        squeeze(nanmean(RSA_Data_Ret.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Ret', TimeY(ind2)),Perceptual_Mat_red16(:) > 0),1));...
+                        squeeze(nanmean(RSA_Data_Enc.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Enc', TimeX(ind1)),Perceptual_Mat_red16(:) < 0),1))...
+                        squeeze(nanmean(RSA_Data_Ret.(ROI{r}).red16_Data(:,dsearchn(TimeVec_Ret', TimeY(ind2)),Perceptual_Mat_red16(:) < 0),1))];
+end
+
+N = 56;
+
+figure
+ct = 1;
+for sbp = 1:15
+    curdat = ScatterData{ct};
+    curdat_tr = tiedrank_(curdat,1);
+    subplot(4,5,ct)
+    s1 = plot(curdat_tr(1:N,1),curdat_tr(1:N,2),'o','Color',[1 0 0]);
+    hold on
+    s2 = plot(curdat_tr(N+1:end,1),curdat_tr(N+1:end,2),'o','Color',[0 1 0]);
+    B = polyfit(curdat_tr(:,1), curdat_tr(:,2),1);
+    ls1 = plot(linspace(min(curdat_tr(:,1)), max(curdat_tr(:,1)),N),B(2) + linspace(min(curdat_tr(:,1)), max(curdat_tr(:,1)),N)*B(1),'--m','linewidth',1.5);
+    t1 = text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(curdat_tr(:,1), curdat_tr(:,2))),'0.','.'),'Color','m');
+    B = polyfit(curdat_tr(1:N,1), curdat_tr(1:N,2),1);
+    ls2 = plot(linspace(min(curdat_tr(1:N,1)), max(curdat_tr(1:N,1)),N),B(2) + linspace(min(curdat_tr(1:N,1)), max(curdat_tr(1:N,1)),N)*B(1),'--r','linewidth',1.5);
+    t2 = text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(curdat_tr(1:N,1), curdat_tr(1:N,2))),'0.','.'),'Color','r');
+    if(((t2.Extent(1) >= t1.Extent(1) &  t2.Extent(1) <= sum(t1.Extent([1 3]))) | (sum(t2.Extent([1 3])) >= t1.Extent(1) &  sum(t2.Extent([1 3])) <= sum(t1.Extent([1 3])))) && ((t2.Extent(2) >= t1.Extent(2) &  t2.Extent(2) <= sum(t1.Extent([2 4])))))
+        t2.Position(2) = t1.Position(2) + t1.Extent(4);
+    elseif(((t2.Extent(1) >= t1.Extent(1) &  t2.Extent(1) <= sum(t1.Extent([1 3]))) | (sum(t2.Extent([1 3])) >= t1.Extent(1) &  sum(t2.Extent([1 3])) <= sum(t1.Extent([1 3])))) && ((sum(t2.Extent([2 4])) >= t1.Extent(2) &  sum(t2.Extent([2 4])) <= sum(t1.Extent([2 4])))))
+        t2.Position(2) = t1.Position(2) - t2.Extent(4);
+    end
+    B = polyfit(curdat_tr(N+1:end,1), curdat_tr(N+1:end,2),1);
+    ls3 = plot(linspace(min(curdat_tr(N+1:end,1)), max(curdat_tr(N+1:end,1)),N),B(2) + linspace(min(curdat_tr(N+1:end,1)), max(curdat_tr(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
+    t3 = text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(curdat_tr(N+1:end,1), curdat_tr(N+1:end,2))),'0.','.'),'Color','g');
+    if(((t3.Extent(1) >= t1.Extent(1) &  t3.Extent(1) <= sum(t1.Extent([1 3]))) | (sum(t3.Extent([1 3])) >= t1.Extent(1) &  sum(t3.Extent([1 3])) <= sum(t1.Extent([1 3])))) && ((t3.Extent(2) >= t1.Extent(2) &  t3.Extent(2) <= sum(t1.Extent([2 4])))))
+        t3.Position(2) = t1.Position(2) + t1.Extent(4);
+    elseif(((t3.Extent(1) >= t1.Extent(1) &  t3.Extent(1) <= sum(t1.Extent([1 3]))) | (sum(t3.Extent([1 3])) >= t1.Extent(1) &  sum(t3.Extent([1 3])) <= sum(t1.Extent([1 3])))) && ((sum(t3.Extent([2 4])) >= t1.Extent(2) &  sum(t3.Extent([2 4])) <= sum(t1.Extent([2 4])))))
+        t3.Position(2) = t1.Position(2) - t3.Extent(4);
+    end
+    if(((t3.Extent(1) >= t2.Extent(1) &  t3.Extent(1) <= sum(t2.Extent([1 3]))) | (sum(t3.Extent([1 3])) >= t2.Extent(1) &  sum(t3.Extent([1 3])) <= sum(t2.Extent([1 3])))) && ((t3.Extent(2) >= t2.Extent(2) &  t3.Extent(2) <= sum(t2.Extent([2 4])))))
+        t3.Position(2) = t2.Position(2) + t2.Extent(4);
+    elseif(((t3.Extent(1) >= t2.Extent(1) &  t3.Extent(1) <= sum(t2.Extent([1 3]))) | (sum(t3.Extent([1 3])) >= t2.Extent(1) &  sum(t3.Extent([1 3])) <= sum(t2.Extent([1 3])))) && ((sum(t3.Extent([2 4])) >= t2.Extent(2) &  sum(t3.Extent([2 4])) <= sum(t2.Extent([2 4])))))
+        t3.Position(2) = t2.Position(2) - t3.Extent(4);
+    end
+    hold off
+    axis equal
+    pause(.1)
+    set(s1.MarkerHandle,'FaceColorData',uint8(255*[1;0;0;0.5]),'EdgeColorData',uint8(255*[0;0;0;0]))
+    set(s2.MarkerHandle,'FaceColorData',uint8(255*[0;1;0;0.5]),'EdgeColorData',uint8(255*[0;0;0;0]))
+    set(gca,'xlim',[min(curdat_tr(:,1))-30 max(curdat_tr(:,1))+30],'ylim',[min(curdat_tr(:,2))-30 max(curdat_tr(:,2))+30])
+    ct = ct + 1;
+end
+subplot(4,5,18)
+hist(Corr_Data(:),30)
+
 
 
 

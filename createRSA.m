@@ -306,7 +306,7 @@ for tp = 1:length(TimeVec)
                 % SVM and LDA
                 if(sum(strcmp(measures,'LDA')) > 0)
                     cfg = [];
-                    cfg.metric      = 'acc';
+                    cfg.metric      = {'acc'};
                     %cfg.cv          = 'holdout';
                     %cfg.p           = 0.3;
                     cfg.cv          = 'kfold';
@@ -314,7 +314,25 @@ for tp = 1:length(TimeVec)
                     cfg.repeat      = 5;
                     cfg.classifier  = 'lda';
                     cfg.feedback    = 0;
-                    RSA_Mat_16x16{1,strcmp(RSA_Mat_16x16(2,:),'LDA')}(ct_x,ct_y,tp) = mv_classify(cfg, Cur_trial, [ones(1,size(cur_trial1,1)) 2*ones(1,size(cur_trial2,1))]');
+                    
+                    [RSA_Mat_16x16{1,strcmp(RSA_Mat_16x16(2,:),'LDA')}(ct_x,ct_y,tp),~,~,weights] = mv_classify_weights(cfg, Cur_trial, [ones(1,size(cur_trial1,1)) 2*ones(1,size(cur_trial2,1))]');
+                    RSA_Mat_16x16{3,strcmp(RSA_Mat_16x16(2,:),'LDA')}(ct_x,ct_y,tp,:) = cov(Cur_trial)*mean(mean(weights,3),2)/cov(Cur_trial*mean(mean(weights,3),2));
+                    
+                    %CV = mv_get_crossvalidation_folds(cfg.cv, [ones(1,size(cur_trial1,1)) 2*ones(1,size(cur_trial2,1))]', cfg.k, 0, 0.3, []);
+                    %[Xtrain, trainlabel, Xtest, testlabel{1,1}] = mv_select_train_and_test_data(Cur_trial, [ones(1,size(cur_trial1,1)) 2*ones(1,size(cur_trial2,1))]', CV.training(1), CV.test(1), 0);
+                    %param           = [];
+                    %param.reg       = 'shrink';
+                    %param.lambda    = 'auto';
+                    %param.lambda_n  = 1e-12;
+                    %param.prob      = 0;
+                    %param.scale     = 1;
+                    %param.form      = 'dual';
+                    %cf = train_lda(param, Xtrain, trainlabel);
+                    %mv_get_classifier_output(cfg.output_type, cf, @test_lda, Xtest);
+                    
+                    %RSA_Mat_16x16{1,strcmp(RSA_Mat_16x16(2,:),'LDA')}(ct_x,ct_y,tp) = mv_classify(cfg, Cur_trial, [ones(1,size(cur_trial1,1)) 2*ones(1,size(cur_trial2,1))]');
+                    
+                    
                 end
                 if(sum(strcmp(measures,'SVM')) > 0)
                     cfg = [];

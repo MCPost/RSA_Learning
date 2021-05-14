@@ -91,13 +91,22 @@ jobHandles = {};
 
 
 % Encoding to Retrieval, Between ROI, No PermTest
-cfg.permtest         = false;
-cfg.ROI              = {'OCC','TMP';'OCC','FRT';'OCC','PRT';...
-                        'TMP','OCC';'TMP','FRT';'TMP','PRT';...
-                        'FRT','OCC';'FRT','TMP';'FRT','PRT';...
-                        'PRT','OCC';'PRT','TMP';'PRT','FRT'};
+cfg.permtest         = true; %false;
+cfg.timewind2        = [-2.2 -0.8];
+cfg.ROI              = {'OCC','TMP';...
+                        %'OCC','FRT';...
+                        'OCC','PRT';...
+                        'TMP','OCC';...
+                        %'TMP','FRT';...
+                        'TMP','PRT';...
+                        %'FRT','OCC';...
+                        %'FRT','TMP';...
+                        %'FRT','PRT';...
+                        'PRT','OCC';...
+                        'PRT','TMP';...
+                        'PRT','FRT'};
 pair = 'Enc - Ret';
-save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_btROI_noperm_msr';
+save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_btROI_perm_msr';
 c = parcluster();
 %jobHandles = {};
 end_ind = length(jobHandles);
@@ -184,146 +193,27 @@ diary(jobHandles{1})
 %delete(jobHandles{1})
 
 
-% % Encoding to Retrieval, Within ROI, PermTest
-% cfg.permtest         = true;
-% cfg.timewind2        = [-2.5 0.2];
-% cfg.ROI              = {'OCC';...
-%                         'TMP';...
-%                         'FRT';...
-%                         'PRT'};
-% pair = 'Enc - Ret';
-% save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_perm_msr';
-% end_ind = length(jobHandles);
-% for msr = 1:3
-%     jobHandles{end_ind+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
-% end
-% 
-% jobHandles{4}
-% diary(jobHandles{4})
+% Encoding to Retrieval, Within ROI, PermTest
+cfg.permtest         = false; %true;
+cfg.timewind2        = [-2.5 0.2];
+cfg.ROI              = {'OCC';...
+                        'TMP';...
+                        'FRT';...
+                        'PRT'};
+pair = 'Enc - Ret';
+save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_wiROI_noperm_msr';
+end_ind = length(jobHandles);
+for msr = 1:3
+    jobHandles{end_ind+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+end
+
+jobHandles{4}
+diary(jobHandles{4})
 
 
-
-%% Plot Data
-
-%load('CrossComp_RSA')
-load('CrossComp_RSA_p01_ts')
-
-
-Data = CrossComp_RSA_LDA.RSA_red16;
-zmapthresh1 = CrossComp_RSA_LDA.zmapthresh{1}; zmapthresh1(isnan(zmapthresh1)) = 0;zmapthresh1(zmapthresh1 ~= 0) = 1;
-zmapthresh2 = CrossComp_RSA_LDA.zmapthresh{2}; zmapthresh2(isnan(zmapthresh2)) = 0;zmapthresh2(zmapthresh2 ~= 0) = 1;
-zmapthresh3 = CrossComp_RSA_LDA.zmapthresh{3}; zmapthresh3(isnan(zmapthresh3)) = 0;zmapthresh3(zmapthresh3 ~= 0) = 1;
-zmapthresh4 = CrossComp_RSA_LDA.zmapthresh{4}; zmapthresh4(isnan(zmapthresh4)) = 0;zmapthresh4(zmapthresh4 ~= 0) = 1;
-zmapthresh5 = CrossComp_RSA_LDA.zmapthresh{5}; zmapthresh5(isnan(zmapthresh5)) = 0;zmapthresh5(zmapthresh5 ~= 0) = 1;
-TimeX = CrossComp_RSA_LDA.TimeVec1;
-TimeY = CrossComp_RSA_LDA.TimeVec2;
-
-
-figure
-subplot(1,2,1)
-contourf(TimeX, TimeY, squeeze(nanmean(Data.OCC,1)), 40,'linestyle','none'); colorbar
-caxis([-.07 .07]); set(gca,'xlim', [-0.2 1.5], 'ylim', [-4 0.2]); title('OCCIPITAL'); xlabel('Encoding'); ylabel('Retrieval')
-hold on
-plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
-plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-contour(TimeX, TimeY,zmapthresh1,1,'linecolor','k','linewidth',1.5)
-hold off
-subplot(1,2,2)
-contourf(TimeX, TimeY, squeeze(nanmean(Data.TMP,1)), 40,'linestyle','none'); colorbar
-caxis([-.07 .07]); set(gca,'xlim', [-0.2 1.5], 'ylim', [-4 0.2]); title('TEMPORAL'); xlabel('Encoding'); ylabel('Retrieval')
-hold on
-plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
-plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-contour(TimeX, TimeY,zmapthresh2,1,'linecolor','k','linewidth',1.5)
-hold off
-
-
-
-TimeX = CrossComp_RSA_euclidian_wcc.TimeVec1;
-TimeY = CrossComp_RSA_euclidian_wcc.TimeVec2;
-enc_win = [-0.2 0.6];
-ret_win = [-2.5 0.2];
-
-figure
-subplot(2,4,1)
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_LDA.RSA_red16.OCC,1)), 40,'linestyle','none'); colorbar
-caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('OCCIPITAL'); xlabel('Encoding'); ylabel('Retrieval')
-hold on
-plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
-plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-zmapthresh = CrossComp_RSA_LDA.zmapthresh{1}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
-hold off
-subplot(2,4,5)
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_LDA.RSA_red16.TMP,1)), 40,'linestyle','none'); colorbar
-caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('TEMPORAL'); xlabel('Encoding'); ylabel('Retrieval')
-hold on
-plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
-plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-zmapthresh = CrossComp_RSA_LDA.zmapthresh{2}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
-hold off
-
-subplot(2,4,2)
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_SVM.RSA_red16.OCC,1)), 40,'linestyle','none'); colorbar
-caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('OCCIPITAL'); xlabel('Encoding'); ylabel('Retrieval')
-hold on
-plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
-plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-zmapthresh = CrossComp_RSA_SVM.zmapthresh{1}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
-hold off
-subplot(2,4,6)
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_SVM.RSA_red16.TMP,1)), 40,'linestyle','none'); colorbar
-caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('TEMPORAL'); xlabel('Encoding'); ylabel('Retrieval')
-hold on
-plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
-plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-zmapthresh = CrossComp_RSA_SVM.zmapthresh{2}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
-hold off
-
-subplot(2,4,3)
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_euclidian.RSA_red16.OCC,1)), 40,'linestyle','none'); colorbar
-caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('OCCIPITAL'); xlabel('Encoding'); ylabel('Retrieval')
-hold on
-plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
-plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-zmapthresh = CrossComp_RSA_euclidian.zmapthresh{1}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
-hold off
-subplot(2,4,7)
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_euclidian.RSA_red16.TMP,1)), 40,'linestyle','none'); colorbar
-caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('TEMPORAL'); xlabel('Encoding'); ylabel('Retrieval')
-hold on
-plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
-plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-zmapthresh = CrossComp_RSA_euclidian.zmapthresh{2}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
-hold off
-
-subplot(2,4,4)
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_euclidian_wcc.RSA_red16.OCC,1)), 40,'linestyle','none'); colorbar
-caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('OCCIPITAL'); xlabel('Encoding'); ylabel('Retrieval')
-hold on
-plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
-plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-zmapthresh = CrossComp_RSA_euclidian_wcc.zmapthresh{1}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
-hold off
-subplot(2,4,8)
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_RSA_euclidian_wcc.RSA_red16.TMP,1)), 40,'linestyle','none'); colorbar
-caxis([-.07 .07]); set(gca,'xlim', enc_win, 'ylim', ret_win); title('TEMPORAL'); xlabel('Encoding'); ylabel('Retrieval')
-hold on
-plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
-plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
-zmapthresh = CrossComp_RSA_euclidian_wcc.zmapthresh{2}; zmapthresh(isnan(zmapthresh)) = 0;zmapthresh(zmapthresh ~= 0) = 1;
-contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
-hold off
 
 
 %% Plot Crosscomparison with Encoding and Retrieval Time series
-
 
 % Subject Names
 load('RSA_Data_Enc','Subj_names')
@@ -517,23 +407,26 @@ end
 
 measures = {'LDA','SVM','euclidian','euclidian_wcc'};
 
-tmp_struct = load('CrossComp_RSA_sw5',['CrossComp_RSA_',measures{msr}]);
-%tmp_struct = load(['CrossComp_RSA_newMeth',num2str(msr)]);
+tmp_struct = load('Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_btROI_noperm_msr1',['CrossComp_RSA_',measures{msr}]);
 tmp_fnames = fieldnames(tmp_struct);
 
 method = {'Corr','Meth1_per','Meth1_sem','Meth2_per','Meth2_sem'};
-permtestname = {'CorrPermTest', 'Meth1_per_PermTest', 'Meth1_sem_PermTest'};
+permtestname = {'CorrPermTest', 'Meth1_per_PermTest', 'Meth1_sem_PermTest',  'Meth2_per_PermTest', 'Meth2_sem_PermTest'};
 mth1 = 2; mth2 = 3;
 
-ROI = {'OCC','TMP','FRT','PRT'};
-ROI_names = {'OCCIPITAL','TEMPORAL','FRONTAL','PARIETAL'};
+ROI = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).ROI;
+if(size(ROI,2) == 2)
+    ROI_names = strcat(ROI(:,1),'_',ROI(:,2));
+else
+    ROI_names = ROI;
+end
 Cat = {'Perceptual','Semantic'};
 Col = {'b','r'};
 
 time_wind_enc = [-0.1  1.2];
-time_wind_ret = [-1.8 -0.6];
+time_wind_ret = [-2.2 -0.8]; % [-1.8 -0.6]
 
-r1 = 4; r2 = 4;
+r1 = 3; r2 = 6;
 c1 = 1; c2 = 2;
 dt1 = [3 4]; dt2 = [3 4];
 rndcut_perm = true;
@@ -542,8 +435,8 @@ TimeX = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp
 time_idx_enc = dsearchn(TimeX',time_wind_enc')';
 TimeY = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).TimeVec2;
 time_idx_ret = dsearchn(TimeY',time_wind_ret')';
-CrossComp_Data.RSA_red16.Data1 = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).RSA_red16.(ROI{r1}).(method{mth1})(:,time_idx_ret(1):time_idx_ret(end),time_idx_enc(1):time_idx_enc(end));
-CrossComp_Data.RSA_red16.Data2 = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).RSA_red16.(ROI{r2}).(method{mth2})(:,time_idx_ret(1):time_idx_ret(end),time_idx_enc(1):time_idx_enc(end));
+CrossComp_Data.RSA_red16.Data1 = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).RSA_red16.(ROI_names{r1}).(method{mth1})(:,time_idx_ret(1):time_idx_ret(end),time_idx_enc(1):time_idx_enc(end));
+CrossComp_Data.RSA_red16.Data2 = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).RSA_red16.(ROI_names{r2}).(method{mth2})(:,time_idx_ret(1):time_idx_ret(end),time_idx_enc(1):time_idx_enc(end));
 TimeX = TimeX(time_idx_enc(1):time_idx_enc(end));
 TimeY = TimeY(time_idx_ret(1):time_idx_ret(end));
 
@@ -565,15 +458,15 @@ cfg.twoside = true;
 
 cfg.Hyp_Mat = Hyp_Mat{c1};
 cfg.TimeVec = RSA_Data_Enc.TimeVec(dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end)));
-Results1 = rsa_perm(cfg, RSA_Data_Enc.(ROI{r1}).red16_Data(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end)),:,:));
+Results1 = rsa_perm(cfg, RSA_Data_Enc.(ROI{r1,1}).red16_Data(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end)),:,:));
 cfg.TimeVec = RSA_Data_Ret.TimeVec(dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)));
-Results2 = rsa_perm(cfg, RSA_Data_Ret.(ROI{r1}).red16_Data(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)),:,:));
+Results2 = rsa_perm(cfg, RSA_Data_Ret.(ROI{r1,end}).red16_Data(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)),:,:));
 
 cfg.Hyp_Mat = Hyp_Mat{c2};
 cfg.TimeVec = RSA_Data_Enc.TimeVec(dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end)));
-Results3 = rsa_perm(cfg, RSA_Data_Enc.(ROI{r2}).red16_Data(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end)),:,:));
+Results3 = rsa_perm(cfg, RSA_Data_Enc.(ROI{r2,1}).red16_Data(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end)),:,:));
 cfg.TimeVec = RSA_Data_Ret.TimeVec(dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)));
-Results4 = rsa_perm(cfg, RSA_Data_Ret.(ROI{r2}).red16_Data(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)),:,:));
+Results4 = rsa_perm(cfg, RSA_Data_Ret.(ROI{r2,end}).red16_Data(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)),:,:));
 
 
 if(rndcut_perm)
@@ -585,9 +478,9 @@ if(rndcut_perm)
     Results5 = PermTestRNDCP2D(cfg, CrossComp_Data.RSA_red16.Data1);
     Results6 = PermTestRNDCP2D(cfg, CrossComp_Data.RSA_red16.Data2);
 else
-    Results5.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).(permtestname{mth1}).(ROI{r1}).zmapthresh;
+    Results5.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).(permtestname{mth1}).(ROI_names{r1}).zmapthresh;
     Results5.H = sum(~isnan(Results5.zmapthresh(:))) ~= 0;
-    Results6.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).(permtestname{mth2}).(ROI{r2}).zmapthresh;
+    Results6.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).(permtestname{mth2}).(ROI_names{r2}).zmapthresh;
     Results6.H = sum(~isnan(Results6.zmapthresh(:))) ~= 0;
 end
 
@@ -617,8 +510,8 @@ pos(3) = aspect(1)/aspect(2)*pos(4);
 set(h1,'Position',pos);
 
 h2 = axes('Units','pixels','pos',[pos(1) pos(2)-130 pos(3) 128]);%,'visible','off');
-Dat_names1 = fieldnames(RSA_Time_Enc.(ROI{r1}).(Cat{c1}));
-dat1 = RSA_Time_Enc.(ROI{r1}).(Cat{c1}).(Dat_names1{dt1(2)})(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end))) - RSA_Time_Enc.(ROI{r1}).(Cat{c1}).(Dat_names1{dt1(1)})(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end)));
+Dat_names1 = fieldnames(RSA_Time_Enc.(ROI{r1,1}).(Cat{c1}));
+dat1 = RSA_Time_Enc.(ROI{r1,1}).(Cat{c1}).(Dat_names1{dt1(2)})(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end))) - RSA_Time_Enc.(ROI{r1,1}).(Cat{c1}).(Dat_names1{dt1(1)})(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end)));
 SEM1 = nanstd(dat1,0,1)./sqrt(size(dat1,1)); hold on;
 fill([Results1.TimeVec fliplr(Results1.TimeVec)],[nanmean(dat1,1) fliplr(nanmean(dat1,1) + SEM1)],Col{c1},'FaceAlpha',0.3,'EdgeAlpha',0);
 fill([Results1.TimeVec fliplr(Results1.TimeVec)],[nanmean(dat1,1) fliplr(nanmean(dat1,1) - SEM1)],Col{c1},'FaceAlpha',0.3,'EdgeAlpha',0);
@@ -633,8 +526,8 @@ lg = legend(l1, sprintf('%s \n%s - %s',Cat{c1},Dat_names1{dt1(2)},Dat_names1{dt1
 xlabel('Encoding')
 
 h3 = axes('Units','pixels','pos',[pos(1)-135 pos(2) 133 pos(4)]);%,'visible','off');
-Dat_names1 = fieldnames(RSA_Time_Ret.(ROI{r1}).(Cat{c1}));
-dat1 = RSA_Time_Ret.(ROI{r1}).(Cat{c1}).(Dat_names1{dt1(2)})(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end))) - RSA_Time_Ret.(ROI{r1}).(Cat{c1}).(Dat_names1{dt1(1)})(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)));
+Dat_names1 = fieldnames(RSA_Time_Ret.(ROI{r1,end}).(Cat{c1}));
+dat1 = RSA_Time_Ret.(ROI{r1,end}).(Cat{c1}).(Dat_names1{dt1(2)})(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end))) - RSA_Time_Ret.(ROI{r1,end}).(Cat{c1}).(Dat_names1{dt1(1)})(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)));
 SEM1 = nanstd(dat1,0,1)./sqrt(size(dat1,1)); hold on;
 fill([nanmean(dat1,1) fliplr(nanmean(dat1,1) + SEM1)],[Results2.TimeVec fliplr(Results2.TimeVec)],Col{c1},'FaceAlpha',0.3,'EdgeAlpha',0);
 fill([nanmean(dat1,1) fliplr(nanmean(dat1,1) - SEM1)],[Results2.TimeVec fliplr(Results2.TimeVec)],Col{c1},'FaceAlpha',0.3,'EdgeAlpha',0);
@@ -668,8 +561,8 @@ pos(3) = aspect(1)/aspect(2)*pos(4);
 set(h4,'Position',pos);
 
 h5 = axes('Units','pixels','pos',[pos(1) pos(2)-130 pos(3) 128]);%,'visible','off');
-Dat_names1 = fieldnames(RSA_Time_Enc.(ROI{r2}).(Cat{c2}));
-dat1 = RSA_Time_Enc.(ROI{r2}).(Cat{c2}).(Dat_names1{dt1(2)})(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end))) - RSA_Time_Enc.(ROI{r2}).(Cat{c2}).(Dat_names1{dt1(1)})(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end)));
+Dat_names1 = fieldnames(RSA_Time_Enc.(ROI{r2,1}).(Cat{c2}));
+dat1 = RSA_Time_Enc.(ROI{r2,1}).(Cat{c2}).(Dat_names1{dt1(2)})(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end))) - RSA_Time_Enc.(ROI{r2,1}).(Cat{c2}).(Dat_names1{dt1(1)})(:,dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(1)):dsearchn(RSA_Data_Enc.TimeVec', time_wind_enc(end)));
 SEM1 = nanstd(dat1,0,1)./sqrt(size(dat1,1)); hold on;
 fill([Results3.TimeVec fliplr(Results3.TimeVec)],[nanmean(dat1,1) fliplr(nanmean(dat1,1) + SEM1)],Col{c2},'FaceAlpha',0.3,'EdgeAlpha',0);
 fill([Results3.TimeVec fliplr(Results3.TimeVec)],[nanmean(dat1,1) fliplr(nanmean(dat1,1) - SEM1)],Col{c2},'FaceAlpha',0.3,'EdgeAlpha',0);
@@ -684,8 +577,8 @@ lg = legend(l1, sprintf('%s \n%s - %s',Cat{c2},Dat_names1{dt1(2)},Dat_names1{dt1
 xlabel('Encoding')
 
 h6 = axes('Units','pixels','pos',[pos(1)-135 pos(2) 133 pos(4)]);%,'visible','off');
-Dat_names1 = fieldnames(RSA_Time_Ret.(ROI{r2}).(Cat{c2}));
-dat1 = RSA_Time_Ret.(ROI{r2}).(Cat{c2}).(Dat_names1{dt1(2)})(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end))) - RSA_Time_Ret.(ROI{r2}).(Cat{c2}).(Dat_names1{dt1(1)})(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)));
+Dat_names1 = fieldnames(RSA_Time_Ret.(ROI{r2,end}).(Cat{c2}));
+dat1 = RSA_Time_Ret.(ROI{r2,end}).(Cat{c2}).(Dat_names1{dt1(2)})(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end))) - RSA_Time_Ret.(ROI{r2,end}).(Cat{c2}).(Dat_names1{dt1(1)})(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)));
 SEM1 = nanstd(dat1,0,1)./sqrt(size(dat1,1)); hold on;
 fill([nanmean(dat1,1) fliplr(nanmean(dat1,1) + SEM1)],[Results4.TimeVec fliplr(Results4.TimeVec)],Col{c2},'FaceAlpha',0.3,'EdgeAlpha',0);
 fill([nanmean(dat1,1) fliplr(nanmean(dat1,1) - SEM1)],[Results4.TimeVec fliplr(Results4.TimeVec)],Col{c2},'FaceAlpha',0.3,'EdgeAlpha',0);
@@ -705,78 +598,301 @@ set([h1 h2 h3 h4 h5 h6],'Units','normalized')
 
 %% Plot all ROIs and Methods
 
+
+measures = {'LDA','SVM','euclidian','euclidian_wcc'};
 msr = 1;
+method = {'Corr','Meth1_per','Meth1_sem','Meth2_per','Meth2_sem'};
+mth1 = 2; mth2 = 3;
+
+
+
+%% Encoding to Encoding  Within ROIs
 
 tmp_struct = load(['Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Enc_wiROI_noperm_msr',num2str(msr)],['CrossComp_RSA_',measures{msr}]);
-
-method = {'Corr','Meth1_per','Meth1_sem','Meth2_per','Meth2_sem'};
-ROI = {'OCC','PRT','TMP','FRT'};
-
 Data = tmp_struct.(['CrossComp_RSA_',measures{msr}]).RSA_red16;
 TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
 TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
-
-%time_wind_enc = [-0.2  1.2];
-%time_wind_ret = [-1.6 -0.8];
+ROI = tmp_struct.(['CrossComp_RSA_',measures{msr}]).ROI;
 
 enc_lim = [-0.2  1.5];
-ret_lim = [-0.2  1.5];
+
 
 figure('Pos',[484 44 885 952])
 ct = 1;
 for m = 1:length(method)
-    for r = 1:length(ROI)
-        curData = squeeze(nanmean(Data.(ROI{r}).(method{m}),1)); prctile(curData(:),[1 99]);
-        subplot(length(method),length(ROI),ct)
-        contourf(TimeX, TimeY, curData, 40,'linestyle','none'); %colorbar
-        caxis([0 prctile(curData(:),60)]); set(gca,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+    for r = 1:size(ROI,1)
+        curData = squeeze(nanmean(Data.(ROI{r,1}).(method{m}),1)); prctile(curData(:),[1 99]);
+        subplot(length(method),size(ROI,1),ct)
+        contourf(TimeX, TimeY, curData, 40,'linestyle','none'); ax_pos = get(gca,'Pos');
+        cl = colorbar('Position',[ax_pos(1)+ax_pos(3)+0.005 ax_pos(2) 0.01 ax_pos(4)]);
+        caxis([min(curData(:)) prctile(curData(:),80)]); set(gca,'xlim', enc_lim, 'ylim', enc_lim, 'xticklabel',[], 'yticklabel',[]); 
         hold on
         plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
         plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
         hold off
         ct = ct + 1;
+        if(m == 1)
+            text('string',ROI{r,1},'Pos',[0.5*(enc_lim(end) + enc_lim(1)) enc_lim(end)*1.2 0],'FontSize',11,'HorizontalAlignment','center')
+        end
+        if(r == 1)
+            text('string',strrep(method{m},'_',' '),'Pos',[enc_lim(1)*2 0.5*(enc_lim(end) + enc_lim(1)) 0],'FontSize',11,'HorizontalAlignment','center','Rotation',90)
+        end
     end
 end
 
 
+r = 4; m = 1;
 figure
-curData = squeeze(nanmean(Data.(ROI{3}).(method{1}),1)); prctile(curData(:),[1 99]);
-contourf(TimeX, TimeY, curData, 40,'linestyle','none'); %colorbar
-caxis([0 1]); set(gca,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+curData = squeeze(nanmean(Data.(ROI{r}).(method{m}),1)); prctile(curData(:),[1 99]);
+contourf(TimeX, TimeY, curData, 40,'linestyle','none'); cl = colorbar;
+caxis([min(curData(:)) prctile(curData(:),70)]); set(gca,'xlim', enc_lim, 'ylim', enc_lim);
+xlabel('Encoding'); ylabel('Encoding'); title(ROI{r}); ylabel(cl, strrep(method{m},'_',' '))
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
 hold off
+saveas(gcf,sprintf('Results/Enc_Enc_%s_%s_TGM_%s.png',ROI{r},method{m},measures{msr}))
 
 
+%% Encoding to Encoding  Between ROIs
 
-
-
-
-tmp_struct = load('CrossComp_RSA_Enc_Ret_diffROI',['CrossComp_RSA_',measures{msr}]);
-
+tmp_struct = load(['Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Enc_btROI_noperm_msr',num2str(msr)],['CrossComp_RSA_',measures{msr}]);
 Data = tmp_struct.(['CrossComp_RSA_',measures{msr}]).RSA_red16;
 TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
 TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
+ROI = tmp_struct.(['CrossComp_RSA_',measures{msr}]).ROI;
 
-enc_lim = [-0.1  1.3];
-ret_lim = [-3 -0.8];
+enc1_lim = [-0.2  1];
+enc2_lim = [-0.2  1];
 
+
+figure('Pos',[300 42 1267 952])
+ct = 1;
+for m = 1:length(method)
+    for r = 1:size(ROI,1)
+        curData = squeeze(nanmean(Data.([ROI{r,1},'_',ROI{r,2}]).(method{m}),1)); prctile(curData(:),[1 99]);
+        subplot(length(method),size(ROI,1),ct)
+        contourf(TimeX, TimeY, curData, 40,'linestyle','none'); ax_pos = get(gca,'Pos');
+        cl = colorbar('Position',[ax_pos(1)+ax_pos(3)+0.005 ax_pos(2) 0.01 ax_pos(4)]);
+        caxis(prctile(curData(:),[2.5 97.5])); set(gca,'xlim', enc1_lim, 'ylim', enc2_lim, 'xticklabel',[], 'yticklabel',[]); 
+        hold on
+        plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+        plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+        hold off
+        ct = ct + 1;
+        if(m == 1)
+            text('string',[ROI{r,1},' - ',ROI{r,2}],'Pos',[0.5*(enc1_lim(end) + enc1_lim(1)) enc2_lim(end)*1.2 0],'FontSize',11,'HorizontalAlignment','center')
+        end
+        if(r == 1)
+            text('string',strrep(method{m},'_',' '),'Pos',[enc1_lim(1)*2 0.5*(enc2_lim(end) + enc2_lim(1)) 0],'FontSize',11,'HorizontalAlignment','center','Rotation',90)
+        end
+    end
+end
+
+
+r = 1; m = 1;
 figure
-subplot(1,2,1)
-curdat = squeeze(nanmean(Data.OCC_PRT.Corr,1));
-contourf(TimeX, TimeY, curdat, 40,'linestyle','none'); colorbar
-caxis(prctile(curdat(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim); title('OCCIPITAL to PARIETAL'); xlabel('Encoding'); ylabel('Retrieval')
+curData = squeeze(nanmean(Data.([ROI{r,1},'_',ROI{r,2}]).(method{m}),1)); prctile(curData(:),[1 99]);
+contourf(TimeX, TimeY, curData, 40,'linestyle','none'); cl = colorbar;
+caxis(prctile(curData(:),[2.5 97.5])); set(gca,'xlim', enc1_lim, 'ylim', enc2_lim); 
+xlabel(['Encoding ',ROI{r,1}]); ylabel(['Encoding ',ROI{r,2}]); ylabel(cl, strrep(method{m},'_',' '))
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
 hold off
-subplot(1,2,2)
-curdat = squeeze(nanmean(Data.TMP_PRT.Corr,1));
-contourf(TimeX, TimeY, curdat, 40,'linestyle','none'); colorbar
-caxis(prctile(curdat(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim); title('TEMPORAL to PARIETAL'); xlabel('Encoding'); ylabel('Retrieval')
+
+
+
+%% Retrieval to Retrieval  Within ROIs
+
+tmp_struct = load(['Crosscompare_RSA_Matfiles/CrossComp_RSA_Ret_Ret_wiROI_noperm_msr',num2str(msr)],['CrossComp_RSA_',measures{msr}]);
+Data = tmp_struct.(['CrossComp_RSA_',measures{msr}]).RSA_red16;
+TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
+TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
+ROI = tmp_struct.(['CrossComp_RSA_',measures{msr}]).ROI;
+
+ret_lim = [-1.8  -0.6];
+
+
+figure('Pos',[484 44 885 952])
+ct = 1;
+for m = 1:length(method)
+    for r = 1:size(ROI,1)
+        curData = squeeze(nanmean(Data.(ROI{r,1}).(method{m}),1)); prctile(curData(:),[1 99]);
+        subplot(length(method),size(ROI,1),ct)
+        contourf(TimeX, TimeY, curData, 40,'linestyle','none'); ax_pos = get(gca,'Pos');
+        cl = colorbar('Position',[ax_pos(1)+ax_pos(3)+0.005 ax_pos(2) 0.01 ax_pos(4)]);
+        caxis([min(curData(:)) prctile(curData(:),90)]); set(gca,'xlim', ret_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+        hold on
+        plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+        plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+        hold off
+        ct = ct + 1;
+        if(m == 1)
+            text('string',ROI{r,1},'Pos',[0.5*(ret_lim(end) + ret_lim(1)) ret_lim(end)*3 0],'FontSize',11,'HorizontalAlignment','center')
+        end
+        if(r == 1)
+            text('string',strrep(method{m},'_',' '),'Pos',[ret_lim(1)*1.1 0.5*(ret_lim(end) + ret_lim(1)) 0],'FontSize',11,'HorizontalAlignment','center','Rotation',90)
+        end
+    end
+end
+
+
+r = 1; m = 1;
+figure
+curData = squeeze(nanmean(Data.(ROI{r}).(method{m}),1)); prctile(curData(:),[1 99]);
+contourf(TimeX, TimeY, curData, 40,'linestyle','none'); cl = colorbar;
+caxis([min(curData(:)) prctile(curData(:),90)]); set(gca,'xlim', ret_lim, 'ylim', ret_lim);
+xlabel('Retrieval'); ylabel('Retrieval'); title(ROI{r}); ylabel(cl, strrep(method{m},'_',' '))
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
 hold off
+
+
+
+%% Retrieval to Retrieval  Between ROIs
+
+tmp_struct = load(['Crosscompare_RSA_Matfiles/CrossComp_RSA_Ret_Ret_btROI_noperm_msr',num2str(msr)],['CrossComp_RSA_',measures{msr}]);
+Data = tmp_struct.(['CrossComp_RSA_',measures{msr}]).RSA_red16;
+TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
+TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
+ROI = tmp_struct.(['CrossComp_RSA_',measures{msr}]).ROI;
+
+ret1_lim = [-1.8 -0.6];
+ret2_lim = [-1.8 -0.6];
+
+
+figure('Pos',[484 44 885 952])
+ct = 1;
+for m = 1:length(method)
+    for r = 1:size(ROI,1)
+        curData = squeeze(nanmean(Data.([ROI{r,1},'_',ROI{r,2}]).(method{m}),1)); prctile(curData(:),[1 99]);
+        subplot(length(method),size(ROI,1),ct)
+        contourf(TimeX, TimeY, curData, 40,'linestyle','none'); ax_pos = get(gca,'Pos');
+        cl = colorbar('Position',[ax_pos(1)+ax_pos(3)+0.005 ax_pos(2) 0.01 ax_pos(4)]);
+        caxis(prctile(curData(:),[2.5 97.5])); set(gca,'xlim', ret1_lim, 'ylim', ret2_lim, 'xticklabel',[], 'yticklabel',[]); 
+        hold on
+        plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+        plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+        hold off
+        ct = ct + 1;
+        if(m == 1)
+            text('string',[ROI{r,1},' - ',ROI{r,2}],'Pos',[0.5*(ret1_lim(end) + ret1_lim(1)) ret2_lim(end)*1.2 0],'FontSize',11,'HorizontalAlignment','center')
+        end
+        if(r == 1)
+            text('string',strrep(method{m},'_',' '),'Pos',[ret1_lim(1)*1.2 0.5*(ret2_lim(end) + ret2_lim(1)) 0],'FontSize',11,'HorizontalAlignment','center','Rotation',90)
+        end
+    end
+end
+
+
+r = 6; m = 2;
+figure
+curData = squeeze(nanmean(Data.([ROI{r,1},'_',ROI{r,2}]).(method{m}),1)); prctile(curData(:),[1 99]);
+contourf(TimeX, TimeY, curData, 40,'linestyle','none'); cl = colorbar;
+caxis(prctile(curData(:),[2.5 97.5])); set(gca,'xlim', ret1_lim, 'ylim', ret2_lim); 
+xlabel(['Retrieval ',ROI{r,1}]); ylabel(['Retrieval ',ROI{r,2}]); ylabel(cl, strrep(method{m},'_',' '))
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+hold off
+
+
+
+%% Encoding to Retrieval  Within ROIs
+
+tmp_struct = load('Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_wiROI_noperm_msr1',['CrossComp_RSA_',measures{msr}]);
+Data = tmp_struct.(['CrossComp_RSA_',measures{msr}]).RSA_red16;
+TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
+TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
+ROI = tmp_struct.(['CrossComp_RSA_',measures{msr}]).ROI;
+
+enc_lim = [-0.1  1.5];
+ret_lim = [-1.5  -0.5];
+
+
+figure('Pos',[484 44 885 952])
+ct = 1;
+for m = 1:length(method)
+    for r = 1:size(ROI,1)
+        curData = squeeze(nanmean(Data.(ROI{r,1}).(method{m}),1)); prctile(curData(:),[1 99]);
+        subplot(length(method),size(ROI,1),ct)
+        contourf(TimeX, TimeY, curData, 40,'linestyle','none'); %colorbar
+        caxis(prctile(curData(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+        hold on
+        plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+        plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+        hold off
+        ct = ct + 1;
+        if(m == 1)
+            text('string',ROI{r,1},'Pos',[0.5*(enc_lim(end) + enc_lim(1)) ret_lim(end)*1.2 0],'FontSize',11,'HorizontalAlignment','center')
+        end
+        if(r == 1)
+            text('string',strrep(method{m},'_',' '),'Pos',[enc_lim(1)*2 0.5*(ret_lim(end) + ret_lim(1)) 0],'FontSize',11,'HorizontalAlignment','center','Rotation',90)
+        end
+    end
+end
+
+
+r = 4; m = 3;
+figure
+curData = squeeze(nanmean(Data.(ROI{r}).(method{m}),1)); prctile(curData(:),[1 99]);
+contourf(TimeX, TimeY, curData, 40,'linestyle','none'); cl = colorbar;
+caxis(prctile(curData(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim);
+xlabel('Encoding'); ylabel('Retrieval'); title(ROI{r}); ylabel(cl, strrep(method{m},'_',' '))
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+hold off
+
+
+
+%% Encoding to Retrieval  Between ROIs
+
+tmp_struct = load(['Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_btROI_noperm_msr',num2str(msr)],['CrossComp_RSA_',measures{msr}]);
+Data = tmp_struct.(['CrossComp_RSA_',measures{msr}]).RSA_red16;
+TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
+TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
+ROI = tmp_struct.(['CrossComp_RSA_',measures{msr}]).ROI;
+
+enc_lim = [-0.1  1.2];
+ret_lim = [-2.4 -1.6];
+
+
+figure('Pos',[484 44 885 952])
+ct = 1;
+for m = 1:length(method)-2
+    for r = 1:size(ROI,1)
+        curData = squeeze(nanmean(Data.([ROI{r,1},'_',ROI{r,2}]).(method{m}),1)); prctile(curData(:),[1 99]);
+        subplot(length(method)-2,size(ROI,1),ct)
+        contourf(TimeX, TimeY, curData, 40,'linestyle','none'); %colorbar
+        caxis(prctile(curData(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+        hold on
+        plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+        plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+        hold off
+        ct = ct + 1;
+        if(m == 1)
+            text('string',[ROI{r,1},' - ',ROI{r,2}],'Pos',[0.5*(enc_lim(end) + enc_lim(1)) ret_lim(end)*1.2 0],'FontSize',11,'HorizontalAlignment','center')
+        end
+        if(r == 1)
+            text('string',strrep(method{m},'_',' '),'Pos',[enc_lim(1)*2 0.5*(ret_lim(end) + ret_lim(1)) 0],'FontSize',11,'HorizontalAlignment','center','Rotation',90)
+        end
+    end
+end
+
+
+r = 3; m = 2;
+figure
+curData = squeeze(nanmean(Data.([ROI{r,1},'_',ROI{r,2}]).(method{m}),1)); prctile(curData(:),[1 99]);
+contourf(TimeX, TimeY, curData, 40,'linestyle','none'); cl = colorbar;
+caxis(prctile(curData(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim); 
+xlabel(['Encoding ',ROI{r,1}]); ylabel(['Retrieval ',ROI{r,2}]); ylabel(cl, strrep(method{m},'_',' '))
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+hold off
+
+
 
