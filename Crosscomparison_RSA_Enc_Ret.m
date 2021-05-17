@@ -407,7 +407,7 @@ end
 
 measures = {'LDA','SVM','euclidian','euclidian_wcc'};
 
-tmp_struct = load('Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_btROI_noperm_msr1',['CrossComp_RSA_',measures{msr}]);
+tmp_struct = load('Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_btROI_perm_msr1',['CrossComp_RSA_',measures{msr}]);
 tmp_fnames = fieldnames(tmp_struct);
 
 method = {'Corr','Meth1_per','Meth1_sem','Meth2_per','Meth2_sem'};
@@ -426,7 +426,7 @@ Col = {'b','r'};
 time_wind_enc = [-0.1  1.2];
 time_wind_ret = [-2.2 -0.8]; % [-1.8 -0.6]
 
-r1 = 3; r2 = 6;
+r1 = 1; r2 = 2;
 c1 = 1; c2 = 2;
 dt1 = [3 4]; dt2 = [3 4];
 rndcut_perm = true;
