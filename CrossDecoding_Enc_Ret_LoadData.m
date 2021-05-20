@@ -115,8 +115,8 @@ for sub = 1:length(Subj_names)
         CurData_Ret = preprocEEG_Ret.Data_dwnsmp(~isnan(sum(preprocEEG_Ret.Data_dwnsmp(:,:,1),2)),ROI_idx{r,end},:);
 
         % Perceptual Dimension
-        Perceptual_Cond_Enc = strcmp(preprocEEG_Enc.TrialInfo(~isnan(sum(CurData_Enc(:,:,1),2)),6),'Drawing') + 2.*strcmp(preprocEEG_Enc.TrialInfo(~isnan(sum(CurData_Enc(:,:,1),2)),6),'Picture');
-        Perceptual_Cond_Ret = strcmp(preprocEEG_Ret.TrialInfo(~isnan(sum(CurData_Ret(:,:,1),2)),6),'Drawing') + 2.*strcmp(preprocEEG_Ret.TrialInfo(~isnan(sum(CurData_Ret(:,:,1),2)),6),'Picture');
+        Perceptual_Cond_Enc = strcmp(preprocEEG_Enc.TrialInfo(cell2mat(preprocEEG_Enc.TrialInfo(:,1)) > 0,6),'Drawing') + 2.*strcmp(preprocEEG_Enc.TrialInfo(cell2mat(preprocEEG_Enc.TrialInfo(:,1)) > 0,6),'Picture');
+        Perceptual_Cond_Ret = strcmp(preprocEEG_Ret.TrialInfo(cell2mat(preprocEEG_Ret.TrialInfo(:,1)) > 0,6),'Drawing') + 2.*strcmp(preprocEEG_Ret.TrialInfo(cell2mat(preprocEEG_Ret.TrialInfo(:,1)) > 0,6),'Picture');
 
         cfg = [];
         cfg.metric      = 'auc';
@@ -313,6 +313,11 @@ if(permtest)
     end
     
 end
+
+
+%% Save Data
+
+save('CrossDec_Enc_Ret','CrossDec_Enc_Ret')
 
 
 

@@ -37,3 +37,91 @@ ROI_pari = {'D24','D25','D26','D27','D28','D17','D16','D32','D31','D30','D29','A
             'A4','A3','A26','A27','A28','A29','A30','A31','A32','B9','B8','B7','B6','B5','B4','B3','B2','B10',...
             'B10','B11','B12','B13','B14','B15','B16','B17','B18','B19'};
 ROI_pari_idx = find(cell2mat(cellfun(@(x) any(strcmp(x, ROI_pari)), elecs, 'UniformOutput', 0)));
+
+
+
+
+% cfg = [];
+% cfg.layout = 'biosemi128.lay';
+% cfg.center = 'no';
+% cfg.projection  = 'polar';
+% cfg.overlap     = 'shift';
+% cfg.skipscale   = 'yes';
+% cfg.skipcomnt   = 'yes';
+% layout_elec = ft_prepare_layout(cfg);
+
+% figure('Pos',[694  464  440  350])
+% axes('Units','Pixel','Position',[0  5  435  340]);
+% ft_plot_layout(layout_elec,'label','no','box','no','pointsymbol','s','pointcolor','k','pointsize',18)
+% h = get(gca,'Child');
+% hold on
+% plot(h(6).XData(ROI_occ_idx), h(6).YData(ROI_occ_idx),'s','MarkerSize',20,'MarkerFaceColor','k')
+% hold off
+% set(gca,'Units','norm')
+% saveas(gcf,'Results/OCC_ROI.png')
+% close(gcf)
+% 
+% figure('Pos',[694  464  440  350])
+% axes('Units','Pixel','Position',[0  5  435  340]);
+% ft_plot_layout(layout_elec,'label','no','box','no','pointsymbol','s','pointcolor','k','pointsize',18)
+% h = get(gca,'Child');
+% hold on
+% plot(h(6).XData(ROI_temp_idx), h(6).YData(ROI_temp_idx),'s','MarkerSize',20,'MarkerFaceColor','k')
+% hold off
+% set(gca,'Units','norm')
+% saveas(gcf,'Results/TEMP_ROI.png')
+% close(gcf)
+% 
+% figure('Pos',[694  464  440  350])
+% axes('Units','Pixel','Position',[0  5  435  340]);
+% ft_plot_layout(layout_elec,'label','no','box','no','pointsymbol','s','pointcolor','k','pointsize',10)
+% h = get(gca,'Child');
+% hold on
+% plot(h(6).XData(ROI_front_idx), h(6).YData(ROI_front_idx),'s','MarkerSize',12,'MarkerFaceColor','k')
+% hold off
+% set(gca,'Units','norm')
+% saveas(gcf,'Results/FRT_ROI.png')
+% close(gcf)
+% 
+% figure('Pos',[694  464  440  350])
+% axes('Units','Pixel','Position',[0  5  435  340]);
+% ft_plot_layout(layout_elec,'label','no','box','no','pointsymbol','s','pointcolor','k','pointsize',10)
+% h = get(gca,'Child');
+% hold on
+% plot(h(6).XData(ROI_pari_idx), h(6).YData(ROI_pari_idx),'s','MarkerSize',12,'MarkerFaceColor','k')
+% hold off
+% set(gca,'Units','norm')
+% saveas(gcf,'Results/PRT_ROI.png')
+% close(gcf)
+
+
+% figure('Pos', [226  57  1185  926])
+% figpos = get(gcf,'position'); bord_pad = 25;
+% axes('Units','Pixel','Position',[bord_pad figpos(4)/2+bord_pad figpos(3)/2-2*bord_pad figpos(4)/2-2*bord_pad]);
+% ft_plot_layout(layout_elec,'label','no','box','no','pointsymbol','s','pointcolor','k','pointsize',10)
+% h = get(gca,'Child');
+% hold on
+% plot(h(6).XData(ROI_occ_idx), h(6).YData(ROI_occ_idx),'s','MarkerSize',12,'MarkerFaceColor','k')
+% hold off
+% axes('Units','Pixel','Position',[figpos(3)/2+bord_pad figpos(4)/2+bord_pad figpos(3)/2-2*bord_pad figpos(4)/2-2*bord_pad]);
+% ft_plot_layout(layout_elec,'label','no','box','no','pointsymbol','s','pointcolor','k','pointsize',10)
+% h = get(gca,'Child');
+% hold on
+% plot(h(6).XData(ROI_temp_idx), h(6).YData(ROI_temp_idx),'s','MarkerSize',12,'MarkerFaceColor','k')
+% hold off
+% axes('Units','Pixel','Position',[bord_pad bord_pad figpos(3)/2-2*bord_pad figpos(4)/2-2*bord_pad]);
+% ft_plot_layout(layout_elec,'label','no','box','no','pointsymbol','s','pointcolor','k','pointsize',10)
+% h = get(gca,'Child');
+% hold on
+% plot(h(6).XData(ROI_front_idx), h(6).YData(ROI_front_idx),'s','MarkerSize',12,'MarkerFaceColor','k')
+% hold off
+% axes('Units','Pixel','Position',[figpos(3)/2+bord_pad bord_pad figpos(3)/2-2*bord_pad figpos(4)/2-2*bord_pad]);
+% ft_plot_layout(layout_elec,'label','no','box','no','pointsymbol','s','pointcolor','k','pointsize',10)
+% h = get(gca,'Child');
+% hold on
+% plot(h(6).XData(ROI_pari_idx), h(6).YData(ROI_pari_idx),'s','MarkerSize',12,'MarkerFaceColor','k')
+% hold off
+
+
+
+
