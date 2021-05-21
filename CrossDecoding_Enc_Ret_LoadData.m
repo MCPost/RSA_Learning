@@ -46,7 +46,7 @@ CrossDec_Enc_Ret.TimeX = [];
 CrossDec_Enc_Ret.TimeY = [];
 
 fprintf('\n')
-nbytes = fprintf('Subject: %s  --  Progress Cross Decoding:  0.0 %%',Subj_names{sub});
+nbytes = fprintf('Subject: %s  --  Progress Cross Decoding:  0.0 %%',Subj_names{1});
 for sub = 1:length(Subj_names)
 
     % Load Encoding Data
@@ -204,7 +204,7 @@ for sub = 1:length(Subj_names)
         fprintf(repmat('\b',1,nbytes))
         nbytes = fprintf('Subject: %s  --  Progress Cross Decoding:  %3.1f %%',Subj_names{sub},(r / size(ROI,1))*100);
     end
-    fprintf('\n')
+    
 end
 fprintf('\n')
 

@@ -60,7 +60,7 @@ MultiCLDA_RSA_Ret_Data.TimeRet = [];
 
 
 fprintf('\n')
-nbytes = fprintf('Subject: %s  --  Progress Cross Decoding:  0.0 %%',Subj_names{sub});
+nbytes = fprintf('Subject: %s  --  Progress Cross Decoding:  0.0 %%',Subj_names{1});
 for sub = 1:length(Subj_names)
 
     % Load Encoding Data
@@ -136,7 +136,7 @@ for sub = 1:length(Subj_names)
         %cfg.cv          = 'holdout';
         %cfg.p           = 0.3;
         cfg.cv          = 'kfold';
-        cfg.k           = 4;
+        cfg.k           = 3;
         cfg.repeat      = 5;
         cfg.feedback    = 1;
         
@@ -144,7 +144,7 @@ for sub = 1:length(Subj_names)
         for tp = 1:size(perf,1)
             dgn_vec = diag(squeeze(perf(tp,:,:))) + double(diag(squeeze(perf(tp,:,:))) == 0);
             S = sqrt(bsxfun(@rdivide, squeeze(perf(tp,:,:)), dgn_vec) * bsxfun(@rdivide, squeeze(perf(tp,:,:)), dgn_vec)');
-            MultiCLDA_RSA_Enc_Data.(ROI{r}).Data(sub,tp,:) = 1 - S(UTM_idx)';
+            MultiCLDA_RSA_Enc_Data.(ROI{r}).Data(sub,tp,:) = S(UTM_idx)';
             MultiCLDA_RSA_Enc_Data.(ROI{r}).Sensor_weights(sub,tp,:) = (cov(CurData_Enc(:,:,tp))*mean(mean(weights(:,:,:,tp),3),2))' / cov(CurData_Enc(:,:,tp)*mean(mean(weights(:,:,:,tp),3),2));
         end
         
@@ -152,21 +152,20 @@ for sub = 1:length(Subj_names)
         for tp = 1:size(perf,1)
             dgn_vec = diag(squeeze(perf(tp,:,:))) + double(diag(squeeze(perf(tp,:,:))) == 0);
             S = sqrt(bsxfun(@rdivide, squeeze(perf(tp,:,:)), dgn_vec) * bsxfun(@rdivide, squeeze(perf(tp,:,:)), dgn_vec)');
-            MultiCLDA_RSA_Ret_Data.(ROI{r}).Data(sub,tp,:) = 1 - S(UTM_idx)';
+            MultiCLDA_RSA_Ret_Data.(ROI{r}).Data(sub,tp,:) = S(UTM_idx)';
             MultiCLDA_RSA_Ret_Data.(ROI{r}).Sensor_weights(sub,tp,:) = (cov(CurData_Ret(:,:,tp))*mean(mean(weights(:,:,:,tp),3),2))' / cov(CurData_Ret(:,:,tp)*mean(mean(weights(:,:,:,tp),3),2));
         end
-        
         
         fprintf(repmat('\b',1,nbytes))
         nbytes = fprintf('Subject: %s  --  Progress Cross Decoding:  %3.1f %%',Subj_names{sub},(r / size(ROI,1))*100);
     end
-    fprintf('\n')
+    
 end
 fprintf('\n')
 
 
 %% Save Data
 
-save('MultiCLDA_RSA_Enc','MultiCLDA_RSA_Ret_Enc')
+save('MultiCLDA_RSA_Enc','MultiCLDA_RSA_Enc_Data')
 save('MultiCLDA_RSA_Ret','MultiCLDA_RSA_Ret_Data')
 
