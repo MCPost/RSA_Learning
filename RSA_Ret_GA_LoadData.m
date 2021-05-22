@@ -22,7 +22,7 @@ Electrodes_ROIs
     eeg_cfg.chan_idx = ROI_all_idx; %ROI_occ_idx'; 
     eeg_cfg.Art_corr = false;
     eeg_cfg.BL_corr = 'demean';
-    eeg_cfg.BL_wind = [];
+    eeg_cfg.BL_wind = [-4 0.2];
     [Data_EEG] = preproc_EEGData(eeg_cfg, Ret_Data_EEG);
     
     

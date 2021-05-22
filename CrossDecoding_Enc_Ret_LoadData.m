@@ -1,6 +1,6 @@
 %% CrossDecoding Encoding and Retrieval Load Data
 
-permtest = true;
+permtest = false;
 n_perms = 100;
 thresh_pval = 0.05;
 mcc_cluster_pval = 0.05;

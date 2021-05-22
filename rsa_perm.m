@@ -6,7 +6,7 @@ nPerms = cfg.nPerms;
 thresh_pval = cfg.thresh_pval;
 mcc_cluster_pval = cfg.mcc_cluster_pval;
 TimeVec = cfg.TimeVec;
-Hyp_Mat = cfg.Hyp_Mat;
+Hyp_idx = cfg.Hyp_idx;
 matshuff = cfg.matshuff;
 twoside = cfg.twoside;
 
@@ -18,8 +18,8 @@ end
 
 %% Real Data Clusters
 
-grp1 = nanmean(Data(:,:,Hyp_Mat(:) == -1),3);
-grp2 = nanmean(Data(:,:,Hyp_Mat(:) == 1),3);
+grp1 = nanmean(Data(:,:,Hyp_idx(:,2)),3);
+grp2 = nanmean(Data(:,:,Hyp_idx(:,1)),3);
 % compute actual t-test of difference (using unequal N and std)
 real_diff   = nanmean(grp1 - grp2,1);
 tdenom = nanstd(grp1 - grp2,0,1)./sqrt(size(grp1,1));
@@ -36,11 +36,11 @@ for p = 1:nPerms
     
     if(matshuff)
         % Create a shuffled version of the Hypothesis Matrix
-        Shuff_Mat = zeros(size(Hyp_Mat));
-        Ind_Mat = triu(reshape(1:size(Hyp_Mat,1)^2,size(Hyp_Mat,1),size(Hyp_Mat,2)));
-        rand_idx = randperm(size(Hyp_Mat,1));
-        for row = 1:size(Hyp_Mat,1)-1
-            for col = (row+1):size(Hyp_Mat,1)
+        Shuff_Mat = zeros(size(Hyp_idx));
+        Ind_Mat = triu(reshape(1:size(Hyp_idx,1)^2,size(Hyp_idx,1),size(Hyp_idx,2)));
+        rand_idx = randperm(size(Hyp_idx,1));
+        for row = 1:size(Hyp_idx,1)-1
+            for col = (row+1):size(Hyp_idx,1)
                 if(Ind_Mat(rand_idx(row),rand_idx(col)) ~= 0)
                     Shuff_Mat(row,col) = Ind_Mat(rand_idx(row),rand_idx(col));
                 else
@@ -50,18 +50,18 @@ for p = 1:nPerms
         end
 
         %curData = permute(Data,[4 3 1 2]);
-        grp1 = nanmean(Data(:,:,Shuff_Mat(Hyp_Mat(:) == -1)),3);
-        grp2 = nanmean(Data(:,:,Shuff_Mat(Hyp_Mat(:) == 1)),3);
+        grp1 = nanmean(Data(:,:,Shuff_Mat(Hyp_idx(:) == -1)),3);
+        grp2 = nanmean(Data(:,:,Shuff_Mat(Hyp_idx(:) ==  1)),3);
     else
         grp1 = zeros(size(Data,1),size(Data,2)); 
         grp2 = zeros(size(Data,1),size(Data,2));
         conditions = [ones(floor(0.5*size(Data,1)),1); zeros(ceil(0.5*size(Data,1)),1)];
         rand_idx = logical(conditions(randperm(length(conditions))));
         %rand_idx = rand(size(Data,1),1) >= .5;
-        grp1( rand_idx,:) = nanmean(Data( rand_idx,:,Hyp_Mat(:) == -1),3);
-        grp1(~rand_idx,:) = nanmean(Data(~rand_idx,:,Hyp_Mat(:) ==  1),3);
-        grp2( rand_idx,:) = nanmean(Data( rand_idx,:,Hyp_Mat(:) ==  1),3);
-        grp2(~rand_idx,:) = nanmean(Data(~rand_idx,:,Hyp_Mat(:) == -1),3);
+        grp1( rand_idx,:) = nanmean(Data( rand_idx,:,Hyp_idx(:,1)),3);
+        grp1(~rand_idx,:) = nanmean(Data(~rand_idx,:,Hyp_idx(:,2)),3);
+        grp2( rand_idx,:) = nanmean(Data( rand_idx,:,Hyp_idx(:,2)),3);
+        grp2(~rand_idx,:) = nanmean(Data(~rand_idx,:,Hyp_idx(:,1)),3);
     end
     % compute actual t-test of difference (using unequal N and std)
     surr_diff   = squeeze(nanmean(grp1 - grp2,1));
@@ -149,7 +149,7 @@ zmapthresh(zmapthresh == 0) = NaN;
 
 Results.nPerms  = nPerms;
 Results.TimeVec = TimeVec;
-Results.Hyp_Mat = Hyp_Mat;
+Results.Hyp_Mat = Hyp_idx;
 Results.Real_T  = Real_T;
 Results.Surr_T  = Surr_T;
 Results.max_pixel_pvals  = max_pixel_pvals;
@@ -158,5 +158,11 @@ Results.clustinfo_pos = clustinfo_pos;
 Results.max_clust_info_neg  = max_clust_info_neg;
 Results.clustinfo_neg = clustinfo_neg;
 Results.zmapthresh = zmapthresh;
+if(sum(~isnan(Results.zmapthresh(:))) > 0)
+    Results.H = 1;
+else
+    Results.H = 0;
+end
+
 
 end

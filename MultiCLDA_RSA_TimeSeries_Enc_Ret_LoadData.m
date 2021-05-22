@@ -155,7 +155,7 @@ for sub = 1:length(Subj_names)
             MultiCLDA_RSA_Ret_Data.(ROI{r}).Data(sub,tp,:) = S(UTM_idx)';
             MultiCLDA_RSA_Ret_Data.(ROI{r}).Sensor_weights(sub,tp,:) = (cov(CurData_Ret(:,:,tp))*mean(mean(weights(:,:,:,tp),3),2))' / cov(CurData_Ret(:,:,tp)*mean(mean(weights(:,:,:,tp),3),2));
         end
-        
+        imagesc(squeeze(perf(50,:,:))); axis square; colorbar
         fprintf(repmat('\b',1,nbytes))
         nbytes = fprintf('Subject: %s  --  Progress Cross Decoding:  %3.1f %%',Subj_names{sub},(r / size(ROI,1))*100);
     end

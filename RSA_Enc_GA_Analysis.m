@@ -7,208 +7,98 @@ load('RSA_Data_Enc','Subj_names')
 %% ROI Electrode positions
 % Biosemi 128 Electrodes System Radial ABC
 Electrodes_ROIs
+ROI_idx = {ROI_occ_idx; ROI_temp_idx; ROI_front_idx; ROI_pari_idx};
+
+%% Hypothesis Matrix
+Hypothesis_Matrix
+
 
 %% Measure
 msr = 1;
 
 
+%% Matrix Indices to choose
+UTmat = triu(ones(16)).*~eye(16);
+UTM_idx = find(UTmat(:) == 1);
+SensUTmat = UTmat(1:end-1,:);
+SensUTM_idx = find(SensUTmat(:) == 1);
+
 %% Create Data
-tmp_strct = load('RSA_Data_Enc');
 RSA_Data = [];
 for sub = 1:length(Subj_names)
+    tmp_strct = load(['RSA_Data/RSA_Data_Enc_',Subj_names{sub}]);
     if(sub == 1)
+        ROI = fieldnames(tmp_strct.(['RSA_Data_',Subj_names{1}]));
         RSA_Data.Names   = Subj_names;
         for fn = fieldnames(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC)'
             RSA_Data.(fn{1}) = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.(fn{1});
         end
         RSA_Data = rmfield(RSA_Data, {'Name','TimeVec1024','RSA_full','MDS_full','RSA_16','Encoding_Data','TrialInfo'...
                                       'rsa_dim','curROI','curROI_name'});
-        RSA_Data.Encoding_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.Encoding_Data;
-        RSA_Data.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.TrialInfo;
-        RSA_Data.OCC_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.curROI; 
-        RSA_Data.TMP_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).TMP.curROI;
-        RSA_Data.FRT_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).FRT.curROI;
-        RSA_Data.PRT_ROI = tmp_strct.(['RSA_Data_',Subj_names{sub}]).PRT.curROI;
+        RSA_Data.Encoding_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).Encoding_Data;
+        RSA_Data.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).TrialInfo;
+        [~,RSA_Data.Cond_idx.Perc_WI_BT_idx(:,1),~] = intersect(UTM_idx,find(Perceptual_Mat_red16(:) > 0));
+        [~,RSA_Data.Cond_idx.Perc_WI_BT_idx(:,2),~] = intersect(UTM_idx,find(Perceptual_Mat_red16(:) < 0));
+        [~,RSA_Data.Cond_idx.Sem_WI_BT_idx(:,1),~]  = intersect(UTM_idx,find(Semantic_Mat_red16(:) > 0));
+        [~,RSA_Data.Cond_idx.Sem_WI_BT_idx(:,2),~]  = intersect(UTM_idx,find(Semantic_Mat_red16(:) < 0));
+        [~,RSA_Data.Cond_idx.Perc_Dr_Ph_idx(:,1),~] = intersect(UTM_idx,find(Perceptual_Mat_red16(:) == 1));
+        [~,RSA_Data.Cond_idx.Perc_Dr_Ph_idx(:,2),~] = intersect(UTM_idx,find(Perceptual_Mat_red16(:) == 2));
+        [~,RSA_Data.Cond_idx.Sem_An_Ia_idx(:,1),~]  = intersect(UTM_idx,find(Semantic_Mat_red16(:) == 1));
+        [~,RSA_Data.Cond_idx.Sem_An_Ia_idx(:,2),~]  = intersect(UTM_idx,find(Semantic_Mat_red16(:) == 2));
+        for r = 1:length(ROI)
+            RSA_Data.([ROI{r},'_ROI']) = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).curROI;
+        end
     else
-        RSA_Data.Encoding_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.Encoding_Data;
-        RSA_Data.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.TrialInfo;
+        RSA_Data.Encoding_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).Encoding_Data;
+        RSA_Data.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).TrialInfo;
     end
     
-    if(~isempty(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full))
-        RSA_Data.OCC.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full{1,msr},[3 1 2]);
-        RSA_Data.TMP.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_full{1,msr},[3 1 2]);
-        RSA_Data.FRT.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_full{1,msr},[3 1 2]);
-        RSA_Data.PRT.full_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_full{1,msr},[3 1 2]);
-    end
-    RSA_Data.OCC.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_16{1,msr},[3 1 2]);
-    RSA_Data.TMP.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_16{1,msr},[3 1 2]);
-    RSA_Data.FRT.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_16{1,msr},[3 1 2]);
-    RSA_Data.PRT.red16_Data(sub,:,:,:) = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_16{1,msr},[3 1 2]);
-end
-
-    
-    
-%% Hypotheses Matrix
-trl_mat = [kron([1;2],ones(64,1)) kron([1;2;1;2],ones(32,1))];
-Perceptual_Mat_full = zeros(size(trl_mat,1));
-Semantic_Mat_full = zeros(size(trl_mat,1));
-for i = 1:size(trl_mat,1)-1
-    for j = (i+1):size(trl_mat,1)
-        if(j ~= size(trl_mat,1) - (i - 1))
-            if(trl_mat(i,1) == 1 && trl_mat(j,1) == 1)
-                Perceptual_Mat_full(i,j) = 1;
-            elseif(trl_mat(i,1) == 2 && trl_mat(j,1) == 2)
-                Perceptual_Mat_full(i,j) = 2;
-            else
-                Perceptual_Mat_full(i,j) = -1;
-            end
-
-            if(trl_mat(i,2) == 1 && trl_mat(j,2) == 1)
-                Semantic_Mat_full(i,j) = 1;
-            elseif(trl_mat(i,2) == 2 && trl_mat(j,2) == 2)
-                Semantic_Mat_full(i,j) = 2;
-            else
-                Semantic_Mat_full(i,j) = -1;
-            end
+    for r = 1:length(ROI)
+        if(~isempty(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full))
+            hlp = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).RSA_full{1,msr},[3 1 2]);
+            RSA_Data.(ROI{r}).full_Data(sub,:,:) = hlp(:,UTM_idx);
+        end
+        hlp = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).RSA_16{1,msr},[3 1 2]);
+        RSA_Data.(ROI{r}).red16_Data(sub,:,:) = hlp(:,UTM_idx);
+        if(msr == 1)
+            hlp = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).RSA_16{3,msr},[4 3 1 2]);
+            hlp2 = hlp(:,:,SensUTM_idx);
+            RSA_Data.(ROI{r}).red16_SensorData(sub,:,:,1) = mean(hlp2(:,:,RSA_Data.Cond_idx.Perc_WI_BT_idx(:,1)),3);
+            RSA_Data.(ROI{r}).red16_SensorData(sub,:,:,2) = mean(hlp2(:,:,RSA_Data.Cond_idx.Perc_WI_BT_idx(:,2)),3);
+            RSA_Data.(ROI{r}).red16_SensorData(sub,:,:,3) = mean(hlp2(:,:,RSA_Data.Cond_idx.Sem_WI_BT_idx(:,1)),3);
+            RSA_Data.(ROI{r}).red16_SensorData(sub,:,:,4) = mean(hlp2(:,:,RSA_Data.Cond_idx.Sem_WI_BT_idx(:,2)),3);
         end
     end
+    clear tmp_strct
 end
 
-figure
-subplot(1,2,1)
-imagesc(Perceptual_Mat_full); title('Perceptual Hypothesis Matrix')
-axis square
-subplot(1,2,2)
-imagesc(Semantic_Mat_full); title('Semantic Hypothesis Matrix')
-axis square
-
-Perceptual_Mat_red16 = zeros(16);
-Semantic_Mat_red16 = zeros(16);
-for i = 1:16-1
-    for j = (i+1):16
-        if(j ~= 16 - (i - 1))
-            if(trl_mat(8*i,1) == 1 && trl_mat(8*j,1) == 1)
-                Perceptual_Mat_red16(i,j) = 1;
-            elseif(trl_mat(8*i,1) == 2 && trl_mat(8*j,1) == 2)
-                Perceptual_Mat_red16(i,j) = 2;
-            else
-                Perceptual_Mat_red16(i,j) = -1;
-            end
-
-            if(trl_mat(8*i,2) == 1 && trl_mat(8*j,2) == 1)
-                Semantic_Mat_red16(i,j) = 1;
-            elseif(trl_mat(8*i,2) == 2 && trl_mat(8*j,2) == 2)
-                Semantic_Mat_red16(i,j) = 2;
-            else
-                Semantic_Mat_red16(i,j) = -1;
-            end
-        end
-    end
-end
-
-figure
-subplot(1,2,1)
-imagesc(Perceptual_Mat_red16); title('Perceptual Hypothesis Matrix')
-axis square
-subplot(1,2,2)
-imagesc(Semantic_Mat_red16); title('Semantic Hypothesis Matrix')
-axis square
-
- 
     
-%% Create RSA Time Courses
 
-RSA_Time = [];
+
+
+%% Plotting Results
+
+% Parameters
 TimeVec = RSA_Data.TimeVec;
-for sub = 1:length(Subj_names)
-    
-    cur_data = zeros(size(RSA_Data.OCC.red16_Data,3));
-    for tp = 1:length(TimeVec)
-        
-        % Occipital
-        cur_data = squeeze(RSA_Data.OCC.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time.OCC.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time.OCC.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time.OCC.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time.OCC.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time.OCC.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time.OCC.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time.OCC.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time.OCC.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-        % Temporal
-        cur_data = squeeze(RSA_Data.TMP.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time.TMP.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time.TMP.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time.TMP.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time.TMP.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time.TMP.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time.TMP.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time.TMP.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time.TMP.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-        % Frontal
-        cur_data = squeeze(RSA_Data.FRT.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time.FRT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time.FRT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time.FRT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time.FRT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time.FRT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time.FRT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time.FRT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time.FRT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-        % Parietal
-        cur_data = squeeze(RSA_Data.PRT.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time.PRT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time.PRT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time.PRT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time.PRT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time.PRT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time.PRT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time.PRT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time.PRT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-    end
-
-end
+Cat = {'Perc','Sem'};
+Comp = {'WI_BT','Dr_Ph'; 'WI_BT','An_Ia'};
+ROI_names = {'Occipital','Temporal','Frontal','Parietal'};
+Comp_names = {{'Within','Between'}, {'Drawing','Photograph'}; {'Within','Between'}, {'Animate','Inanimate'}};
+Cat_names = {'Perceptual','Semantic'};
 
 
-%% Permutation Matrix
 
-
-cfg = [];
-cfg.nPerms = 1000;
-cfg.thresh_pval = 0.01;
-cfg.mcc_cluster_pval = 0.01;
-cfg.TimeVec = RSA_Data.TimeVec;
-cfg.Hyp_Mat = double(Semantic_Mat_red16>0) + -double(Semantic_Mat_red16<0);
-cfg.matshuff = false;
-cfg.twoside = true;
-%Results = rsa_perm(cfg, RSA_Data.TMP.red16_Data);
-
-
-% Plot RSA Time series
-
-ROI = {'OCC','TMP','FRT','PRT'}; r = 3;
-Cat = {'Perceptual','Semantic'}; c = 1;
-dt = 3:4;
+%% Plot RSA Time series
+r = 1;
+c = 1;
+cp = 1;
 
 figure('Pos', [325 510 650 402]);
 plot([]); hold on
-Dat_names = fieldnames(RSA_Time.(ROI{r}).(Cat{c}));
-dat1 = nanmean(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),1);
-dat2 = nanmean(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(2)})(:,:),1);
-SEM1 = nanstd(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),0,1)./sqrt(size(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)}),1));
-SEM2 = nanstd(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),0,1)./sqrt(size(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)}),1));
+dat1 = mean(mean(RSA_Data.(ROI{r}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,1)),3),1);
+dat2 = mean(mean(RSA_Data.(ROI{r}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,2)),3),1);
+SEM1 = nanstd(mean(RSA_Data.(ROI{r}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,1)),3),0,1)./sqrt(size(RSA_Data.(ROI{r}).red16_Data,1));
+SEM2 = nanstd(mean(RSA_Data.(ROI{r}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,2)),3),0,1)./sqrt(size(RSA_Data.(ROI{r}).red16_Data,1));
 fill([TimeVec fliplr(TimeVec)],[dat1 fliplr(dat1 + SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
 fill([TimeVec fliplr(TimeVec)],[dat1 fliplr(dat1 - SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
 fill([TimeVec fliplr(TimeVec)],[dat2 fliplr(dat2 + SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
@@ -216,26 +106,26 @@ fill([TimeVec fliplr(TimeVec)],[dat2 fliplr(dat2 - SEM2)],'r','FaceAlpha',0.3,'E
 h1 = plot(TimeVec, dat1,'b','linewidth',2);
 h2 = plot(TimeVec, dat2,'r','linewidth',2);
 hold off
-ylabel(RSA_Data.meas16{msr}); xlabel('Time (s)'); title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
-xlim([-0.2 1.5]);lg = legend([h1 h2], {Dat_names{dt(1)},Dat_names{dt(2)}}); legend boxoff; set(lg,'FontSize',14)
+ylabel(RSA_Data.meas16{msr}); xlabel('Time (s)'); title([ROI{r}])
+xlim([-0.2 1.5]);lg = legend([h1 h2], {[Cat_names{c},' ',Comp_names{c,cp}{1}],[Cat_names{c},' ',Comp_names{c,cp}{2}]}); legend boxoff; set(lg,'FontSize',14)
 box off; %ylim([0.42 0.6])
 set(gca,'linewidth',2.5,'FontSize',14)
-%saveas(gcf,sprintf('Results/%s_16_%s_LDA_%s.png',ROI{r},Cat{c},datanames{d}))
+%saveas(gcf,sprintf('Results/Enc_%s_16_%s_LDA_%s.png',ROI{r},Cat{c},datanames{d}))
 %close(gcf)
 
 
-% Plot RSA Difference Time series
 
+%% Plot RSA Difference Time series
 r1 = 1; r2 = 2;
 c1 = 1; c2 = 2;
-dt1 = [3 4]; dt2 = [3 4];
+cp = 1;
 
-if(sum(dt1) == 7)
-    Hyp_Mat_per = double(Perceptual_Mat_red16>0) + -double(Perceptual_Mat_red16<0);
-    Hyp_Mat_sem = double(Semantic_Mat_red16>0) + -double(Semantic_Mat_red16<0);
+if(cp == 1)
+    Perceptual_idx  = RSA_Data.Cond_idx.Perc_WI_BT_idx;
+    Semantic_idx    = RSA_Data.Cond_idx.Sem_WI_BT_idx;
 else
-    Hyp_Mat_per = double(Perceptual_Mat_red16==1) + -double(Perceptual_Mat_red16==2);
-    Hyp_Mat_sem = double(Semantic_Mat_red16==1) + -double(Semantic_Mat_red16==2);
+    Perceptual_idx  = RSA_Data.Cond_idx.Perc_Dr_Ph_idx;
+    Semantic_idx 	= RSA_Data.Cond_idx.Sem_An_Ia_idx;
 end
 
 cfg = [];
@@ -243,20 +133,18 @@ cfg.nPerms = 1000;
 cfg.thresh_pval = 0.05;
 cfg.mcc_cluster_pval = 0.05;
 cfg.TimeVec = RSA_Data.TimeVec;
-cfg.Hyp_Mat = Hyp_Mat_per;
+cfg.Hyp_idx = Perceptual_idx;
 cfg.matshuff = false;
 cfg.twoside = true;
 Results1 = rsa_perm(cfg, RSA_Data.(ROI{r1}).red16_Data);
 
-cfg.Hyp_Mat = Hyp_Mat_sem;
+cfg.Hyp_idx = Semantic_idx;
 Results2 = rsa_perm(cfg, RSA_Data.(ROI{r2}).red16_Data);
 
 figure('Pos', [325 510 650 402]);
 plot([]); hold on
-Dat_names1 = fieldnames(RSA_Time.(ROI{r1}).(Cat{c1}));
-dat1 = RSA_Time.(ROI{r1}).(Cat{c1}).(Dat_names1{dt1(2)}) - RSA_Time.(ROI{r1}).(Cat{c1}).(Dat_names1{dt1(1)});
-Dat_names2 = fieldnames(RSA_Time.(ROI{r2}).(Cat{c2}));
-dat2 = RSA_Time.(ROI{r2}).(Cat{c2}).(Dat_names2{dt2(2)}) - RSA_Time.(ROI{r2}).(Cat{c2}).(Dat_names2{dt2(1)});
+dat1 = mean(RSA_Data.(ROI{r1}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c1},'_',Comp{cp},'_idx'])(:,2)),3) - mean(RSA_Data.(ROI{r1}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c1},'_',Comp{cp},'_idx'])(:,1)),3);
+dat2 = mean(RSA_Data.(ROI{r2}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c2},'_',Comp{cp},'_idx'])(:,2)),3) - mean(RSA_Data.(ROI{r2}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c2},'_',Comp{cp},'_idx'])(:,1)),3);
 SEM1 = nanstd(dat1,0,1)./sqrt(size(dat1,1)); SEM2 = nanstd(dat2,0,1)./sqrt(size(dat2,1));
 % SEM1 = zeros(1,length(TimeVec)); SEM2 = zeros(1,length(TimeVec));
 % for tp = 1:length(TimeVec)
@@ -273,19 +161,23 @@ xlim([-0.2 1.5]); %ylim([0.35 0.6]);
 plot([-0.2 1.5],[0 0],'--k','linewidth',1)
 h1 = plot(TimeVec, nanmean(dat1,1),'b','linewidth',2);
 h2 = plot(TimeVec, nanmean(dat2,1),'r','linewidth',2);
-ylabel(['Diff ',RSA_Data.meas16{msr}]); xlabel('Time (s)'); %title([Cat{c},': ',Dat_names{dt(1)},' vs ',Dat_names{dt(2)}])
-lg = legend([h1 h2], {[ROI{r1},' ',Cat{c1},' ',Dat_names1{dt1(2)},' - ',Dat_names1{dt1(1)}],[ROI{r2},' ',Cat{c2},' ',Dat_names2{dt2(2)},' - ',Dat_names2{dt2(1)}]}); legend boxoff; set(lg,'FontSize',14)
+ylabel(['Diff ',RSA_Data.meas16{msr}]); xlabel('Time (s)'); 
+lg = legend([h1 h2], {[ROI{r1},' ',Cat{c1},' ',strjoin(Comp_names{c,cp},' - ')],[ROI{r2},' ',Cat{c2},' ',strjoin(Comp_names{c,cp},' - ')]}); legend boxoff; set(lg,'FontSize',14)
 box off;
 set(gca,'linewidth',2.5,'FontSize',14,'xlim',[-0.2 1])
-sign_mcc_clust_1 = Results1.zmapthresh;
-sign_mcc_clust_1(sign_mcc_clust_1 > 0) = min(get(gca,'ylim'))*0.8;
-plot(TimeVec,sign_mcc_clust_1,'bo','MarkerFaceColor','b')
-sign_mcc_clust_2 = Results2.zmapthresh;
-sign_mcc_clust_2(sign_mcc_clust_2 > 0) = min(get(gca,'ylim'))*0.9;
-plot(TimeVec,sign_mcc_clust_2,'ro','MarkerFaceColor','r')
+if(Results1.H == 1)
+    sign_mcc_clust = Results1.zmapthresh;
+    sign_mcc_clust(sign_mcc_clust > 0) = min(get(gca,'ylim'))*0.8;
+    plot(TimeVec,sign_mcc_clust,'bo','MarkerFaceColor','b')
+end
+if(Results2.H == 1)
+    sign_mcc_clust = Results2.zmapthresh;
+    sign_mcc_clust(sign_mcc_clust > 0) = min(get(gca,'ylim'))*0.9;
+    plot(TimeVec,sign_mcc_clust,'ro','MarkerFaceColor','r')
+end
 hold off
-saveas(gcf,'Results/Enc_OCC_TMP_PerceptualvsSemantic_BT-WI_Dat16_eucl.png')
-close(gcf)
+%saveas(gcf,'Results/Enc_OCC_TMP_PerceptualvsSemantic_BT-WI_Dat16_eucl.png')
+%close(gcf)
 
 
 
@@ -308,8 +200,8 @@ calc_dat(calc_dat == 0) = [];
 colb_lim = prctile(calc_dat, [2.5 97.5]);
 
 figure
-[~,t_idx] = min(abs(RSA_Data.TimeVec - tp));
-cur_data = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,t_idx,:,:),1));
+cur_data = zeros(16);
+cur_data(UTM_idx) = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,dsearchn(RSA_Data.TimeVec', tp),:),1));
 imagesc(cur_data);
 colorbar
 axis square
@@ -340,17 +232,17 @@ if(~clim_wi)
 end
 
 figure
-[~,t_idx] = min(abs(RSA_Data.TimeVec - tp));
-cur_data = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,t_idx,:,:),1));
+cur_data = zeros(16);
+cur_data(UTM_idx) = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,dsearchn(RSA_Data.TimeVec', tp),:),1));
 if(clim_wi)
     colb_lim = prctile(cur_data(cur_data(:) ~= 0), [2.5 97.5]);
 end
-imagesc(cur_data+cur_data);
+imagesc(cur_data+cur_data');
 colorbar
 axis square
 set(gca,'clim',colb_lim,'xtick',1:16,'xticklabels',Cat_names,'XTickLabelRotation',55,...
     'ytick',1:16,'yticklabels',Cat_names, 'TickLength',[0 0])
-
+title(sprintf('%s Encoding at %4.0f ms',ROI{r},round(1000*tp)))
 
 
 % Plot Timeseries GA Matrix
@@ -365,8 +257,8 @@ end
 figure('pos',[202 73 1481 898])
 tps = -0.2:0.1:1.2; %s
 for sbp = 1:length(tps)
-    [~,t_idx] = min(abs(RSA_Data.TimeVec - tps(sbp)));
-    cur_data = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,t_idx,:,:),1));
+    cur_data = zeros(16);
+    cur_data(UTM_idx) = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,dsearchn(RSA_Data.TimeVec', tps(sbp)),:,:),1));
     if(clim_wi)
         colb_lim = prctile(cur_data(cur_data(:) ~= 0), [2.5 97.5]);
     end
@@ -413,8 +305,8 @@ end
 
 figure('Units','pixels')
 h1 = axes('Units','pixels','xlim',[0 18],'ylim',[0 18]);
-[~,t_idx] = min(abs(RSA_Data.TimeVec - tp));
-cur_data = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,t_idx,:,:),1));
+cur_data = zeros(16);
+cur_data(UTM_idx) = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,dsearchn(RSA_Data.TimeVec', tp),:),1));
 if(clim_wi)
     colb_lim = [min(cur_data(cur_data(:) ~= 0))*.95 prctile(cur_data(cur_data(:) ~= 0), 90)];
 end
@@ -445,20 +337,17 @@ set(h1,'Units','normalized')
 
 
 
-ROI = {'OCC','TMP','FRT','CNT','PRT'}; r = 1;
-Cat = {'Perceptual','Semantic'}; c = 1;
-dt = 3:4;
+r = 2;
+c = 2;
 tps = [-0.05 0.05 0.1 0.2 0.4 0.6];
-%tps = [-0.05 0.1 0.3 0.4 0.5 0.6];
 
 figure('Pos', [222 82 1391 898]);
 subplot(4,6,1:18)
 plot([]); hold on
-Dat_names = fieldnames(RSA_Time.(ROI{r}).(Cat{c}));
-dat1 = nanmean(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),1);
-dat2 = nanmean(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(2)})(:,:),1);
-SEM1 = nanstd(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),0,1)./sqrt(size(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)}),1));
-SEM2 = nanstd(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)})(:,:),0,1)./sqrt(size(RSA_Time.(ROI{r}).(Cat{c}).(Dat_names{dt(1)}),1));
+dat1 = mean(mean(RSA_Data.(ROI{r}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,1)),3),1);
+dat2 = mean(mean(RSA_Data.(ROI{r}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,2)),3),1);
+SEM1 = nanstd(mean(RSA_Data.(ROI{r}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,1)),3),0,1)./sqrt(size(RSA_Data.(ROI{r}).red16_Data,1));
+SEM2 = nanstd(mean(RSA_Data.(ROI{r}).red16_Data(:,:,RSA_Data.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,2)),3),0,1)./sqrt(size(RSA_Data.(ROI{r}).red16_Data,1));
 fill([TimeVec fliplr(TimeVec)],[dat1 fliplr(dat1 + SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
 fill([TimeVec fliplr(TimeVec)],[dat1 fliplr(dat1 - SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
 fill([TimeVec fliplr(TimeVec)],[dat2 fliplr(dat2 + SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
@@ -466,14 +355,14 @@ fill([TimeVec fliplr(TimeVec)],[dat2 fliplr(dat2 - SEM2)],'r','FaceAlpha',0.3,'E
 h1 = plot(TimeVec, dat1,'b','linewidth',2);
 h2 = plot(TimeVec, dat2,'r','linewidth',2);
 hold off
-ylabel(RSA_Data.meas16{msr}); title([ROI{r},': ', Cat{c}])
-xlim([-0.1 0.8]);lg = legend([h1 h2], {Dat_names{dt(1)},Dat_names{dt(2)}}); legend boxoff; set(lg,'FontSize',14)
+ylabel(RSA_Data.meas16{msr}); title(ROI_names{r})
+xlim([-0.1 0.8]);lg = legend([h1 h2], {[Cat_names{c},' ',Comp_names{c,cp}{1}],[Cat_names{c},' ',Comp_names{c,cp}{2}]}); legend boxoff; set(lg,'FontSize',14)
 box off; %ylim([0.42 0.6])
 set(gca,'linewidth',2.5,'FontSize',14)
 for sbp = 1:length(tps)
     h1 = subplot(4,6,18+sbp,'Units','pixels','xlim',[0 18],'ylim',[0 18]);
-    [~,t_idx] = min(abs(RSA_Data.TimeVec - tps(sbp)));
-    cur_data = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,t_idx,:,:),1));
+    cur_data = zeros(16);
+    cur_data(UTM_idx) = squeeze(nanmean(RSA_Data.(ROI{r}).red16_Data(:,dsearchn(RSA_Data.TimeVec',tps(sbp)),:),1));
     if(clim_wi)
         colb_lim = [0.45 0.57];
     end
@@ -503,11 +392,70 @@ text(17.2,9,Dim_names{2,1}{3}(1:3),'fontsize',9,'Rotation',-90)
 text(17.2,13,Dim_names{2,1}{4}(1:3),'fontsize',9,'Rotation',-90)
 %set(h1,'Units','normalized')
 
-
-
-%saveas(gcf,sprintf('Results/%s_16_%s_LDA_%s.png',ROI{r},Cat{c},datanames{d}))
+%saveas(gcf,sprintf('Results/Enc_%s_16_%s_LDA_%s.png',ROI{r},Cat{c},datanames{d}))
 %close(gcf)
 
+
+
+%% Plot Electrode Activations
+
+
+r = 4;
+elec_idx = ROI_idx{r};
+'subs_chan_time_idx';
+Sensor_Data = zeros(size(RSA_Data.(ROI{r}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data.(ROI{r}).red16_SensorData,3),4);
+Sensor_Data(:,elec_idx,:,1) = mean(RSA_Data.(ROI{r}).red16_SensorData(:,:,:,1),4);
+Sensor_Data(:,elec_idx,:,2) = mean(RSA_Data.(ROI{r}).red16_SensorData(:,:,:,2),4);
+Sensor_Data(:,elec_idx,:,3) = mean(RSA_Data.(ROI{r}).red16_SensorData(:,:,:,3),4);
+Sensor_Data(:,elec_idx,:,4) = mean(RSA_Data.(ROI{r}).red16_SensorData(:,:,:,4),4);
+
+GA_Sensor_Data = [];
+GA_Sensor_Data.avg = squeeze(mean(Sensor_Data(:,:,:,2),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data.var = squeeze(std(Sensor_Data(:,:,:,2),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data.dof = size(Sensor_Data,1).*ones(size(Sensor_Data,2),size(Sensor_Data,3)); 
+GA_Sensor_Data.time = RSA_Data.TimeVec; 
+GA_Sensor_Data.label = elecs; 
+GA_Sensor_Data.dimord = 'chan_time';
+
+
+
+cfg = [];
+cfg.xlim             = [0:0.04:0.6];
+cfg.zlim             = prctile(GA_Sensor_Data.avg(:),[1 99]);
+%cfg.colorbar         = 'yes';
+cfg.layout           = 'biosemi128.lay';
+cfg.highlight        = 'on';
+cfg.highlightchannel = elec_idx;
+cfg.highlightsymbol  = 's';
+cfg.highlightcolor   = [0 0 0];
+cfg.comment          = 'yes';
+
+figure('pos',[21 105 884 843])
+ft_topoplotER(cfg, GA_Sensor_Data);
+
+
+r = 4;
+elec_idx = ROI_idx{r};
+'subs_chan_time_idx';
+Sensor_Data = zeros(size(RSA_Data.(ROI{r}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data.(ROI{r}).red16_SensorData,3),4);
+Sensor_Data(:,elec_idx,:,1) = mean(RSA_Data.(ROI{r}).red16_SensorData(:,:,:,1),4);
+Sensor_Data(:,elec_idx,:,2) = mean(RSA_Data.(ROI{r}).red16_SensorData(:,:,:,2),4);
+Sensor_Data(:,elec_idx,:,3) = mean(RSA_Data.(ROI{r}).red16_SensorData(:,:,:,3),4);
+Sensor_Data(:,elec_idx,:,4) = mean(RSA_Data.(ROI{r}).red16_SensorData(:,:,:,4),4);
+
+
+GA_Sensor_Data = [];
+GA_Sensor_Data.avg = squeeze(mean(Sensor_Data(:,:,:,4),1)); %squeeze(mean(Sensor_Data(:,:,:,4) - Sensor_Data(:,:,:,3),1)); 
+GA_Sensor_Data.var = squeeze(std(Sensor_Data(:,:,:,4),0,1)); %squeeze(std(Sensor_Data(:,:,:,4) - Sensor_Data(:,:,:,3),0,1));  
+GA_Sensor_Data.dof = size(Sensor_Data,1).*ones(size(Sensor_Data,2),size(Sensor_Data,3)); 
+GA_Sensor_Data.time = RSA_Data.TimeVec; 
+GA_Sensor_Data.label = elecs; 
+GA_Sensor_Data.dimord = 'chan_time';
+
+cfg.highlightchannel = elec_idx;
+
+figure('pos',[916 105 884 843])
+ft_topoplotER(cfg, GA_Sensor_Data);
 
 
 

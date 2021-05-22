@@ -14,8 +14,8 @@ load('RSA_Data_Enc','Subj_names')
 tmp_struct = load('CrossDec_Enc_Ret');
 tmp_fnames = fieldnames(tmp_struct);
 
-time_wind_enc = [-0.2  1.2];
-time_wind_ret = [-1.8  0.2];
+time_wind_enc = [-0.1  1.5];
+time_wind_ret = [-2.5  0.1];
 
 Cat = {'Perc','Sem'};
 ROI = tmp_struct.(tmp_fnames{1}).ROI;
