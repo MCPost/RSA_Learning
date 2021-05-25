@@ -6,11 +6,12 @@ warning('off','all')
 % Parameter Settings
 slide_window_s = cfg.slide_window; %s
 slide_step_s = cfg.slide_step; %s
+fwhm = cfg.fwhm; %s
 if(strcmp(cfg.window_average,'gaussian'))
-    average_kern = @(x, dim, gsize) sum(bsxfun(@times, x, (gausswin(gsize)./sum(gausswin(gsize)))'),dim);
+    average_kern = @(x, dim, gsize, sd) sum(bsxfun(@times, x, (gausswin(gsize,sd)./sum(gausswin(gsize,sd)))'),dim);
     av = 'gaussian'; % Gaussian Average
 else
-    average_kern = @(x, dim, gsize) mean(x,dim);
+    average_kern = @(x, dim, gsize, sd) mean(x,dim);
     av = 'uniform';  % Uniform Average
 end
 Name = cfg.Name;
@@ -241,8 +242,8 @@ for tp = 1:length(TimeVec)
         for j = i:8:size(Data,1)
             if(i ~= j)
                 for h = 0:7
-                    cur_trial1(h+1,:) = average_kern(squeeze(Data(i+h,:,time_window)), 2, length(time_window))' - mean_pattern;
-                    cur_trial2(h+1,:) = average_kern(squeeze(Data(j+h,:,time_window)), 2, length(time_window))' - mean_pattern;
+                    cur_trial1(h+1,:) = average_kern(squeeze(Data(i+h,:,time_window)), 2, length(time_window),length(time_window)/round(samplingrate*(fwhm/2))*.44)' - mean_pattern;
+                    cur_trial2(h+1,:) = average_kern(squeeze(Data(j+h,:,time_window)), 2, length(time_window),length(time_window)/round(samplingrate*(fwhm/2))*.44)' - mean_pattern;
                 end
                 x = cur_trial1; y = cur_trial2;
                 cur_trial1(sum(isnan(cur_trial1),2) > 0,:) = []; cur_trial2(sum(isnan(cur_trial2),2) > 0,:) = []; Cur_trial = [cur_trial1; cur_trial2];

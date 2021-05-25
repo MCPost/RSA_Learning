@@ -1,6 +1,6 @@
 %% Load in RSA Encoding Grand Average Data
 
-function RSA_Enc_GA_LoadData(sub, Subj_names)
+function RSA_Enc_GA_LoadData(sub, Subj_names, ROI_idx, save_name)
 
 
 %% ROI Electrode positions
@@ -34,6 +34,7 @@ Electrodes_ROIs
     rsa_cfg = Data_EEG;
     rsa_cfg.slide_window = 0.080; 
     rsa_cfg.slide_step = 0.004;
+    rsa_cfg.fwhm = 0.040;
     rsa_cfg.window_average = 'gaussian';
     rsa_cfg.meas128 = '';
     rsa_cfg.meas16 = {'LDA', 'SVM', 'euclidian'};
@@ -44,23 +45,13 @@ Electrodes_ROIs
     rsa_cfg.labelshuffperm = false;
     rsa_cfg.n_perms = 1000;
     
-    rsa_cfg.curROI = ROI_occ_idx;
-    rsa_cfg.curROI_name = 'occipital';
-    RSA_Data.(['RSA_Data_',Subj_names{sub}]).OCC = createRSA(rsa_cfg);
+    for r = 1:size(ROI_idx,1)
+        rsa_cfg.curROI = ROI_idx{r,1};
+        rsa_cfg.curROI_name = ROI_idx{r,2};
+        RSA_Data.(['RSA_Data_',Subj_names{sub}]).(ROI_idx{r,1}) = createRSA(rsa_cfg);
+    end
     
-    rsa_cfg.curROI = ROI_temp_idx;
-    rsa_cfg.curROI_name = 'temporal';
-    RSA_Data.(['RSA_Data_',Subj_names{sub}]).TMP = createRSA(rsa_cfg);
-    
-    rsa_cfg.curROI = ROI_front_idx;
-    rsa_cfg.curROI_name = 'frontal';
-    RSA_Data.(['RSA_Data_',Subj_names{sub}]).FRT = createRSA(rsa_cfg);
-    
-    rsa_cfg.curROI = ROI_pari_idx;
-    rsa_cfg.curROI_name = 'parietal';
-    RSA_Data.(['RSA_Data_',Subj_names{sub}]).PRT = createRSA(rsa_cfg);
-    
-    save('RSA_Data_Enc','-struct','RSA_Data','-append')
+    save(save_name,'-struct','RSA_Data','-append')
     clear('RSA_Data')
     
 %end

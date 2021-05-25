@@ -847,3 +847,385 @@ hold off
 
 
 
+
+%% Encoding to Retrieval  Within ROIs with ROIs
+
+tmp_struct = load('Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_wiROI_perm_msr',['CrossComp_RSA_',measures{msr}]);
+Data = tmp_struct.(['CrossComp_RSA_',measures{msr}]).RSA_red16;
+TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
+TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
+ROI = tmp_struct.(['CrossComp_RSA_',measures{msr}]).ROI;
+
+enc_lim = [-0.1  1.2];
+ret_lim = [-1.8  -0.6];
+
+tmp_fnames = fieldnames(tmp_struct);
+
+method = {'Corr','Meth1_per','Meth1_sem','Meth2_per','Meth2_sem'};
+permtestname = {'CorrPermTest', 'Meth1_per_PermTest', 'Meth1_sem_PermTest',  'Meth2_per_PermTest', 'Meth2_sem_PermTest'};
+mth1 = 2; mth2 = 3;
+
+ROI = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).ROI;
+if(size(ROI,2) == 2)
+    ROI_names = strcat(ROI(:,1),'_',ROI(:,2));
+else
+    ROI_names = ROI;
+end
+Cat = {'Perceptual','Semantic'};
+Col = {'b','r'};
+
+r1 = 4; r2 = 4;
+c1 = 1; c2 = 2;
+cp = 1;
+
+
+Results5.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).(permtestname{mth1}).(ROI_names{r1}).zmapthresh;
+Results5.H = sum(~isnan(Results5.zmapthresh(:))) ~= 0;
+Results6.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).(permtestname{mth2}).(ROI_names{r2}).zmapthresh;
+Results6.H = sum(~isnan(Results6.zmapthresh(:))) ~= 0;
+
+
+elec_idx = ROI_idx{r1};
+Sensor_Data_Enc = zeros(size(RSA_Data_Enc.(ROI{r1}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Enc.(ROI{r1}).red16_SensorData,3),4);
+Sensor_Data_Enc(:,elec_idx,:,1) = mean(RSA_Data_Enc.(ROI{r1}).red16_SensorData(:,:,:,1),4);
+Sensor_Data_Enc(:,elec_idx,:,2) = mean(RSA_Data_Enc.(ROI{r1}).red16_SensorData(:,:,:,2),4);
+Sensor_Data_Enc(:,elec_idx,:,3) = mean(RSA_Data_Enc.(ROI{r1}).red16_SensorData(:,:,:,3),4);
+Sensor_Data_Enc(:,elec_idx,:,4) = mean(RSA_Data_Enc.(ROI{r1}).red16_SensorData(:,:,:,4),4);
+
+GA_Sensor_Data_Enc = [];
+GA_Sensor_Data_Enc.avg1_1 = squeeze(mean(Sensor_Data_Enc(:,:,:,1),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc.var1_1 = squeeze(std(Sensor_Data_Enc(:,:,:,1),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Enc.avg1_2 = squeeze(mean(Sensor_Data_Enc(:,:,:,2),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc.var1_2 = squeeze(std(Sensor_Data_Enc(:,:,:,2),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1)); 
+GA_Sensor_Data_Enc.avg2_1 = squeeze(mean(Sensor_Data_Enc(:,:,:,3),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc.var2_1 = squeeze(std(Sensor_Data_Enc(:,:,:,3),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Enc.avg2_2 = squeeze(mean(Sensor_Data_Enc(:,:,:,4),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc.var2_2 = squeeze(std(Sensor_Data_Enc(:,:,:,4),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Enc.dof = size(Sensor_Data_Enc,1).*ones(size(Sensor_Data_Enc,2),size(Sensor_Data_Enc,3)); 
+GA_Sensor_Data_Enc.time = RSA_Data_Enc.TimeVec; 
+GA_Sensor_Data_Enc.label = elecs; 
+GA_Sensor_Data_Enc.dimord = 'chan_time';
+
+elec_idx = ROI_idx{r2};
+Sensor_Data_Ret = zeros(size(RSA_Data_Ret.(ROI{r2}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Ret.(ROI{r2}).red16_SensorData,3),4);
+Sensor_Data_Ret(:,elec_idx,:,1) = mean(RSA_Data_Ret.(ROI{r2}).red16_SensorData(:,:,:,1),4);
+Sensor_Data_Ret(:,elec_idx,:,2) = mean(RSA_Data_Ret.(ROI{r2}).red16_SensorData(:,:,:,2),4);
+Sensor_Data_Ret(:,elec_idx,:,3) = mean(RSA_Data_Ret.(ROI{r2}).red16_SensorData(:,:,:,3),4);
+Sensor_Data_Ret(:,elec_idx,:,4) = mean(RSA_Data_Ret.(ROI{r2}).red16_SensorData(:,:,:,4),4);
+
+GA_Sensor_Data_Ret = [];
+GA_Sensor_Data_Ret.avg1_1 = squeeze(mean(Sensor_Data_Ret(:,:,:,1),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Ret.var1_1 = squeeze(std(Sensor_Data_Ret(:,:,:,1),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Ret.avg1_2 = squeeze(mean(Sensor_Data_Ret(:,:,:,2),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Ret.var1_2 = squeeze(std(Sensor_Data_Ret(:,:,:,2),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1)); 
+GA_Sensor_Data_Ret.avg2_1 = squeeze(mean(Sensor_Data_Ret(:,:,:,3),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Ret.var2_1 = squeeze(std(Sensor_Data_Ret(:,:,:,3),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Ret.avg2_2 = squeeze(mean(Sensor_Data_Ret(:,:,:,4),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Ret.var2_2 = squeeze(std(Sensor_Data_Ret(:,:,:,4),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Ret.dof = size(Sensor_Data_Ret,1).*ones(size(Sensor_Data_Ret,2),size(Sensor_Data_Ret,3)); 
+GA_Sensor_Data_Ret.time = RSA_Data_Ret.TimeVec; 
+GA_Sensor_Data_Ret.label = elecs; 
+GA_Sensor_Data_Ret.dimord = 'chan_time';
+
+
+cfg = [];
+cfg.parameter        = [];
+cfg.xlim             = []; %[0.24:0.02:0.54]; %[0.06:0.02:0.36];
+cfg.zlim             = [];
+%cfg.colorbar         = 'yes';
+cfg.layout           = 'biosemi128.lay';
+cfg.highlight        = 'on';
+cfg.highlightchannel = elec_idx;
+cfg.highlightsymbol  = 's';
+cfg.highlightcolor   = [0 0 0];
+cfg.comment          = 'no';
+
+
+figure('Pos',[298  70  1285  924])
+subplot(4,4,[1 2 5 6])
+curData = squeeze(nanmean(Data.(ROI{r1}).(method{mth1}),1)); prctile(curData(:),[1 99]);
+contourf(TimeX, TimeY, curData, 40,'linestyle','none'); cl = colorbar;
+caxis(prctile(curData(:),[2.5 97.5])); set(gca,'xlim', enc_lim, 'ylim', ret_lim);
+ylabel('Retrieval'); title(ROI{r1}); ylabel(cl, strrep(method{mth1},'_',' '))
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+if(Results5.H == 1)
+    zmapthresh = Results5.zmapthresh; zmapthresh(isnan(zmapthresh)) = 0; zmapthresh(zmapthresh ~= 0) = 1;
+    contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+end
+hold off
+
+subplot(4,4,[9 10 13 14])
+curData = squeeze(nanmean(Data.(ROI{r2}).(method{mth2}),1)); prctile(curData(:),[1 99]);
+contourf(TimeX, TimeY, curData, 40,'linestyle','none'); cl = colorbar;
+caxis(prctile(curData(:),[2.5 97.5])); set(gca,'xlim', enc_lim, 'ylim', ret_lim);
+xlabel('Encoding'); ylabel('Retrieval'); title(ROI{r2}); ylabel(cl, strrep(method{mth2},'_',' '))
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+if(Results6.H == 1)
+    zmapthresh = Results6.zmapthresh; zmapthresh(isnan(zmapthresh)) = 0; zmapthresh(zmapthresh ~= 0) = 1;
+    contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+end
+hold off
+
+subplot(4,4,3)
+cfg.parameter = ['avg',num2str(c1),'_2'];
+cfg.xlim      = [0.08 0.2];
+cfg.zlim      = prctile(GA_Sensor_Data_Enc.(['avg',num2str(c1),'_2'])(:),[2.5 97.5]);
+ft_topoplotER(cfg, GA_Sensor_Data_Enc);
+
+subplot(4,4,4)
+cfg.parameter = ['avg',num2str(c1),'_1'];
+cfg.xlim      = [0.08 0.2];
+cfg.zlim      = prctile(GA_Sensor_Data_Enc.(['avg',num2str(c1),'_1'])(:),[2.5 97.5]);
+ft_topoplotER(cfg, GA_Sensor_Data_Enc);
+
+subplot(4,4,7)
+cfg.parameter = ['avg',num2str(c1),'_2'];
+cfg.xlim      = [-1.3 -0.95];
+cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_2'])(:),[2.5 97.5]);
+ft_topoplotER(cfg, GA_Sensor_Data_Ret);
+
+subplot(4,4,8)
+cfg.parameter = ['avg',num2str(c1),'_1'];
+cfg.xlim      = [-1.3 -0.95];
+cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_1'])(:),[2.5 97.5]);
+ft_topoplotER(cfg, GA_Sensor_Data_Ret);
+
+
+
+subplot(4,4,11)
+cfg.parameter = ['avg',num2str(c1),'_2'];
+cfg.xlim      = [0.75 1.2];
+cfg.zlim      = prctile(GA_Sensor_Data_Enc.(['avg',num2str(c1),'_2'])(:),[2.5 97.5]);
+ft_topoplotER(cfg, GA_Sensor_Data_Enc);
+
+subplot(4,4,12)
+cfg.parameter = ['avg',num2str(c1),'_1'];
+cfg.xlim      = [0.75 1.2];
+cfg.zlim      = prctile(GA_Sensor_Data_Enc.(['avg',num2str(c1),'_1'])(:),[2.5 97.5]);
+ft_topoplotER(cfg, GA_Sensor_Data_Enc);
+
+subplot(4,4,15)
+cfg.parameter = ['avg',num2str(c1),'_2'];
+cfg.xlim      = [-1.45 -1.15];
+cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_2'])(:),[2.5 97.5]);
+ft_topoplotER(cfg, GA_Sensor_Data_Ret);
+
+subplot(4,4,16)
+cfg.parameter = ['avg',num2str(c1),'_1'];
+cfg.xlim      = [-1.45 -1.15];
+cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_1'])(:),[2.5 97.5]);
+ft_topoplotER(cfg, GA_Sensor_Data_Ret);
+
+
+
+
+
+%% Encoding to Retrieval  Between ROIs with ROIs
+
+tmp_struct = load('Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_btROI_perm_msr1',['CrossComp_RSA_',measures{msr}]);
+Data = tmp_struct.(['CrossComp_RSA_',measures{msr}]).RSA_red16;
+TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
+TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
+ROI = tmp_struct.(['CrossComp_RSA_',measures{msr}]).ROI;
+
+enc_lim = [-0.2  1.5];
+ret_lim = [-2.2  -0.8];
+
+tmp_fnames = fieldnames(tmp_struct);
+
+method = {'Corr','Meth1_per','Meth1_sem','Meth2_per','Meth2_sem'};
+permtestname = {'CorrPermTest', 'Meth1_per_PermTest', 'Meth1_sem_PermTest',  'Meth2_per_PermTest', 'Meth2_sem_PermTest'};
+mth1 = 2; mth2 = 3;
+
+ROI = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).ROI;
+if(size(ROI,2) == 2)
+    ROI_names = strcat(ROI(:,1),'_',ROI(:,2));
+else
+    ROI_names = ROI;
+end
+Cat = {'Perceptual','Semantic'};
+Col = {'b','r'};
+
+r1 = 1; r2 = 2;
+c1 = 1; c2 = 2;
+cp = 1;
+
+
+Results5.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).(permtestname{mth1}).(ROI_names{r1}).zmapthresh;
+Results5.H = sum(~isnan(Results5.zmapthresh(:))) ~= 0;
+Results6.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).(permtestname{mth2}).(ROI_names{r2}).zmapthresh;
+Results6.H = sum(~isnan(Results6.zmapthresh(:))) ~= 0;
+
+
+elec_idx = ROI_idx{1};
+Sensor_Data_Enc1 = zeros(size(RSA_Data_Enc.(ROI{1}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Enc.(ROI{1}).red16_SensorData,3),4);
+Sensor_Data_Enc1(:,elec_idx,:,1) = mean(RSA_Data_Enc.(ROI{1}).red16_SensorData(:,:,:,1),4);
+Sensor_Data_Enc1(:,elec_idx,:,2) = mean(RSA_Data_Enc.(ROI{1}).red16_SensorData(:,:,:,2),4);
+Sensor_Data_Enc1(:,elec_idx,:,3) = mean(RSA_Data_Enc.(ROI{1}).red16_SensorData(:,:,:,3),4);
+Sensor_Data_Enc1(:,elec_idx,:,4) = mean(RSA_Data_Enc.(ROI{1}).red16_SensorData(:,:,:,4),4);
+
+GA_Sensor_Data_Enc1 = [];
+GA_Sensor_Data_Enc1.avg1_1 = squeeze(mean(Sensor_Data_Enc1(:,:,:,1),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc1.var1_1 = squeeze(std(Sensor_Data_Enc1(:,:,:,1),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Enc1.avg1_2 = squeeze(mean(Sensor_Data_Enc1(:,:,:,2),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc1.var1_2 = squeeze(std(Sensor_Data_Enc1(:,:,:,2),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1)); 
+GA_Sensor_Data_Enc1.avg2_1 = squeeze(mean(Sensor_Data_Enc1(:,:,:,3),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc1.var2_1 = squeeze(std(Sensor_Data_Enc1(:,:,:,3),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Enc1.avg2_2 = squeeze(mean(Sensor_Data_Enc1(:,:,:,4),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc1.var2_2 = squeeze(std(Sensor_Data_Enc1(:,:,:,4),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Enc1.dof = size(Sensor_Data_Enc1,1).*ones(size(Sensor_Data_Enc1,2),size(Sensor_Data_Enc1,3)); 
+GA_Sensor_Data_Enc1.time = RSA_Data_Enc.TimeVec; 
+GA_Sensor_Data_Enc1.label = elecs; 
+GA_Sensor_Data_Enc1.dimord = 'chan_time';
+
+
+elec_idx = ROI_idx{2};
+Sensor_Data_Enc2 = zeros(size(RSA_Data_Enc.(ROI{2}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Enc.(ROI{2}).red16_SensorData,3),4);
+Sensor_Data_Enc2(:,elec_idx,:,1) = mean(RSA_Data_Enc.(ROI{2}).red16_SensorData(:,:,:,1),4);
+Sensor_Data_Enc2(:,elec_idx,:,2) = mean(RSA_Data_Enc.(ROI{2}).red16_SensorData(:,:,:,2),4);
+Sensor_Data_Enc2(:,elec_idx,:,3) = mean(RSA_Data_Enc.(ROI{2}).red16_SensorData(:,:,:,3),4);
+Sensor_Data_Enc2(:,elec_idx,:,4) = mean(RSA_Data_Enc.(ROI{2}).red16_SensorData(:,:,:,4),4);
+
+GA_Sensor_Data_Enc2 = [];
+GA_Sensor_Data_Enc2.avg1_1 = squeeze(mean(Sensor_Data_Enc2(:,:,:,1),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc2.var1_1 = squeeze(std(Sensor_Data_Enc2(:,:,:,1),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Enc2.avg1_2 = squeeze(mean(Sensor_Data_Enc2(:,:,:,2),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc2.var1_2 = squeeze(std(Sensor_Data_Enc2(:,:,:,2),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1)); 
+GA_Sensor_Data_Enc2.avg2_1 = squeeze(mean(Sensor_Data_Enc2(:,:,:,3),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc2.var2_1 = squeeze(std(Sensor_Data_Enc2(:,:,:,3),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Enc2.avg2_2 = squeeze(mean(Sensor_Data_Enc2(:,:,:,4),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Enc2.var2_2 = squeeze(std(Sensor_Data_Enc2(:,:,:,4),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Enc2.dof = size(Sensor_Data_Enc2,1).*ones(size(Sensor_Data_Enc2,2),size(Sensor_Data_Enc2,3)); 
+GA_Sensor_Data_Enc2.time = RSA_Data_Enc.TimeVec; 
+GA_Sensor_Data_Enc2.label = elecs; 
+GA_Sensor_Data_Enc2.dimord = 'chan_time';
+
+
+elec_idx = ROI_idx{4};
+Sensor_Data_Ret = zeros(size(RSA_Data_Ret.(ROI{4}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Ret.(ROI{4}).red16_SensorData,3),4);
+Sensor_Data_Ret(:,elec_idx,:,1) = mean(RSA_Data_Ret.(ROI{4}).red16_SensorData(:,:,:,1),4);
+Sensor_Data_Ret(:,elec_idx,:,2) = mean(RSA_Data_Ret.(ROI{4}).red16_SensorData(:,:,:,2),4);
+Sensor_Data_Ret(:,elec_idx,:,3) = mean(RSA_Data_Ret.(ROI{4}).red16_SensorData(:,:,:,3),4);
+Sensor_Data_Ret(:,elec_idx,:,4) = mean(RSA_Data_Ret.(ROI{4}).red16_SensorData(:,:,:,4),4);
+
+GA_Sensor_Data_Ret = [];
+GA_Sensor_Data_Ret.avg1_1 = squeeze(mean(Sensor_Data_Ret(:,:,:,1),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Ret.var1_1 = squeeze(std(Sensor_Data_Ret(:,:,:,1),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Ret.avg1_2 = squeeze(mean(Sensor_Data_Ret(:,:,:,2),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Ret.var1_2 = squeeze(std(Sensor_Data_Ret(:,:,:,2),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1)); 
+GA_Sensor_Data_Ret.avg2_1 = squeeze(mean(Sensor_Data_Ret(:,:,:,3),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Ret.var2_1 = squeeze(std(Sensor_Data_Ret(:,:,:,3),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Ret.avg2_2 = squeeze(mean(Sensor_Data_Ret(:,:,:,4),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data_Ret.var2_2 = squeeze(std(Sensor_Data_Ret(:,:,:,4),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data_Ret.dof = size(Sensor_Data_Ret,1).*ones(size(Sensor_Data_Ret,2),size(Sensor_Data_Ret,3)); 
+GA_Sensor_Data_Ret.time = RSA_Data_Ret.TimeVec; 
+GA_Sensor_Data_Ret.label = elecs; 
+GA_Sensor_Data_Ret.dimord = 'chan_time';
+
+
+cfg = [];
+cfg.parameter        = [];
+cfg.xlim             = []; %[0.24:0.02:0.54]; %[0.06:0.02:0.36];
+cfg.zlim             = [];
+%cfg.colorbar         = 'yes';
+cfg.layout           = 'biosemi128.lay';
+cfg.highlight        = 'on';
+cfg.highlightchannel = elec_idx;
+cfg.highlightsymbol  = 's';
+cfg.highlightcolor   = [0 0 0];
+cfg.comment          = 'no';
+
+
+figure('Pos',[298  70  1285  924])
+subplot(4,4,[1 2 5 6])
+curData = squeeze(nanmean(Data.(ROI_names{r1}).(method{mth1}),1)); prctile(curData(:),[1 99]);
+contourf(TimeX, TimeY, curData, 40,'linestyle','none'); cl = colorbar;
+caxis(prctile(curData(:),[2.5 97.5])); set(gca,'xlim', enc_lim, 'ylim', ret_lim);
+ylabel('Retrieval'); title(strrep(ROI_names{r1},'_',' ')); ylabel(cl, strrep(method{mth1},'_',' '))
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+if(Results5.H == 1)
+    zmapthresh = Results5.zmapthresh; zmapthresh(isnan(zmapthresh)) = 0; zmapthresh(zmapthresh ~= 0) = 1;
+    contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+end
+hold off
+
+subplot(4,4,[9 10 13 14])
+curData = squeeze(nanmean(Data.(ROI_names{r2}).(method{mth2}),1)); prctile(curData(:),[1 99]);
+contourf(TimeX, TimeY, curData, 40,'linestyle','none'); cl = colorbar;
+caxis(prctile(curData(:),[2.5 97.5])); set(gca,'xlim', enc_lim, 'ylim', ret_lim);
+xlabel('Encoding'); ylabel('Retrieval'); title(strrep(ROI_names{r2},'_',' ')); ylabel(cl, strrep(method{mth2},'_',' '))
+hold on
+plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
+plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
+if(Results6.H == 1)
+    zmapthresh = Results6.zmapthresh; zmapthresh(isnan(zmapthresh)) = 0; zmapthresh(zmapthresh ~= 0) = 1;
+    contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
+end
+hold off
+
+subplot(4,4,3)
+cfg.parameter = ['avg',num2str(c1),'_2'];
+cfg.xlim      = [0.08 0.2];
+cfg.zlim      = prctile(GA_Sensor_Data_Enc1.(['avg',num2str(c1),'_2'])(:),[2.5 97.5]);
+cfg.highlightchannel = ROI_idx{1};
+ft_topoplotER(cfg, GA_Sensor_Data_Enc1);
+
+subplot(4,4,4)
+cfg.parameter = ['avg',num2str(c1),'_1'];
+cfg.xlim      = [0.08 0.2];
+cfg.zlim      = prctile(GA_Sensor_Data_Enc1.(['avg',num2str(c1),'_1'])(:),[2.5 97.5]);
+cfg.highlightchannel = ROI_idx{1};
+ft_topoplotER(cfg, GA_Sensor_Data_Enc1);
+
+subplot(4,4,7)
+cfg.parameter = ['avg',num2str(c1),'_2'];
+cfg.xlim      = [-1.3 -0.9];
+cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_2'])(:),[2.5 97.5]);
+cfg.highlightchannel = ROI_idx{4};
+ft_topoplotER(cfg, GA_Sensor_Data_Ret);
+
+subplot(4,4,8)
+cfg.parameter = ['avg',num2str(c1),'_1'];
+cfg.xlim      = [-1.3 -0.9];
+cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_1'])(:),[2.5 97.5]);
+cfg.highlightchannel = ROI_idx{4};
+ft_topoplotER(cfg, GA_Sensor_Data_Ret);
+
+
+
+subplot(4,4,11)
+cfg.parameter = ['avg',num2str(c1),'_2'];
+cfg.xlim      = [1.0 1.15];
+cfg.zlim      = prctile(GA_Sensor_Data_Enc2.(['avg',num2str(c1),'_2'])(:),[2.5 97.5]);
+cfg.highlightchannel = ROI_idx{2};
+ft_topoplotER(cfg, GA_Sensor_Data_Enc2);
+
+subplot(4,4,12)
+cfg.parameter = ['avg',num2str(c1),'_1'];
+cfg.xlim      = [1.0 1.15];
+cfg.zlim      = prctile(GA_Sensor_Data_Enc2.(['avg',num2str(c1),'_1'])(:),[2.5 97.5]);
+cfg.highlightchannel = ROI_idx{2};
+ft_topoplotER(cfg, GA_Sensor_Data_Enc2);
+
+subplot(4,4,15)
+cfg.parameter = ['avg',num2str(c1),'_2'];
+cfg.xlim      = [-2.15 -1.85];
+cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_2'])(:),[2.5 97.5]);
+cfg.highlightchannel = ROI_idx{4};
+ft_topoplotER(cfg, GA_Sensor_Data_Ret);
+
+subplot(4,4,16)
+cfg.parameter = ['avg',num2str(c1),'_1'];
+cfg.xlim      = [-2.15 -1.85];
+cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_1'])(:),[2.5 97.5]);
+cfg.highlightchannel = ROI_idx{4};
+ft_topoplotER(cfg, GA_Sensor_Data_Ret);
+
+
+
