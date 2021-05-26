@@ -7,7 +7,8 @@ load('RSA_Data_Enc','Subj_names')
 %% ROI Electrode positions
 % Biosemi 128 Electrodes System Radial ABC
 Electrodes_ROIs
-ROI_idx = {ROI_occ_idx; ROI_temp_idx; ROI_front_idx; ROI_pari_idx};
+%ROI_idx = {ROI_occ_idx; ROI_temp_idx; ROI_front_idx; ROI_pari_idx};
+ROI_idx = {ROI_all_idx};
 
 %% Hypothesis Matrix
 Hypothesis_Matrix
@@ -26,12 +27,12 @@ SensUTM_idx = find(SensUTmat(:) == 1);
 %% Create Data
 RSA_Data_Enc = [];
 for sub = 1:length(Subj_names)
-    tmp_strct = load(['RSA_Data/RSA_Data_Enc_',Subj_names{sub}]);
+    tmp_strct = load(['RSA_Data_wholehead/RSA_Data_Enc_wholehead_',Subj_names{sub}]);
     if(sub == 1)
         ROI = fieldnames(tmp_strct.(['RSA_Data_',Subj_names{1}]));
         RSA_Data_Enc.Names   = Subj_names;
-        for fn = fieldnames(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC)'
-            RSA_Data_Enc.(fn{1}) = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.(fn{1});
+        for fn = fieldnames(tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}))'
+            RSA_Data_Enc.(fn{1}) = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).(fn{1});
         end
         RSA_Data_Enc = rmfield(RSA_Data_Enc, {'Name','TimeVec1024','RSA_full','MDS_full','RSA_16','Encoding_Data','TrialInfo'...
                                       'rsa_dim','curROI','curROI_name'});
@@ -54,7 +55,7 @@ for sub = 1:length(Subj_names)
     end
     
     for r = 1:length(ROI)
-        if(~isempty(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full))
+        if(~isempty(tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).RSA_full))
             hlp = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).RSA_full{1,msr},[3 1 2]);
             RSA_Data_Enc.(ROI{r}).full_Data(sub,:,:) = hlp(:,UTM_idx);
         end
@@ -82,7 +83,8 @@ end
 TimeVec_Enc = RSA_Data_Enc.TimeVec;
 Cat = {'Perc','Sem'};
 Comp = {'WI_BT','Dr_Ph'; 'WI_BT','An_Ia'};
-ROI_names = {'Occipital','Temporal','Frontal','Parietal'};
+%ROI_names = {'Occipital','Temporal','Frontal','Parietal'};
+ROI_names = {'Wholehead'};
 Comp_names = {{'Within','Between'}, {'Drawing','Photograph'}; {'Within','Between'}, {'Animate','Inanimate'}};
 Cat_names = {'Perceptual','Semantic'};
 
@@ -116,7 +118,7 @@ set(gca,'linewidth',2.5,'FontSize',14)
 
 
 %% Plot RSA Difference Time series
-r1 = 4; r2 = 4;
+r1 = 1; r2 = 1;
 c1 = 1; c2 = 2;
 cp = 1;
 
@@ -166,12 +168,12 @@ lg = legend([h1 h2], {[ROI{r1},' ',Cat{c1},' ',strjoin(fliplr(Comp_names{c,cp}),
 box off;
 set(gca,'linewidth',2.5,'FontSize',14,'xlim',[-0.2 1],'xtick',[-0.2:0.1:1])
 if(Results1.H == 1)
-    sign_mcc_clust = Results1.zmapthresh;
+    sign_mcc_clust = abs(Results1.zmapthresh);
     sign_mcc_clust(sign_mcc_clust > 0) = min(get(gca,'ylim'))*0.8;
     plot(TimeVec_Enc,sign_mcc_clust,'bo','MarkerFaceColor','b')
 end
 if(Results2.H == 1)
-    sign_mcc_clust = Results2.zmapthresh;
+    sign_mcc_clust = abs(Results2.zmapthresh);
     sign_mcc_clust(sign_mcc_clust > 0) = min(get(gca,'ylim'))*0.9;
     plot(TimeVec_Enc,sign_mcc_clust,'ro','MarkerFaceColor','r')
 end
@@ -468,16 +470,18 @@ ft_topoplotER(cfg, GA_Sensor_Data);
 
 
 %% Plot RSA Time series
-r = 4;
-c = 1;
+r = 1;
+c = 2;
 cp = 1;
 
-timelim = [-0.1  0.8];
+timelim = [-0.1  1.2];
 
-%TimeFrameTopo = dsearchn(TimeVec_Enc',linspace(time_lim(1),timelim(2),8)')';
+%TimeFrameTopo = dsearchn(TimeVec_Enc',linspace(timelim(1),timelim(2),8)')';
 %TimeFrameTopo = [dsearchn(TimeVec_Enc',-.1) dsearchn(TimeVec_Enc',0) round(linspace(find(sign_mcc_clust > 0,1,'first'),find(sign_mcc_clust > 0,1,'last'),6))];
-TimeFrameTopo = dsearchn(TimeVec_Enc',[0.05 0.08 0.12 0.13 0.14 0.15 0.28 0.4]')'; % Parietal Perceptual Timepoints
+%TimeFrameTopo = dsearchn(TimeVec_Enc',[0.05 0.08 0.12 0.13 0.14 0.15 0.28 0.4]')'; % Parietal Perceptual Timepoints
 %TimeFrameTopo = dsearchn(TimeVec_Enc',[0.12 0.25 0.28 0.37 0.425 0.46 0.57 0.65]')'; % Parietal Semantic Timepoints
+%TimeFrameTopo = dsearchn(TimeVec_Enc',[0.05 0.08 0.12 0.13 0.14 0.15 0.28 0.4]')'; % ALL Perceptual Timepoints
+TimeFrameTopo = dsearchn(TimeVec_Enc',[0.12 0.28 0.37 0.46 0.7 0.83 0.91 1.1]')'; % ALL Semantic Timepoints
 
 elec_idx = ROI_idx{r};
 
@@ -503,6 +507,13 @@ GA_Sensor_Data.dimord = 'chan_time';
 
 RDM_Data = squeeze(nanmean(RSA_Data_Enc.(ROI{r}).red16_Data,1));
 colb_lim = prctile(RDM_Data(:),[2.5 97.5]);
+Dim_names = {};
+[a,b] = unique(RSA_Data_Enc.TrialInfo{1,1}(1:64,6),'stable');
+Dim_names{1,1} = RSA_Data_Enc.TrialInfo{1,1}([b;b+64],6);
+Dim_names{1,2} = [8.5; 8.5];
+[a,b] = unique(RSA_Data_Enc.TrialInfo{1,1}(1:64,8),'stable');
+Dim_names{2,1} = RSA_Data_Enc.TrialInfo{1,1}([b;b+64],8);
+Dim_names{2,2} = [4.5:4:12.5; 4.5:4:12.5];
 
 Hyp_idx{1}  = RSA_Data_Enc.Cond_idx.Perc_WI_BT_idx;
 Hyp_idx{2}    = RSA_Data_Enc.Cond_idx.Sem_WI_BT_idx;
@@ -549,7 +560,7 @@ h1 = plot(TimeVec_Enc, dat1,'b','linewidth',2);
 h2 = plot(TimeVec_Enc, dat2,'r','linewidth',2);
 xlim(timelim)
 if(Results1.H == 1)
-    sign_mcc_clust = Results1.zmapthresh;
+    sign_mcc_clust = abs(Results1.zmapthresh);
     sign_mcc_clust(sign_mcc_clust > 0) = min(get(gca,'ylim'))*1.02;
     plot(TimeVec_Enc,sign_mcc_clust,'ko','MarkerFaceColor','k')
 end

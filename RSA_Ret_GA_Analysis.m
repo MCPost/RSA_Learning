@@ -7,7 +7,8 @@ load('RSA_Data_Ret','Subj_names')
 %% ROI Electrode positions
 % Biosemi 128 Electrodes System Radial ABC
 Electrodes_ROIs
-ROI_idx = {ROI_occ_idx; ROI_temp_idx; ROI_front_idx; ROI_pari_idx};
+%ROI_idx = {ROI_occ_idx; ROI_temp_idx; ROI_front_idx; ROI_pari_idx};
+ROI_idx = {ROI_all_idx};
 
 %% Hypothesis Matrix
 Hypothesis_Matrix
@@ -26,17 +27,17 @@ SensUTM_idx = find(SensUTmat(:) == 1);
 %% Create Data
 RSA_Data_Ret = [];
 for sub = 1:length(Subj_names)
-    tmp_strct = load(['RSA_Data/RSA_Data_Ret_',Subj_names{sub}]);
+    tmp_strct = load(['RSA_Data_wholehead/RSA_Data_Ret_wholehead_',Subj_names{sub}]);
     if(sub == 1)
         ROI = fieldnames(tmp_strct.(['RSA_Data_',Subj_names{1}]));
         RSA_Data_Ret.Names   = Subj_names;
-        for fn = fieldnames(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC)'
-            RSA_Data_Ret.(fn{1}) = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.(fn{1});
+        for fn = fieldnames(tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}))'
+            RSA_Data_Ret.(fn{1}) = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).(fn{1});
         end
         RSA_Data_Ret = rmfield(RSA_Data_Ret, {'Name','TimeVec1024','RSA_full','MDS_full','RSA_16','Retrieval_Data','TrialInfo'...
                                       'rsa_dim','curROI','curROI_name'});
-        RSA_Data_Ret.Retrieval_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.Retrieval_Data;
-        RSA_Data_Ret.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.TrialInfo;
+        RSA_Data_Ret.Retrieval_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).Retrieval_Data;
+        RSA_Data_Ret.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).TrialInfo;
         [~,RSA_Data_Ret.Cond_idx.Perc_WI_BT_idx(:,1),~] = intersect(UTM_idx,find(Perceptual_Mat_red16(:) > 0));
         [~,RSA_Data_Ret.Cond_idx.Perc_WI_BT_idx(:,2),~] = intersect(UTM_idx,find(Perceptual_Mat_red16(:) < 0));
         [~,RSA_Data_Ret.Cond_idx.Sem_WI_BT_idx(:,1),~]  = intersect(UTM_idx,find(Semantic_Mat_red16(:) > 0));
@@ -49,12 +50,12 @@ for sub = 1:length(Subj_names)
             RSA_Data_Ret.([ROI{r},'_ROI']) = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).curROI;
         end
     else
-        RSA_Data_Ret.Retrieval_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.Retrieval_Data;
-        RSA_Data_Ret.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.TrialInfo;
+        RSA_Data_Ret.Retrieval_Data{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).Retrieval_Data;
+        RSA_Data_Ret.TrialInfo{sub} = tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).TrialInfo;
     end
     
     for r = 1:length(ROI)
-        if(~isempty(tmp_strct.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full))
+        if(~isempty(tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).RSA_full))
             hlp = permute(tmp_strct.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).RSA_full{1,msr},[3 1 2]);
             RSA_Data_Ret.(ROI{r}).full_Data(sub,:,:) = hlp(:,UTM_idx);
         end
@@ -80,7 +81,8 @@ end
 TimeVec_Ret = RSA_Data_Ret.TimeVec;
 Cat = {'Perc','Sem'};
 Comp = {'WI_BT','Dr_Ph'; 'WI_BT','An_Ia'};
-ROI_names = {'Occipital','Temporal','Frontal','Parietal'};
+%ROI_names = {'Occipital','Temporal','Frontal','Parietal'};
+ROI_names = {'Wholehead'};
 Comp_names = {{'Within','Between'}, {'Drawing','Photograph'}; {'Within','Between'}, {'Animate','Inanimate'}};
 Cat_names = {'Perceptual','Semantic'};
 
@@ -427,11 +429,17 @@ ft_topoplotER(cfg, GA_Sensor_Data);
 
 %% Plot RSA Time series
 r = 1;
-c = 1;
+c = 2;
 cp = 1;
 
-elec_idx = ROI_idx{r};
+timelim = [-1.9  -0.6];
 
+%TimeFrameTopo = [dsearchn(TimeVec_Ret',-.1) dsearchn(TimeVec_Ret',0) round(linspace(find(sign_mcc_clust > 0,1,'first'),find(sign_mcc_clust > 0,1,'last'),6))];
+%TimeFrameTopo = dsearchn(TimeVec_Ret',linspace(timelim(1),timelim(2),8)')';
+%TimeFrameTopo = dsearchn(TimeVec_Ret',[-1.9 -1.86 -1.53 -1.39 -1.28 -1.04 -0.88 -0.74]')'; % ALL Perceptual Timepoints
+TimeFrameTopo = dsearchn(TimeVec_Ret',[-1.9 -1.74 -1.54 -1.33 -1.28 -1.02 -0.85 -0.69]')'; % ALL Semantic Timepoints
+
+elec_idx = ROI_idx{r};
 Sensor_Data = zeros(size(RSA_Data_Ret.(ROI{r}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Ret.(ROI{r}).red16_SensorData,3),4);
 Sensor_Data(:,elec_idx,:,1) = mean(RSA_Data_Ret.(ROI{r}).red16_SensorData(:,:,:,1),4);
 Sensor_Data(:,elec_idx,:,2) = mean(RSA_Data_Ret.(ROI{r}).red16_SensorData(:,:,:,2),4);
@@ -454,6 +462,13 @@ GA_Sensor_Data.dimord = 'chan_time';
 
 RDM_Data = squeeze(nanmean(RSA_Data_Ret.(ROI{r}).red16_Data,1));
 colb_lim = prctile(RDM_Data(:),[2.5 97.5]);
+Dim_names = {};
+[a,b] = unique(RSA_Data_Ret.TrialInfo{1,1}(1:64,6),'stable');
+Dim_names{1,1} = RSA_Data_Ret.TrialInfo{1,1}([b;b+64],6);
+Dim_names{1,2} = [8.5; 8.5];
+[a,b] = unique(RSA_Data_Ret.TrialInfo{1,1}(1:64,8),'stable');
+Dim_names{2,1} = RSA_Data_Ret.TrialInfo{1,1}([b;b+64],8);
+Dim_names{2,2} = [4.5:4:12.5; 4.5:4:12.5];
 
 Hyp_idx{1}  = RSA_Data_Ret.Cond_idx.Perc_WI_BT_idx;
 Hyp_idx{2}    = RSA_Data_Ret.Cond_idx.Sem_WI_BT_idx;
@@ -475,10 +490,6 @@ cfg.overlap     = 'shift';
 cfg.skipscale   = 'yes';
 cfg.skipcomnt   = 'yes';
 layout_elec = ft_prepare_layout(cfg);
-
-%TimeFrameTopo = [dsearchn(TimeVec_Ret',-.1) dsearchn(TimeVec_Ret',0) round(linspace(find(sign_mcc_clust > 0,1,'first'),find(sign_mcc_clust > 0,1,'last'),6))];
-TimeFrameTopo = dsearchn(TimeVec_Ret',linspace(-1.9,-0.6,8)')';
-
 
 figpos    = [330  52  1256  939];
 tspos     = [(1/5)*figpos(3) (2/3)*figpos(4) (3/5)*figpos(3) 280];

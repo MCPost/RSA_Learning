@@ -9,10 +9,10 @@ slide_step_s = cfg.slide_step; %s
 fwhm = cfg.fwhm; %s
 if(strcmp(cfg.window_average,'gaussian'))
     average_kern = @(x, dim, gsize, sd) sum(bsxfun(@times, x, (gausswin(gsize,sd)./sum(gausswin(gsize,sd)))'),dim);
-    av = 'gaussian'; % Gaussian Average
+    cfg.av = 'gaussian'; % Gaussian Average
 else
     average_kern = @(x, dim, gsize, sd) mean(x,dim);
-    av = 'uniform';  % Uniform Average
+    cfg.av = 'uniform';  % Uniform Average
 end
 Name = cfg.Name;
 TrialInfo = cfg.TrialInfo;
@@ -229,7 +229,7 @@ for tp = 1:length(TimeVec)
     
     all_patterns = zeros(size(Data,1), length(curROI));
     for i = 1:size(Data,1)
-        all_patterns(i,:) = average_kern(squeeze(Data(i,:,time_window)), 2, length(time_window))';
+        all_patterns(i,:) = average_kern(squeeze(Data(i,:,time_window)), 2, length(time_window),length(time_window)/round(samplingrate*(fwhm/2))*.44)';
     end
     if(Cktl_blank_rm)
         mean_pattern = nanmean(all_patterns,1);

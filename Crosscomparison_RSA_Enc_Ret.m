@@ -8,12 +8,18 @@ Electrodes_ROIs
 Hypothesis_Matrix
 
 %% Load Data 
-
-% Subject Names
+%% Subject Names
 load('RSA_Data_Enc','Subj_names')
 
-% Measure
+%% Measure
 msr = 1;
+
+%% Matrix Indices to choose
+UTmat = triu(ones(16)).*~eye(16);
+UTM_idx = find(UTmat(:) == 1);
+SensUTmat = UTmat(1:end-1,:);
+SensUTM_idx = find(SensUTmat(:) == 1);
+
 
 %% Cross-correlate RSA time courses for each subject
 
@@ -169,191 +175,57 @@ diary(jobHandles{4})
 % Subject Names
 load('RSA_Data_Enc','Subj_names')
 
-% Measure
-msr = 1;
-
 % Create Data Struct for Encoding
-tmp_strct_enc = load('RSA_Data_Enc');
-measures = tmp_strct_enc.RSA_Data_CM.OCC.meas16;
-tmp_strct_ret = load('RSA_Data_Ret');
 RSA_Data_Enc = [];
 RSA_Data_Ret = [];
 for sub = 1:length(Subj_names)
+    tmp_strct_enc = load(['RSA_Data/RSA_Data_Enc_',Subj_names{sub}]);
+    tmp_strct_ret = load(['RSA_Data/RSA_Data_Ret_',Subj_names{sub}]);
     if(sub == 1)
+        ROI = fieldnames(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]));
         RSA_Data_Enc.Names   = Subj_names;
-        for fn = fieldnames(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC)'
-            RSA_Data_Enc.(fn{1}) = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.(fn{1});
+        for fn = fieldnames(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).(ROI{1}))'
+            RSA_Data_Enc.(fn{1}) = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).(fn{1});
         end
         RSA_Data_Enc = rmfield(RSA_Data_Enc, {'Name','TimeVec1024','RSA_full','MDS_full','RSA_16','Encoding_Data','TrialInfo'...
                                       'rsa_dim','curROI','curROI_name'});
-        RSA_Data_Enc.OCC_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.curROI; 
-        RSA_Data_Enc.TMP_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).TMP.curROI;
-        RSA_Data_Enc.FRT_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).FRT.curROI;
-        RSA_Data_Enc.PRT_ROI = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).PRT.curROI;
+        for r = 1:length(ROI)
+            RSA_Data_Enc.([ROI{r},'_ROI']) = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).curROI;
+        end
 
         RSA_Data_Ret.Names   = Subj_names;
-        for fn = fieldnames(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC)'
-            RSA_Data_Ret.(fn{1}) = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.(fn{1});
+        for fn = fieldnames(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).(ROI{1}))'
+            RSA_Data_Ret.(fn{1}) = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).(fn{1});
         end
         RSA_Data_Ret = rmfield(RSA_Data_Ret, {'Name','TimeVec1024','RSA_full','MDS_full','RSA_16','Retrieval_Data','TrialInfo'...
                                       'rsa_dim','curROI','curROI_name'});
-        RSA_Data_Ret.OCC_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.curROI; 
-        RSA_Data_Ret.TMP_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).TMP.curROI;
-        RSA_Data_Ret.FRT_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).FRT.curROI;
-        RSA_Data_Ret.PRT_ROI = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).PRT.curROI;
+        for r = 1:length(ROI)
+            RSA_Data_Ret.([ROI{r},'_ROI']) = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).curROI;
+        end
 
     end
-
-    if(~isempty(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full))
-        RSA_Data_Enc.OCC.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full{1,msr},[3 1 2]);
-        RSA_Data_Enc.TMP.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_full{1,msr},[3 1 2]);
-        RSA_Data_Enc.FRT.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_full{1,msr},[3 1 2]);
-        RSA_Data_Enc.PRT.full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_full{1,msr},[3 1 2]);
+    
+    for r = 1:length(ROI)
+        if(~isempty(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).RSA_full))
+            RSA_Data_Enc.(ROI{r}).full_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).RSA_full{1,msr},[3 1 2]);
+        end
+        RSA_Data_Enc.(ROI{r}).red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).RSA_16{1,msr},[3 1 2]);
+        
+        if(~isempty(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).RSA_full))
+            RSA_Data_Ret.(ROI{r}).full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).RSA_full{1,msr},[3 1 2]);
+        end
+        RSA_Data_Ret.(ROI{r}).red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).(ROI{r}).RSA_16{1,msr},[3 1 2]);
     end
-    RSA_Data_Enc.OCC.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_16{1,msr},[3 1 2]);
-    RSA_Data_Enc.TMP.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_16{1,msr},[3 1 2]);
-    RSA_Data_Enc.FRT.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_16{1,msr},[3 1 2]);
-    RSA_Data_Enc.PRT.red16_Data(sub,:,:,:) = permute(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_16{1,msr},[3 1 2]);
+    
+    RSA_Data_Enc.Encoding_Data{sub} = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).Encoding_Data;
+    RSA_Data_Enc.TrialInfo{sub} = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).TrialInfo;
 
-    if(~isempty(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full))
-        RSA_Data_Ret.OCC.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_full{1,msr},[3 1 2]);
-        RSA_Data_Ret.TMP.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_full{1,msr},[3 1 2]);
-        RSA_Data_Ret.FRT.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_full{1,msr},[3 1 2]);
-        RSA_Data_Ret.PRT.full_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_full{1,msr},[3 1 2]);
-    end
-    RSA_Data_Ret.OCC.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.RSA_16{1,msr},[3 1 2]);
-    RSA_Data_Ret.TMP.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).TMP.RSA_16{1,msr},[3 1 2]);
-    RSA_Data_Ret.FRT.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).FRT.RSA_16{1,msr},[3 1 2]);
-    RSA_Data_Ret.PRT.red16_Data(sub,:,:,:) = permute(tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).PRT.RSA_16{1,msr},[3 1 2]);
-
-    RSA_Data_Enc.Encoding_Data{sub} = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.Encoding_Data;
-    RSA_Data_Enc.TrialInfo{sub} = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).OCC.TrialInfo;
-
-    RSA_Data_Ret.Retrieval_Data{sub} = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.Retrieval_Data;
-    RSA_Data_Ret.TrialInfo{sub} = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).OCC.TrialInfo;
+    RSA_Data_Ret.Retrieval_Data{sub} = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).Retrieval_Data;
+    RSA_Data_Ret.TrialInfo{sub} = tmp_strct_ret.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).TrialInfo;
 
 end
 clear tmp_strct_enc tmp_strct_ret
 
-RSA_Time_Enc = []; RSA_Time_Ret = [];
-TimeVec_Enc = RSA_Data_Enc.TimeVec; TimeVec_Ret = RSA_Data_Ret.TimeVec;
-for sub = 1:length(Subj_names)
-    
-    for tp = 1:length(TimeVec_Enc)
-        
-        % Encoding
-        % Occipital
-        cur_data = squeeze(RSA_Data_Enc.OCC.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time_Enc.OCC.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time_Enc.OCC.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time_Enc.OCC.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time_Enc.OCC.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time_Enc.OCC.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time_Enc.OCC.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time_Enc.OCC.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time_Enc.OCC.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-        % Temporal
-        cur_data = squeeze(RSA_Data_Enc.TMP.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time_Enc.TMP.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time_Enc.TMP.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time_Enc.TMP.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time_Enc.TMP.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time_Enc.TMP.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time_Enc.TMP.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time_Enc.TMP.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time_Enc.TMP.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-        % Frontal
-        cur_data = squeeze(RSA_Data_Enc.FRT.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time_Enc.FRT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time_Enc.FRT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time_Enc.FRT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time_Enc.FRT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time_Enc.FRT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time_Enc.FRT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time_Enc.FRT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time_Enc.FRT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-        % Parietal
-        cur_data = squeeze(RSA_Data_Enc.PRT.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time_Enc.PRT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time_Enc.PRT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time_Enc.PRT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time_Enc.PRT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time_Enc.PRT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time_Enc.PRT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time_Enc.PRT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time_Enc.PRT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-    end
-        
-    for tp = 1:length(TimeVec_Ret)
-        
-        % Retrieval
-        % Occipital
-        cur_data = squeeze(RSA_Data_Ret.OCC.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time_Ret.OCC.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time_Ret.OCC.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time_Ret.OCC.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time_Ret.OCC.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time_Ret.OCC.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time_Ret.OCC.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time_Ret.OCC.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time_Ret.OCC.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-        % Temporal
-        cur_data = squeeze(RSA_Data_Ret.TMP.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time_Ret.TMP.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time_Ret.TMP.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time_Ret.TMP.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time_Ret.TMP.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time_Ret.TMP.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time_Ret.TMP.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time_Ret.TMP.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time_Ret.TMP.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-        % Frontal
-        cur_data = squeeze(RSA_Data_Ret.FRT.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time_Ret.FRT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time_Ret.FRT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time_Ret.FRT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time_Ret.FRT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time_Ret.FRT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time_Ret.FRT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time_Ret.FRT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time_Ret.FRT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-        % Parietal
-        cur_data = squeeze(RSA_Data_Ret.PRT.red16_Data(sub,tp,:,:));
-        % Perceptual Dimension
-        RSA_Time_Ret.PRT.Perceptual.Drawing(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 1));
-        RSA_Time_Ret.PRT.Perceptual.Picture(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 == 2));
-        RSA_Time_Ret.PRT.Perceptual.Within(sub,tp)      = nanmean(cur_data(Perceptual_Mat_red16 > 0));
-        RSA_Time_Ret.PRT.Perceptual.Between(sub,tp)     = nanmean(cur_data(Perceptual_Mat_red16 < 0));
-        % Semantic Dimension
-        RSA_Time_Ret.PRT.Semantic.Animate(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 == 1));
-        RSA_Time_Ret.PRT.Semantic.Inanimate(sub,tp)     = nanmean(cur_data(Semantic_Mat_red16 == 2));
-        RSA_Time_Ret.PRT.Semantic.Within(sub,tp)        = nanmean(cur_data(Semantic_Mat_red16 > 0));
-        RSA_Time_Ret.PRT.Semantic.Between(sub,tp)       = nanmean(cur_data(Semantic_Mat_red16 < 0));
-        
-    end
-
-end
 
 
 measures = {'LDA','SVM','euclidian','euclidian_wcc'};
@@ -850,7 +722,9 @@ hold off
 
 %% Encoding to Retrieval  Within ROIs with ROIs
 
-tmp_struct = load('Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_wiROI_perm_msr',['CrossComp_RSA_',measures{msr}]);
+measures = {'LDA','SVM','euclidian','euclidian_wcc'};
+
+tmp_struct = load('Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_wiROI_noperm_msr',['CrossComp_RSA_',measures{msr}]);
 Data = tmp_struct.(['CrossComp_RSA_',measures{msr}]).RSA_red16;
 TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
 TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
@@ -885,12 +759,14 @@ Results6.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnam
 Results6.H = sum(~isnan(Results6.zmapthresh(:))) ~= 0;
 
 
-elec_idx = ROI_idx{r1};
-Sensor_Data_Enc = zeros(size(RSA_Data_Enc.(ROI{r1}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Enc.(ROI{r1}).red16_SensorData,3),4);
-Sensor_Data_Enc(:,elec_idx,:,1) = mean(RSA_Data_Enc.(ROI{r1}).red16_SensorData(:,:,:,1),4);
-Sensor_Data_Enc(:,elec_idx,:,2) = mean(RSA_Data_Enc.(ROI{r1}).red16_SensorData(:,:,:,2),4);
-Sensor_Data_Enc(:,elec_idx,:,3) = mean(RSA_Data_Enc.(ROI{r1}).red16_SensorData(:,:,:,3),4);
-Sensor_Data_Enc(:,elec_idx,:,4) = mean(RSA_Data_Enc.(ROI{r1}).red16_SensorData(:,:,:,4),4);
+ROI1 = {'Wholehead'}; r = 1;
+
+elec_idx = ROI_idx{r};
+Sensor_Data_Enc = zeros(size(RSA_Data_Enc.(ROI1{r}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Enc.(ROI1{r}).red16_SensorData,3),4);
+Sensor_Data_Enc(:,elec_idx,:,1) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,1),4);
+Sensor_Data_Enc(:,elec_idx,:,2) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,2),4);
+Sensor_Data_Enc(:,elec_idx,:,3) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,3),4);
+Sensor_Data_Enc(:,elec_idx,:,4) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,4),4);
 
 GA_Sensor_Data_Enc = [];
 GA_Sensor_Data_Enc.avg1_1 = squeeze(mean(Sensor_Data_Enc(:,:,:,1),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
@@ -906,12 +782,12 @@ GA_Sensor_Data_Enc.time = RSA_Data_Enc.TimeVec;
 GA_Sensor_Data_Enc.label = elecs; 
 GA_Sensor_Data_Enc.dimord = 'chan_time';
 
-elec_idx = ROI_idx{r2};
-Sensor_Data_Ret = zeros(size(RSA_Data_Ret.(ROI{r2}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Ret.(ROI{r2}).red16_SensorData,3),4);
-Sensor_Data_Ret(:,elec_idx,:,1) = mean(RSA_Data_Ret.(ROI{r2}).red16_SensorData(:,:,:,1),4);
-Sensor_Data_Ret(:,elec_idx,:,2) = mean(RSA_Data_Ret.(ROI{r2}).red16_SensorData(:,:,:,2),4);
-Sensor_Data_Ret(:,elec_idx,:,3) = mean(RSA_Data_Ret.(ROI{r2}).red16_SensorData(:,:,:,3),4);
-Sensor_Data_Ret(:,elec_idx,:,4) = mean(RSA_Data_Ret.(ROI{r2}).red16_SensorData(:,:,:,4),4);
+elec_idx = ROI_idx{r};
+Sensor_Data_Ret = zeros(size(RSA_Data_Ret.(ROI1{r}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Ret.(ROI1{r}).red16_SensorData,3),4);
+Sensor_Data_Ret(:,elec_idx,:,1) = mean(RSA_Data_Ret.(ROI1{r}).red16_SensorData(:,:,:,1),4);
+Sensor_Data_Ret(:,elec_idx,:,2) = mean(RSA_Data_Ret.(ROI1{r}).red16_SensorData(:,:,:,2),4);
+Sensor_Data_Ret(:,elec_idx,:,3) = mean(RSA_Data_Ret.(ROI1{r}).red16_SensorData(:,:,:,3),4);
+Sensor_Data_Ret(:,elec_idx,:,4) = mean(RSA_Data_Ret.(ROI1{r}).red16_SensorData(:,:,:,4),4);
 
 GA_Sensor_Data_Ret = [];
 GA_Sensor_Data_Ret.avg1_1 = squeeze(mean(Sensor_Data_Ret(:,:,:,1),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
@@ -1061,12 +937,14 @@ Results6.zmapthresh = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnam
 Results6.H = sum(~isnan(Results6.zmapthresh(:))) ~= 0;
 
 
-elec_idx = ROI_idx{1};
-Sensor_Data_Enc1 = zeros(size(RSA_Data_Enc.(ROI{1}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Enc.(ROI{1}).red16_SensorData,3),4);
-Sensor_Data_Enc1(:,elec_idx,:,1) = mean(RSA_Data_Enc.(ROI{1}).red16_SensorData(:,:,:,1),4);
-Sensor_Data_Enc1(:,elec_idx,:,2) = mean(RSA_Data_Enc.(ROI{1}).red16_SensorData(:,:,:,2),4);
-Sensor_Data_Enc1(:,elec_idx,:,3) = mean(RSA_Data_Enc.(ROI{1}).red16_SensorData(:,:,:,3),4);
-Sensor_Data_Enc1(:,elec_idx,:,4) = mean(RSA_Data_Enc.(ROI{1}).red16_SensorData(:,:,:,4),4);
+ROI1 = {'Wholehead'}; r = 1;
+
+elec_idx = ROI_idx{1}; %1
+Sensor_Data_Enc1 = zeros(size(RSA_Data_Enc.(ROI1{r}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Enc.(ROI1{r}).red16_SensorData,3),4);
+Sensor_Data_Enc1(:,elec_idx,:,1) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,1),4);
+Sensor_Data_Enc1(:,elec_idx,:,2) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,2),4);
+Sensor_Data_Enc1(:,elec_idx,:,3) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,3),4);
+Sensor_Data_Enc1(:,elec_idx,:,4) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,4),4);
 
 GA_Sensor_Data_Enc1 = [];
 GA_Sensor_Data_Enc1.avg1_1 = squeeze(mean(Sensor_Data_Enc1(:,:,:,1),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
@@ -1083,12 +961,12 @@ GA_Sensor_Data_Enc1.label = elecs;
 GA_Sensor_Data_Enc1.dimord = 'chan_time';
 
 
-elec_idx = ROI_idx{2};
-Sensor_Data_Enc2 = zeros(size(RSA_Data_Enc.(ROI{2}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Enc.(ROI{2}).red16_SensorData,3),4);
-Sensor_Data_Enc2(:,elec_idx,:,1) = mean(RSA_Data_Enc.(ROI{2}).red16_SensorData(:,:,:,1),4);
-Sensor_Data_Enc2(:,elec_idx,:,2) = mean(RSA_Data_Enc.(ROI{2}).red16_SensorData(:,:,:,2),4);
-Sensor_Data_Enc2(:,elec_idx,:,3) = mean(RSA_Data_Enc.(ROI{2}).red16_SensorData(:,:,:,3),4);
-Sensor_Data_Enc2(:,elec_idx,:,4) = mean(RSA_Data_Enc.(ROI{2}).red16_SensorData(:,:,:,4),4);
+elec_idx = ROI_idx{r}; %2
+Sensor_Data_Enc2 = zeros(size(RSA_Data_Enc.(ROI1{r}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Enc.(ROI1{r}).red16_SensorData,3),4);
+Sensor_Data_Enc2(:,elec_idx,:,1) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,1),4);
+Sensor_Data_Enc2(:,elec_idx,:,2) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,2),4);
+Sensor_Data_Enc2(:,elec_idx,:,3) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,3),4);
+Sensor_Data_Enc2(:,elec_idx,:,4) = mean(RSA_Data_Enc.(ROI1{r}).red16_SensorData(:,:,:,4),4);
 
 GA_Sensor_Data_Enc2 = [];
 GA_Sensor_Data_Enc2.avg1_1 = squeeze(mean(Sensor_Data_Enc2(:,:,:,1),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
@@ -1105,12 +983,12 @@ GA_Sensor_Data_Enc2.label = elecs;
 GA_Sensor_Data_Enc2.dimord = 'chan_time';
 
 
-elec_idx = ROI_idx{4};
-Sensor_Data_Ret = zeros(size(RSA_Data_Ret.(ROI{4}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Ret.(ROI{4}).red16_SensorData,3),4);
-Sensor_Data_Ret(:,elec_idx,:,1) = mean(RSA_Data_Ret.(ROI{4}).red16_SensorData(:,:,:,1),4);
-Sensor_Data_Ret(:,elec_idx,:,2) = mean(RSA_Data_Ret.(ROI{4}).red16_SensorData(:,:,:,2),4);
-Sensor_Data_Ret(:,elec_idx,:,3) = mean(RSA_Data_Ret.(ROI{4}).red16_SensorData(:,:,:,3),4);
-Sensor_Data_Ret(:,elec_idx,:,4) = mean(RSA_Data_Ret.(ROI{4}).red16_SensorData(:,:,:,4),4);
+elec_idx = ROI_idx{r}; %4
+Sensor_Data_Ret = zeros(size(RSA_Data_Ret.(ROI1{r}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Ret.(ROI1{r}).red16_SensorData,3),4);
+Sensor_Data_Ret(:,elec_idx,:,1) = mean(RSA_Data_Ret.(ROI1{r}).red16_SensorData(:,:,:,1),4);
+Sensor_Data_Ret(:,elec_idx,:,2) = mean(RSA_Data_Ret.(ROI1{r}).red16_SensorData(:,:,:,2),4);
+Sensor_Data_Ret(:,elec_idx,:,3) = mean(RSA_Data_Ret.(ROI1{r}).red16_SensorData(:,:,:,3),4);
+Sensor_Data_Ret(:,elec_idx,:,4) = mean(RSA_Data_Ret.(ROI1{r}).red16_SensorData(:,:,:,4),4);
 
 GA_Sensor_Data_Ret = [];
 GA_Sensor_Data_Ret.avg1_1 = squeeze(mean(Sensor_Data_Ret(:,:,:,1),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
@@ -1187,14 +1065,14 @@ subplot(4,4,7)
 cfg.parameter = ['avg',num2str(c1),'_2'];
 cfg.xlim      = [-1.3 -0.9];
 cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_2'])(:),[2.5 97.5]);
-cfg.highlightchannel = ROI_idx{4};
+cfg.highlightchannel = ROI_idx{1}; %4
 ft_topoplotER(cfg, GA_Sensor_Data_Ret);
 
 subplot(4,4,8)
 cfg.parameter = ['avg',num2str(c1),'_1'];
 cfg.xlim      = [-1.3 -0.9];
 cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_1'])(:),[2.5 97.5]);
-cfg.highlightchannel = ROI_idx{4};
+cfg.highlightchannel = ROI_idx{1}; %4
 ft_topoplotER(cfg, GA_Sensor_Data_Ret);
 
 
@@ -1203,28 +1081,28 @@ subplot(4,4,11)
 cfg.parameter = ['avg',num2str(c1),'_2'];
 cfg.xlim      = [1.0 1.15];
 cfg.zlim      = prctile(GA_Sensor_Data_Enc2.(['avg',num2str(c1),'_2'])(:),[2.5 97.5]);
-cfg.highlightchannel = ROI_idx{2};
+cfg.highlightchannel = ROI_idx{1}; %2
 ft_topoplotER(cfg, GA_Sensor_Data_Enc2);
 
 subplot(4,4,12)
 cfg.parameter = ['avg',num2str(c1),'_1'];
 cfg.xlim      = [1.0 1.15];
 cfg.zlim      = prctile(GA_Sensor_Data_Enc2.(['avg',num2str(c1),'_1'])(:),[2.5 97.5]);
-cfg.highlightchannel = ROI_idx{2};
+cfg.highlightchannel = ROI_idx{1}; %2
 ft_topoplotER(cfg, GA_Sensor_Data_Enc2);
 
 subplot(4,4,15)
 cfg.parameter = ['avg',num2str(c1),'_2'];
 cfg.xlim      = [-2.15 -1.85];
 cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_2'])(:),[2.5 97.5]);
-cfg.highlightchannel = ROI_idx{4};
+cfg.highlightchannel = ROI_idx{1}; %4
 ft_topoplotER(cfg, GA_Sensor_Data_Ret);
 
 subplot(4,4,16)
 cfg.parameter = ['avg',num2str(c1),'_1'];
 cfg.xlim      = [-2.15 -1.85];
 cfg.zlim      = prctile(GA_Sensor_Data_Ret.(['avg',num2str(c1),'_1'])(:),[2.5 97.5]);
-cfg.highlightchannel = ROI_idx{4};
+cfg.highlightchannel = ROI_idx{1}; %4
 ft_topoplotER(cfg, GA_Sensor_Data_Ret);
 
 
