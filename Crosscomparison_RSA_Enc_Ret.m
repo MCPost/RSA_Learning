@@ -153,7 +153,7 @@ diary(jobHandles{1})
 % Encoding to Retrieval, Within ROI, PermTest
 cfg.permtest         = false; %true;
 cfg.timewind2        = [-2.5 0.2];
-cfg.ROI              = 'Wholehead';
+cfg.ROI              = {'Wholehead'};
 % cfg.ROI              = {'OCC';...
 %                         'TMP';...
 %                         'FRT';...
@@ -161,6 +161,8 @@ cfg.ROI              = 'Wholehead';
 
 pair = 'Enc - Ret';
 save_name = 'Crosscompare_RSA_Matfiles/CrossComp_RSA_Enc_Ret_wiROI_noperm_wholehead_msr';
+c = parcluster();
+%jobHandles = {};
 end_ind = length(jobHandles);
 for msr = 1:3
     jobHandles{end_ind+msr} = batch(c, @Crosscomparison_RSA_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
