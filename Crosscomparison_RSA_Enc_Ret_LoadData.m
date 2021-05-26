@@ -30,6 +30,7 @@ for sub = 1:length(Subj_names)
     tmp_strct_enc = load(['RSA_Data_wholehead/RSA_Data_Enc_wholehead_',Subj_names{sub}]);
     tmp_strct_ret = load(['RSA_Data_wholehead/RSA_Data_Ret_wholehead_',Subj_names{sub}]);
     if(sub == 1)
+        measures = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).meas16;
         RSA_Data_Enc.Names   = Subj_names;
         for fn = fieldnames(tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).(ROI{1}))'
             RSA_Data_Enc.(fn{1}) = tmp_strct_enc.(['RSA_Data_',Subj_names{sub}]).(ROI{1}).(fn{1});
