@@ -27,7 +27,7 @@ SensUTM_idx = find(SensUTmat(:) == 1);
 %% Create Data
 RSA_Data_Enc = [];
 for sub = 1:length(Subj_names)
-    tmp_strct = load(['RSA_Data_wholehead/RSA_Data_Enc_wholehead_',Subj_names{sub}]);
+    tmp_strct = load(['RSA_Data/RSA_Data_Enc_',Subj_names{sub}]);
     if(sub == 1)
         ROI = fieldnames(tmp_strct.(['RSA_Data_',Subj_names{1}]));
         RSA_Data_Enc.Names   = Subj_names;
@@ -118,7 +118,7 @@ set(gca,'linewidth',2.5,'FontSize',14)
 
 
 %% Plot RSA Difference Time series
-r1 = 1; r2 = 1;
+r1 = 4; r2 = 4;
 c1 = 1; c2 = 2;
 cp = 1;
 

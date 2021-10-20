@@ -27,7 +27,7 @@ SensUTM_idx = find(SensUTmat(:) == 1);
 %% Create Data
 RSA_Data_Ret = [];
 for sub = 1:length(Subj_names)
-    tmp_strct = load(['RSA_Data_wholehead/RSA_Data_Ret_wholehead_',Subj_names{sub}]);
+    tmp_strct = load(['RSA_Data/RSA_Data_Ret_',Subj_names{sub}]);
     if(sub == 1)
         ROI = fieldnames(tmp_strct.(['RSA_Data_',Subj_names{1}]));
         RSA_Data_Ret.Names   = Subj_names;
@@ -116,7 +116,7 @@ set(gca,'linewidth',2.5,'FontSize',14)
 
 % Plot RSA Difference Time series
 
-r1 = 1; r2 = 2;
+r1 = 4; r2 = 4;
 c1 = 1; c2 = 2;
 cp = 1;
 
@@ -157,14 +157,14 @@ fill([TimeVec_Ret fliplr(TimeVec_Ret)],[nanmean(dat1,1) fliplr(nanmean(dat1,1) +
 fill([TimeVec_Ret fliplr(TimeVec_Ret)],[nanmean(dat1,1) fliplr(nanmean(dat1,1) - SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
 fill([TimeVec_Ret fliplr(TimeVec_Ret)],[nanmean(dat2,1) fliplr(nanmean(dat2,1) + SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
 fill([TimeVec_Ret fliplr(TimeVec_Ret)],[nanmean(dat2,1) fliplr(nanmean(dat2,1) - SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
-xlim([-0.2 1.5]); %ylim([0.35 0.6]);
-plot([-0.2 1.5],[0 0],'--k','linewidth',1)
+xlim([-2.5 0.2]); %ylim([0.35 0.6]);
+plot([-2.5 0.2],[0 0],'--k','linewidth',1)
 h1 = plot(TimeVec_Ret, nanmean(dat1,1),'b','linewidth',2);
 h2 = plot(TimeVec_Ret, nanmean(dat2,1),'r','linewidth',2);
 ylabel(['Diff ',RSA_Data_Ret.meas16{msr}]); xlabel('Time (s)'); 
 lg = legend([h1 h2], {[ROI{r1},' ',Cat{c1},' ',strjoin(Comp_names{c,cp},' - ')],[ROI{r2},' ',Cat{c2},' ',strjoin(Comp_names{c,cp},' - ')]}); legend boxoff; set(lg,'FontSize',14)
 box off;
-set(gca,'linewidth',2.5,'FontSize',14,'xlim',[-0.2 1])
+set(gca,'linewidth',2.5,'FontSize',14,'xlim',[-2.5 0.2])
 if(Results1.H == 1)
     sign_mcc_clust = Results1.zmapthresh;
     sign_mcc_clust(sign_mcc_clust > 0) = min(get(gca,'ylim'))*0.8;

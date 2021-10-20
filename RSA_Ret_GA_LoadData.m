@@ -53,3 +53,13 @@ Electrodes_ROIs
 %end
 
 end
+
+
+Data = Ret_Data_EEG.Retrieval_Data(cell2mat(Ret_Data_EEG.TrialInfo(cell2mat(Ret_Data_EEG.TrialInfo(:,1)) > 0,2)),:);
+
+hist(cell2mat(Data(:,9)),20)
+
+
+
+
+
