@@ -7,8 +7,8 @@ load('RSA_Data_Enc','Subj_names')
 %% ROI Electrode positions
 % Biosemi 128 Electrodes System Radial ABC
 Electrodes_ROIs
-%ROI_idx = {ROI_occ_idx; ROI_temp_idx; ROI_front_idx; ROI_pari_idx};
-ROI_idx = {ROI_all_idx};
+ROI_idx = {ROI_occ_idx; ROI_temp_idx; ROI_front_idx; ROI_pari_idx};
+%ROI_idx = {ROI_all_idx};
 
 %% Hypothesis Matrix
 Hypothesis_Matrix
@@ -91,11 +91,11 @@ Cat_names = {'Perceptual','Semantic'};
 
 
 %% Plot RSA Time series
-r = 1;
+r = 4;
 c = 1;
 cp = 1;
 
-figure('Pos', [325 510 650 402]);
+figure('Pos', [325 210 650 402]);
 plot([]); hold on
 dat1 = mean(mean(RSA_Data_Enc.(ROI{r}).red16_Data(:,:,RSA_Data_Enc.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,1)),3),1);
 dat2 = mean(mean(RSA_Data_Enc.(ROI{r}).red16_Data(:,:,RSA_Data_Enc.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,2)),3),1);
@@ -108,7 +108,7 @@ fill([TimeVec_Enc fliplr(TimeVec_Enc)],[dat2 fliplr(dat2 - SEM2)],'r','FaceAlpha
 h1 = plot(TimeVec_Enc, dat1,'b','linewidth',2);
 h2 = plot(TimeVec_Enc, dat2,'r','linewidth',2);
 hold off
-ylabel(RSA_Data_Enc.meas16{msr}); xlabel('Time (s)'); title([ROI{r}])
+ylabel(RSA_Data_Enc.meas16{msr}); xlabel('Time (s)'); %title([ROI{r}])
 xlim([-0.2 1.5]);lg = legend([h1 h2], {[Cat_names{c},' ',Comp_names{c,cp}{1}],[Cat_names{c},' ',Comp_names{c,cp}{2}]}); legend boxoff; set(lg,'FontSize',14)
 box off; %ylim([0.42 0.6])
 set(gca,'linewidth',2.5,'FontSize',14)
@@ -315,8 +315,8 @@ end
 imagesc(cur_data);
 axis square
 grid on
-set(get(gca,'Yruler'),'Minortick',Dim_names{2,2}(1,:))
-set(get(gca,'Xruler'),'Minortick',Dim_names{2,2}(1,:))
+set(get(gca,'Yruler'),'Minortick','off') %Dim_names{2,2}(1,:))
+set(get(gca,'Xruler'),'Minortick','off')%Dim_names{2,2}(1,:))
 set(gca,'clim',colb_lim,'xtick',Dim_names{1,2}(1,:),'xticklabels',[],...
         'ytick',Dim_names{1,2}(2,:),'yticklabels',[], 'TickLength',[0 0],'XMinorgrid','on','YMinorgrid','on',...
         'gridcolor','w','gridalpha',.9,'minorgridlinestyle','--','minorgridalpha',.5,'MinorGridColor','w')
@@ -402,7 +402,7 @@ text(17.2,13,Dim_names{2,1}{4}(1:3),'fontsize',9,'Rotation',-90)
 %% Plot Electrode Activations
 
 
-r = 1;
+r = 4;
 elec_idx = ROI_idx{r};
 
 Sensor_Data = zeros(size(RSA_Data_Enc.(ROI{r}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Enc.(ROI{r}).red16_SensorData,3),4);
@@ -470,8 +470,8 @@ ft_topoplotER(cfg, GA_Sensor_Data);
 
 
 %% Plot RSA Time series
-r = 1;
-c = 2;
+r = 4;
+c = 1;
 cp = 1;
 
 timelim = [-0.1  1.2];
@@ -656,6 +656,164 @@ end
 
 
 
+%% Plot for SFN-Poster
+
+r = 4;
+c = 2;
+cp = 1;
+
+timelim = [-0.1  1.2];
+
+%TimeFrameTopo = dsearchn(TimeVec_Enc',linspace(timelim(1),timelim(2),8)')';
+%TimeFrameTopo = [dsearchn(TimeVec_Enc',-.1) dsearchn(TimeVec_Enc',0) round(linspace(find(sign_mcc_clust > 0,1,'first'),find(sign_mcc_clust > 0,1,'last'),6))];
+%TimeFrameTopo = dsearchn(TimeVec_Enc',[0.05 0.08 0.12 0.13 0.14 0.15 0.28 0.4]')'; % Parietal Perceptual Timepoints
+%TimeFrameTopo = dsearchn(TimeVec_Enc',[0.12 0.25 0.28 0.37 0.425 0.46 0.57 0.65]')'; % Parietal Semantic Timepoints
+%TimeFrameTopo = dsearchn(TimeVec_Enc',[0.05 0.08 0.12 0.13 0.14 0.15 0.28 0.4]')'; % ALL Perceptual Timepoints
+TimeFrameTopo = dsearchn(TimeVec_Enc',[0.12 0.28 0.37 0.46 0.7 0.83 0.91 1.1]')'; % ALL Semantic Timepoints
+
+elec_idx = ROI_idx{r};
+
+Sensor_Data = zeros(size(RSA_Data_Enc.(ROI{r}).red16_SensorData,1), length(ROI_all_idx), size(RSA_Data_Enc.(ROI{r}).red16_SensorData,3),4);
+Sensor_Data(:,elec_idx,:,1) = mean(RSA_Data_Enc.(ROI{r}).red16_SensorData(:,:,:,1),4);
+Sensor_Data(:,elec_idx,:,2) = mean(RSA_Data_Enc.(ROI{r}).red16_SensorData(:,:,:,2),4);
+Sensor_Data(:,elec_idx,:,3) = mean(RSA_Data_Enc.(ROI{r}).red16_SensorData(:,:,:,3),4);
+Sensor_Data(:,elec_idx,:,4) = mean(RSA_Data_Enc.(ROI{r}).red16_SensorData(:,:,:,4),4);
+
+GA_Sensor_Data = [];
+GA_Sensor_Data.avg1_1 = squeeze(mean(Sensor_Data(:,:,:,1),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data.var1_1 = squeeze(std(Sensor_Data(:,:,:,1),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data.avg1_2 = squeeze(mean(Sensor_Data(:,:,:,2),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data.var1_2 = squeeze(std(Sensor_Data(:,:,:,2),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1)); 
+GA_Sensor_Data.avg2_1 = squeeze(mean(Sensor_Data(:,:,:,3),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data.var2_1 = squeeze(std(Sensor_Data(:,:,:,3),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data.avg2_2 = squeeze(mean(Sensor_Data(:,:,:,4),1)); %squeeze(mean(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),1)); 
+GA_Sensor_Data.var2_2 = squeeze(std(Sensor_Data(:,:,:,4),0,1)); %squeeze(std(Sensor_Data(:,:,:,2) - Sensor_Data(:,:,:,1),0,1));  
+GA_Sensor_Data.dof = size(Sensor_Data,1).*ones(size(Sensor_Data,2),size(Sensor_Data,3)); 
+GA_Sensor_Data.time = RSA_Data_Enc.TimeVec; 
+GA_Sensor_Data.label = elecs; 
+GA_Sensor_Data.dimord = 'chan_time';
+
+RDM_Data = squeeze(nanmean(RSA_Data_Enc.(ROI{r}).red16_Data,1));
+colb_lim = prctile(RDM_Data(:),[2.5 97.5]);
+Dim_names = {};
+[a,b] = unique(RSA_Data_Enc.TrialInfo{1,1}(1:64,6),'stable');
+Dim_names{1,1} = RSA_Data_Enc.TrialInfo{1,1}([b;b+64],6);
+Dim_names{1,2} = [8.5; 8.5];
+[a,b] = unique(RSA_Data_Enc.TrialInfo{1,1}(1:64,8),'stable');
+Dim_names{2,1} = RSA_Data_Enc.TrialInfo{1,1}([b;b+64],8);
+Dim_names{2,2} = [4.5:4:12.5; 4.5:4:12.5];
+
+Hyp_idx{1}  = RSA_Data_Enc.Cond_idx.Perc_WI_BT_idx;
+Hyp_idx{2}    = RSA_Data_Enc.Cond_idx.Sem_WI_BT_idx;
+cfg = [];
+cfg.nPerms = 1000;
+cfg.thresh_pval = 0.05;
+cfg.mcc_cluster_pval = 0.05;
+cfg.TimeVec = RSA_Data_Enc.TimeVec;
+cfg.Hyp_idx = Hyp_idx{c};
+cfg.matshuff = false;
+cfg.twoside = true;
+Results1 = rsa_perm(cfg, RSA_Data_Enc.(ROI{r}).red16_Data);
+
+figure('Pos', [300 200 1000 500]);
+tsh = axes('units','pixels');
+hold on
+dat1 = mean(mean(RSA_Data_Enc.(ROI{r}).red16_Data(:,:,RSA_Data_Enc.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,1)),3),1);
+dat2 = mean(mean(RSA_Data_Enc.(ROI{r}).red16_Data(:,:,RSA_Data_Enc.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,2)),3),1);
+SEM1 = nanstd(mean(RSA_Data_Enc.(ROI{r}).red16_Data(:,:,RSA_Data_Enc.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,1)),3),0,1)./sqrt(size(RSA_Data_Enc.(ROI{r}).red16_Data,1));
+SEM2 = nanstd(mean(RSA_Data_Enc.(ROI{r}).red16_Data(:,:,RSA_Data_Enc.Cond_idx.([Cat{c},'_',Comp{cp},'_idx'])(:,2)),3),0,1)./sqrt(size(RSA_Data_Enc.(ROI{r}).red16_Data,1));
+fill([TimeVec_Enc fliplr(TimeVec_Enc)],[dat1 fliplr(dat1 + SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec_Enc fliplr(TimeVec_Enc)],[dat1 fliplr(dat1 - SEM1)],'b','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec_Enc fliplr(TimeVec_Enc)],[dat2 fliplr(dat2 + SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
+fill([TimeVec_Enc fliplr(TimeVec_Enc)],[dat2 fliplr(dat2 - SEM2)],'r','FaceAlpha',0.3,'EdgeAlpha',0);
+h1 = plot(TimeVec_Enc, dat1,'b','linewidth',2);
+h2 = plot(TimeVec_Enc, dat2,'r','linewidth',2);
+xlim(timelim)
+if(Results1.H == 1)
+    sign_mcc_clust = abs(Results1.zmapthresh);
+    sign_mcc_clust(sign_mcc_clust > 0) = min(get(gca,'ylim'))*1.02;
+    plot(TimeVec_Enc,sign_mcc_clust,'ko','MarkerFaceColor','k')
+end
+hold off
+ylabel('LDA Accuracy');
+lg = legend([h1 h2], {[Cat_names{c},' ',Comp_names{c,cp}{1}],[Cat_names{c},' ',Comp_names{c,cp}{2}]}); legend boxoff; set(lg,'FontSize',14) %,'Location','east')
+box off; %ylim([0.42 0.6])
+set(gca,'linewidth',2.5,'FontSize',14,'xtick',-0.2:0.1:1.5)
+
+
+GA_Sensor_Data_avgbtwi = [];
+GA_Sensor_Data_avgbtwi.dof = GA_Sensor_Data.dof;
+GA_Sensor_Data_avgbtwi.time = GA_Sensor_Data.time;
+GA_Sensor_Data_avgbtwi.label = GA_Sensor_Data.label;
+GA_Sensor_Data_avgbtwi.dimord = GA_Sensor_Data.dimord;
+GA_Sensor_Data_avgbtwi.avg = (GA_Sensor_Data.avg2_2);
+GA_Sensor_Data_avgbtwi.var = (GA_Sensor_Data.var2_2);
+
+cfg = [];
+cfg.parameter        = [];
+cfg.xlim             = []; %[0.24:0.02:0.54]; %[0.06:0.02:0.36];
+cfg.zlim             = [];
+%cfg.colorbar         = 'yes';
+cfg.layout           = 'biosemi128.lay';
+cfg.highlight        = 'on';
+cfg.highlightchannel = elec_idx;
+cfg.highlightsymbol  = 's';
+cfg.highlightcolor   = [0 0 0];
+cfg.comment          = 'no';
+%cfg.commentpos       = 'middlebottom';
+
+cfg.parameter = 'avg';
+cfg.xlim      = [0.42 0.48]; %[0.1 0.17]; %[0.18 0.24]; [0.25 0.31];
+%cfg.xlim      = [0.460 0.460]; %[0.370 0.370]; %[0.420 0.420]; [0.460 0.460];
+cfg.zlim      = prctile(GA_Sensor_Data_avgbtwi.avg(:),[2.5 97.5]);
+ft_topoplotER(cfg, GA_Sensor_Data_avgbtwi);
+
+
+figure
+rdm_h(1) = axes('units','pixels');
+cur_data = nan(16);
+cur_data(UTM_idx) = RDM_Data(250,:);
+imh = imagesc(cur_data);
+axis('off', 'image')
+set(gca,'clim',colb_lim,'xtick',Dim_names{1,2}(1,:),'xticklabels',[],...
+        'ytick',Dim_names{1,2}(2,:),'yticklabels',[], 'TickLength',[0 0])
+set(imh, 'AlphaData', ~isnan(cur_data))
+hold on
+if(c == 1)
+    triplot([1 2 3],[0.55;8.45;8.45],[0.55;8.45;0.55],'Color',[0 0 1],'LineWidth',1) %rectangle('Position',[0.55 0.55 7.9 7.9],'EdgeColor',[0 0 1],'LineWidth',1)
+    triplot([1 2 3],[8.55;16.45;16.45],[8.55;16.45;8.55],'Color',[0 0 1],'LineWidth',1) %rectangle('Position',[8.55 8.55 7.9 7.9],'EdgeColor',[0 0 1],'LineWidth',1)
+    rectangle('Position',[8.55 0.55 7.9 7.9],'EdgeColor',[1 0 0],'LineWidth',1)
+else
+    triplot([1 2 3],[0.55;4.45;4.45],[0.55;4.45;0.55],'Color',[0 0 1],'LineWidth',1) %rectangle('Position',[ 0.55  0.55 3.9 3.9],'EdgeColor',[0 0 1],'LineWidth',1)
+    rectangle('Position',[ 4.55  0.55 3.9 3.9],'EdgeColor',[1 0 0],'LineWidth',1)
+    rectangle('Position',[ 8.55  0.55 3.9 3.9],'EdgeColor',[0 0 1],'LineWidth',1)
+    rectangle('Position',[12.55  0.55 3.9 3.9],'EdgeColor',[1 0 0],'LineWidth',1)
+    triplot([1 2 3],[4.55;8.45;8.45],[4.55;8.45;4.55],'Color',[0 0 1],'LineWidth',1) %rectangle('Position',[ 4.55  4.55 3.9 3.9],'EdgeColor',[0 0 1],'LineWidth',1)
+    rectangle('Position',[ 8.55  4.55 3.9 3.9],'EdgeColor',[1 0 0],'LineWidth',1)
+    rectangle('Position',[12.55  4.55 3.9 3.9],'EdgeColor',[0 0 1],'LineWidth',1)
+    triplot([1 2 3],[8.55;12.45;12.45],[8.55;12.45;8.55],'Color',[0 0 1],'LineWidth',1) %rectangle('Position',[ 8.55  8.55 3.9 3.9],'EdgeColor',[0 0 1],'LineWidth',1)
+    rectangle('Position',[12.55  8.55 3.9 3.9],'EdgeColor',[1 0 0],'LineWidth',1)
+    triplot([1 2 3],[12.55;16.45;16.45],[12.55;16.45;12.55],'Color',[0 0 1],'LineWidth',1) %rectangle('Position',[12.55 12.55 3.9 3.9],'EdgeColor',[0 0 1],'LineWidth',1)
+end
+hold off
+if(c == 1)
+    text(4.5,-0.6,Dim_names{1,1}{1},'fontsize',10, 'HorizontalAlignment','center')
+    text(12.5,-0.6,Dim_names{1,1}{2},'fontsize',10, 'HorizontalAlignment','center')
+else
+    text(2.5,-0.6,Dim_names{2,1}{1}(1:2),'fontsize',10, 'HorizontalAlignment','center')
+    text(6.5,-0.6,Dim_names{2,1}{2}(1:2),'fontsize',10, 'HorizontalAlignment','center')
+    text(10.5,-0.6,Dim_names{2,1}{3}(1:2),'fontsize',10, 'HorizontalAlignment','center')
+    text(14.5,-0.6,Dim_names{2,1}{4}(1:2),'fontsize',10, 'HorizontalAlignment','center')
+end
+
+
+
+figure
+rdm_h(1) = axes('units','pixels');
+cur_data = nan(16);
+cur_data(UTM_idx) = RDM_Data(52,:);
+imh = imagesc(cur_data(end-16:end-1));
+set(gca,'xtick','','ytick','')
 
 
 

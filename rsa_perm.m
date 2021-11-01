@@ -6,7 +6,7 @@ nPerms = cfg.nPerms;
 thresh_pval = cfg.thresh_pval;
 mcc_cluster_pval = cfg.mcc_cluster_pval;
 TimeVec = cfg.TimeVec;
-Hyp_idx = cfg.Hyp_idx;
+Hyp_idx = cfg.Hyp_Mat;
 matshuff = cfg.matshuff;
 twoside = cfg.twoside;
 

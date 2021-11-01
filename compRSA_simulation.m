@@ -518,28 +518,26 @@ Dur_Meth(2,1) = toc;
 
 N = 56;
 
-mu = [0 0; 3 3];
+mu = [3 3; 0 0];
 sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
 %rng('default')  % For reproducibility
 R = [];
 R = [R; mvnrnd(mu(1,:),sigma(:,:,1),N)];
 R = [R; mvnrnd(mu(2,:),sigma(:,:,2),N)];
 
-figure('Pos', [326   500   619   483])
+figure('Pos', [326   200   619   483])
 scatter(R(1:56,1),R(1:56,2),'ro','MarkerFaceColor','r','MarkerEdgeColor','r');
 hold on
-scatter(R(57:end,1),R(57:end,2),'go','MarkerFaceColor','g','MarkerEdgeColor','g')
-set(gca,'xlim',[-3.5 6.5], 'ylim',[-3.5 6.5])
+scatter(R(57:end,1),R(57:end,2),'go','MarkerFaceColor','b','MarkerEdgeColor','b')
+set(gca,'xlim',[-3.5 6.5], 'ylim',[-3.5 6.5],'xtick','','ytick','')
 B = polyfit(R(:,1), R(:,2),1);
-ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--m','linewidth',1.5);
-text(ls1.XData(end), ls1.YData(end),strrep(sprintf('r = %1.3f',corr(R(:,1), R(:,2))),'0.','.'),'Color','m')
-B = polyfit(R(1:N,1), R(1:N,2),1);
-ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--r','linewidth',1.5);
-text(ls2.XData(end), ls2.YData(end),strrep(sprintf('r = %1.3f',corr(R(1:N,1), R(1:N,2))),'0.','.'),'Color','r')
-B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
-ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--g','linewidth',1.5);
-text(ls3.XData(end), ls3.YData(end),strrep(sprintf('r = %1.3f',corr(R(N+1:end,1), R(N+1:end,2))),'0.','.'),'Color','g')
+ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--k','linewidth',3.5);
+%B = polyfit(R(1:N,1), R(1:N,2),1);
+%ls2 = plot(linspace(min(R(1:N,1)), max(R(1:N,1)),N),B(2) + linspace(min(R(1:N,1)), max(R(1:N,1)),N)*B(1),'--b','linewidth',1.5);
+%B = polyfit(R(N+1:end,1), R(N+1:end,2),1);
+%ls3 = plot(linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N),B(2) + linspace(min(R(N+1:end,1)), max(R(N+1:end,1)),N)*B(1),'--r','linewidth',1.5);
 hold off
+
 
 
 
