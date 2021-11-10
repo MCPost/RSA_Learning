@@ -518,7 +518,7 @@ Dur_Meth(2,1) = toc;
 
 N = 56;
 
-mu = [3 3; 0 0];
+mu = [2.7 2.7; 0 0];
 sigma = cat(3,[1 0; 0 1], [1 0; 0 1]);
 %rng('default')  % For reproducibility
 R = [];
@@ -529,7 +529,7 @@ figure('Pos', [326   200   619   483])
 scatter(R(1:56,1),R(1:56,2),'ro','MarkerFaceColor','r','MarkerEdgeColor','r');
 hold on
 scatter(R(57:end,1),R(57:end,2),'go','MarkerFaceColor','b','MarkerEdgeColor','b')
-set(gca,'xlim',[-3.5 6.5], 'ylim',[-3.5 6.5],'xtick','','ytick','')
+set(gca,'xlim',[-2.7 5.4], 'ylim',[-2.7 5.4],'xtick','','ytick','')
 B = polyfit(R(:,1), R(:,2),1);
 ls1 = plot(linspace(min(R(:,1)), max(R(:,1)),N),B(2) + linspace(min(R(:,1)), max(R(:,1)),N)*B(1),'--k','linewidth',3.5);
 %B = polyfit(R(1:N,1), R(1:N,2),1);

@@ -194,7 +194,7 @@ Cat_names = strcat(strrep(strrep(RSA_Data_Enc.TrialInfo{1,1}([b;b+64],6),'Pictur
 
 % Plot Single GA Matrix
 
-r = 1;
+r = 4;
 tp = 0.2; % s
 
 calc_dat = nanmean(RSA_Data_Enc.(ROI{r}).red16_Data(:,:),1);
@@ -277,6 +277,60 @@ end
 cl = colorbar; set(cl,'Pos', [0.9 0.2 0.1 0.1])
 pos_val = get(gca,'Position');
 set(cl,'Pos', [0.92 pos_val(2) 0.0119 pos_val(4)],'Xtick',linspace(colb_lim(1),colb_lim(2),5))
+
+
+% Simulate RDMs for SFN Poster
+for i = 1:6
+    figure('pos',[200 200 400 400])
+    cur_data = (0.4*rand(16)+0.4).*(~eye(16));
+    cur_data = triu(cur_data) + triu(cur_data)';
+    imagesc(cur_data)
+    set(gca,'Pos', [0 0 1 1])
+    axis square
+    set(gca,'clim',[0.3 0.9],'xtick','','ytick','','TickLength',[0 0])
+    saveas(gcf,sprintf('Results/SFN_Poster/Ret_RDM_plain_Ex_%i.png',i))
+    close(gcf)
+end
+
+figure('pos',[834   697   606    32])
+cur_data = (0.4*rand(16)+0.4).*(~eye(16));
+cur_data = triu(cur_data) + triu(cur_data)';
+imagesc(cur_data(:,end)')
+set(gca,'xtick',[],'ytick',[])
+
+cx = 0; cy = 0;
+for i = 1:2
+    figure('pos',[200 200 400 400])
+    axes()
+    set(gca,'Pos', [0 0 1 1])
+    axis square
+    set(gca,'clim',[0.1 0.9],'xtick','','ytick','','TickLength',[0 0])
+    hold on
+    if(i == 1)
+        rectangle('Position',[8.55 0.55 7.9 7.9],'EdgeColor',[1 0 0],'LineWidth',4)
+        fill([8.55 8.55+7.9 8.55+7.9 8.55],[0.55 0.55 0.55+7.9 0.55+7.9],'red','FaceAlpha',0.3)
+        rectangle('Position',[0.55 8.55 7.9 7.9],'EdgeColor',[1 0 0],'LineWidth',4)
+        fill([0.55 0.55+7.9 0.55+7.9 0.55],[8.55 8.55 8.55+7.9 8.55+7.9],'red','FaceAlpha',0.3)
+        rectangle('Position',[0.55 0.55 7.9 7.9],'EdgeColor',[0 0 1],'LineWidth',4)
+        fill([0.55 0.55+7.9 0.55+7.9 0.55],[0.55 0.55 0.55+7.9 0.55+7.9],'blue','FaceAlpha',0.3)
+        rectangle('Position',[8.55 8.55 7.9 7.9],'EdgeColor',[0 0 1],'LineWidth',4)
+        fill([8.55 8.55+7.9 8.55+7.9 8.55],[8.55 8.55 8.55+7.9 8.55+7.9],'blue','FaceAlpha',0.3)
+        hold off
+        saveas(gcf,sprintf('Results/SFN_Poster/Ret_RDM_btwi_Perc_Ex_%i.png',i))
+        close(gcf)
+    else
+        for j = 1:16
+            px = 4*cx + 0.55; py = 4*cy + 0.55;
+            rectangle('Position',[ px  py 3.9 3.9],'EdgeColor',[mod(cx+cy,2) 0 ~mod(cx+cy,2)],'LineWidth',4)
+            fill([px px+3.9 px+3.9 px],[py py py+3.9 py+3.9],[mod(cx+cy,2) 0 ~mod(cx+cy,2)],'FaceAlpha',0.3)
+            cx = mod(cx + 1,4);
+            cy = cy + (cx == 0);
+        end
+        hold off
+        saveas(gcf,sprintf('Results/SFN_Poster/Ret_RDM_btwi_Sem_Ex_%i.png',i-1))
+        close(gcf)
+    end
+end
 
 
 

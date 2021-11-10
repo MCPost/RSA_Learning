@@ -239,7 +239,7 @@ tmp_fnames = fieldnames(tmp_struct);
 
 method = {'Corr','Meth1_per','Meth1_sem','Meth2_per','Meth2_sem'};
 permtestname = {'CorrPermTest', 'Meth1_per_PermTest', 'Meth1_sem_PermTest',  'Meth2_per_PermTest', 'Meth2_sem_PermTest'};
-mth1 = 2; mth2 = 3;
+mth1 = 1; mth2 = 1;
 
 ROI = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).ROI;
 if(size(ROI,2) == 2)
@@ -254,9 +254,9 @@ time_wind_enc = [-0.1  1.2];
 time_wind_ret = [-1.8 -0.6];
 
 r1 = 4; r2 = 4;
-c1 = 2; c2 = 2;
+c1 = 1; c2 = 2;
 dt1 = [3 4]; dt2 = [3 4];
-rndcut_perm = true;
+rndcut_perm = false;
 
 TimeX = tmp_struct.(tmp_fnames{~cellfun(@isempty, strfind(tmp_fnames,['CrossComp_RSA_',measures{msr}]))}).TimeVec1;
 time_idx_enc = dsearchn(TimeX',time_wind_enc')';
@@ -315,11 +315,12 @@ end
 enc_lim = [TimeX(1) TimeX(end)]; %enc_lim = [-0.2 1.0];
 ret_lim = [TimeY(1) TimeY(end)]; %ret_lim = [-2.5 0.2];
 
-figure('Pos',[100 100 631 682])
+figure('Pos',[100 100 831 882],'renderer','opengl')
 
-contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.Data1,1)), 40,'linestyle','none'); colorbar
+contourf(TimeX, TimeY, squeeze(nanmean(CrossComp_Data.RSA_red16.Data1,1)), 40,'linestyle','none'); cl = colorbar;
 h1 = gca;
-caxis([-.0055 .0055]); set(h1,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]); 
+caxis([-.07 .07]); %set(h1,'xlim', enc_lim, 'ylim', ret_lim, 'xticklabel',[], 'yticklabel',[]);
+set(cl, 'ytick',-0.08:0.02:0.08,'FontSize',25)
 %title(ROI_names{r1});
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
@@ -329,10 +330,11 @@ if(Results5.H == 1)
     contour(TimeX, TimeY,zmapthresh,1,'linecolor','k','linewidth',1.5)
 end
 hold off
+set(h1,'xlim', enc_lim, 'ylim', ret_lim,'ytick',[-1.7:0.2:-0.7], 'xtick',[0:0.2:1], 'Fontsize',20)
 
 aspect = get(h1,'PlotBoxAspectRatio');
 set(h1,'Units','pixels');
-pos = get(h1,'Position')+[100 100 -75 -75];
+pos = get(h1,'Position')+[80 80 -80 -90];
 pos(3) = aspect(1)/aspect(2)*pos(4);
 set(h1,'Position',pos);
 
@@ -348,6 +350,7 @@ sign_mcc_clust_1 = Results3.zmapthresh;
 sign_mcc_clust_1(abs(sign_mcc_clust_1) > 0) = min(nanmean(dat1,1) - SEM1);
 plot(Results3.TimeVec,sign_mcc_clust_1,[Col{c1},'o'],'MarkerFaceColor',Col{c1})
 xlim(enc_lim); ylim([min(nanmean(dat1,1) - SEM1) max(nanmean(dat1,1) + SEM1)]*1.4); hold off
+set(h2,'ytick',[-0.02 0 0.02], 'xtick',[0:0.2:1], 'Fontsize',14)
 %lg = legend(l1, sprintf('%s \n%s - %s',Cat{c1},Dat_names1{dt1(2)},Dat_names1{dt1(1)})); legend boxoff; set(lg,'FontSize',8)
 %lg = legend(l1, {[Cat{c1},' \n ',Dat_names1{dt1(2)},' - ',Dat_names1{dt1(1)}]}); legend boxoff; set(lg,'FontSize',8)
 
@@ -356,16 +359,15 @@ h3 = axes('Units','pixels','pos',[pos(1)-135 pos(2) 133 pos(4)]);%,'visible','of
 %Dat_names1 = fieldnames(RSA_red16_Data_Ret.(ROI{r1,end}).(Cat{c1}));
 dat1 = nanmean(RSA_Data_Ret.(ROI{r1,end}).red16_Data(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)),Hyp_Mat{c1}(:) == -1),3) - nanmean(RSA_Data_Ret.(ROI{r1,end}).red16_Data(:,dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(1)):dsearchn(RSA_Data_Ret.TimeVec', time_wind_ret(end)),Hyp_Mat{c1}(:) == 1),3);
 SEM1 = nanstd(dat1,0,1)./sqrt(size(dat1,1)); hold on;
-fill([nanmean(dat1,1) fliplr(nanmean(dat1,1) + SEM1)],[Results2.TimeVec fliplr(Results2.TimeVec)],Col{c1},'FaceAlpha',0.3,'EdgeAlpha',0);
-fill([nanmean(dat1,1) fliplr(nanmean(dat1,1) - SEM1)],[Results2.TimeVec fliplr(Results2.TimeVec)],Col{c1},'FaceAlpha',0.3,'EdgeAlpha',0);
+fill([nanmean(dat1,1) fliplr(nanmean(dat1,1) + SEM1)],[Results4.TimeVec fliplr(Results4.TimeVec)],Col{c1},'FaceAlpha',0.3,'EdgeAlpha',0);
+fill([nanmean(dat1,1) fliplr(nanmean(dat1,1) - SEM1)],[Results4.TimeVec fliplr(Results4.TimeVec)],Col{c1},'FaceAlpha',0.3,'EdgeAlpha',0);
 plot([min(nanmean(dat1,1) - SEM1) max(nanmean(dat1,1) + SEM1)]*1.4,[0 0],'--k','linewidth',2)
-plot(nanmean(dat1,1), Results2.TimeVec,Col{c1},'linewidth',2);
-sign_mcc_clust_2 = Results2.zmapthresh;
+plot(nanmean(dat1,1), Results4.TimeVec,Col{c1},'linewidth',2);
+sign_mcc_clust_2 = Results4.zmapthresh;
 sign_mcc_clust_2(abs(sign_mcc_clust_2) > 0) = min(nanmean(dat1,1) - SEM1);
-plot(sign_mcc_clust_2,Results2.TimeVec,[Col{c1},'o'],'MarkerFaceColor',Col{c1})
-ylim(ret_lim); xlim([min(nanmean(dat1,1) - SEM1) max(nanmean(dat1,1) + SEM1)]*1.4); hold off
-set(h3,'xdir','reverse')
-
+plot(sign_mcc_clust_2,Results4.TimeVec,[Col{c1},'o'],'MarkerFaceColor',Col{c1})
+ylim(ret_lim); xlim([min(nanmean(dat1,1) - SEM1) max(nanmean(dat1,1) + SEM1)]*1.2 + [-0.00 -0.00]); hold off
+set(h3,'xtick',[-0.01 0 0.01], 'ytick',-1.7:0.2:-0.7, 'Fontsize',14,'xdir','reverse')
 
 
 h4 = subplot(1,2,2);
@@ -635,8 +637,8 @@ TimeX = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec1;
 TimeY = tmp_struct.(['CrossComp_RSA_',measures{msr}]).TimeVec2;
 ROI = tmp_struct.(['CrossComp_RSA_',measures{msr}]).ROI;
 
-enc_lim = [-0.1  1.5];
-ret_lim = [-1.5  -0.5];
+enc_lim = [-0.1  1.2];
+ret_lim = [-1.8  -0.6];
 
 
 figure('Pos',[484 44 885 952])
