@@ -161,17 +161,18 @@ cfg.ROI              = {'OCC';...
                         'FRT';...
                         'PRT'};
 
-cfg.pair = 'Enc - Ret';
-save_name = 'Crossdecoding_Matfiles/CrossDec_Enc_Ret_wiROI_noperm_msr';
+pair = 'Enc - Ret';
+cfg.pair = pair;
+save_name = 'Crossdecoding_Matfiles/CrossDec_Enc_Ret_noperm_msr';
 c = parcluster();
-%jobHandles = {};
+jobHandles = {};
 end_ind = length(jobHandles);
 for msr = 1
     jobHandles{end_ind+msr} = batch(c, @CrossDecoding_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
 end
 
-jobHandles{4}
-diary(jobHandles{4})
+jobHandles{1}
+diary(jobHandles{1})
 
 
 

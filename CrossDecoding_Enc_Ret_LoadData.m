@@ -7,8 +7,7 @@ cfg.msr = msr;
 
 % ROI Electrode positions
 % Biosemi 128 Electrodes System Radial ABC
-Electrodes_ROIs 
-cfg.ROI = ROI;
+Electrodes_ROIs
 cfg.ROI_idx = {ROI_occ_idx; ROI_temp_idx; ROI_front_idx; ROI_pari_idx};
 
 % Hypotheses Matrix
