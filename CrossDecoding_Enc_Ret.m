@@ -168,13 +168,13 @@ c = parcluster();
 jobHandles = {};
 end_ind = length(jobHandles);
 for msr = 1
-    jobHandles{end_ind+msr} = batch(c, @CrossDecoding_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name},'Pool',5);
+    jobHandles{end_ind+msr} = batch(c, @CrossDecoding_Enc_Ret_LoadData, 0, {msr, cfg, pair, save_name});
 end
 
 jobHandles{1}
 diary(jobHandles{1})
 
-
+delete(jobHandles{1})
 
 
 
