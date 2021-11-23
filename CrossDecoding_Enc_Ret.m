@@ -187,26 +187,66 @@ ROI_idx = {ROI_occ_idx; ROI_temp_idx; ROI_front_idx; ROI_pari_idx};
 % Subject Names
 load('RSA_Data_Enc','Subj_names')
 
+% Matrix Indices to choose
+Perc_lt_mat = Perceptual_Mat_red16' + tril(ones(16)).*flipud(3*eye(16));
+Perc_lt_mat = Perc_lt_mat(:);
+Perc_lt_mat(Perc_lt_mat == 0) = [];
+Perc_lt_mat(Perc_lt_mat == 2) = 1;
+
+Sem_lt_mat = Semantic_Mat_red16' + tril(ones(16)).*flipud(3*eye(16));
+Sem_lt_mat = Sem_lt_mat(:);
+Sem_lt_mat(Sem_lt_mat == 0) = [];
+Sem_lt_mat(Sem_lt_mat == 2) = 1;
+
+CrossDec = [];
+CrossDec.window_average = tmp_struct.window_average; 
+CrossDec.slide_window = tmp_struct.slide_window;
+CrossDec.slide_step = tmp_struct.slide_step;
+CrossDec.fwhm = tmp_struct.fwhm;
+CrossDec.ROI = tmp_struct.ROI;
+CrossDec.permtest = tmp_struct.permtest;
+CrossDec.n_perms = tmp_struct.n_perms;
+CrossDec.thresh_pval = tmp_struct.thresh_pval;
+CrossDec.mcc_cluster_pval = tmp_struct.mcc_cluster_pval;
+CrossDec.ts_os_fac = tmp_struct.ts_os_fac;
+CrossDec.TimeX = [];
+CrossDec.TimeY = [];
 % Load Data
-tmp_struct = load('CrossDec_Enc_Ret');
-tmp_fnames = fieldnames(tmp_struct);
+for sub = 1:length(Subj_names)
+    
+    tmp_struct = load('Crossdecoding_Matfiles/CrossDec_Enc_Ret_noperm_msr1',['CrossDecoding_msr1_',Subj_names{sub}]);
+    tmp_struct = tmp_struct.(['CrossDecoding_msr1_',Subj_names{sub}]);
+    
+    for r = 1:length(ROI)      
+        CrossDec.(ROI{r}).Data(sub,1,:,:) = nanmean(tmp_struct.(ROI{r}).Data(:,:,Perc_lt_mat ==  1),3);
+        CrossDec.(ROI{r}).Data(sub,2,:,:) = nanmean(tmp_struct.(ROI{r}).Data(:,:,Perc_lt_mat == -1),3);
+        CrossDec.(ROI{r}).Data(sub,3,:,:) = nanmean(tmp_struct.(ROI{r}).Data(:,:,Sem_lt_mat  ==  1),3);
+        CrossDec.(ROI{r}).Data(sub,4,:,:) = nanmean(tmp_struct.(ROI{r}).Data(:,:,Sem_lt_mat  == -1),3);
+    end
+end
+CrossDec.TimeX = tmp_struct.TimeX;
+CrossDec.TimeY = tmp_struct.TimeY;
+
 
 time_wind_enc = [-0.1  1.2];
 time_wind_ret = [-1.8  -0.6];
 
 Cat = {'Perc','Sem'};
-ROI = tmp_struct.(tmp_fnames{1}).ROI;
-r1 = 1; r2 = 2;
-c1 = 1; c2 = 2;
+ROI = CrossDec.ROI;
+r1 = 4; r2 = 4;
+c1 = [1 2]; c2 = [3 4];
 
-TimeX = tmp_struct.(tmp_fnames{1}).TimeX;
+TimeX = CrossDec.TimeX;
 time_idx_enc = dsearchn(TimeX',time_wind_enc')';
-TimeY = tmp_struct.(tmp_fnames{1}).TimeY;
+TimeY = CrossDec.TimeY;
 time_idx_ret = dsearchn(TimeY',time_wind_ret')';
 TimeX = TimeX(time_idx_enc(1):time_idx_enc(end));
 TimeY = TimeY(time_idx_ret(1):time_idx_ret(end));
-CurDat1 = tmp_struct.(tmp_fnames{1}).(ROI{r1}).(['Data_',Cat{c1}])(:,time_idx_ret(1):time_idx_ret(end),time_idx_enc(1):time_idx_enc(end));
-CurDat2 = tmp_struct.(tmp_fnames{1}).(ROI{r2}).(['Data_',Cat{c2}])(:,time_idx_ret(1):time_idx_ret(end),time_idx_enc(1):time_idx_enc(end));
+CurDat1 = squeeze(nanmean(CrossDec.(ROI{r1}).Data(:,c1,time_idx_ret(1):time_idx_ret(end),time_idx_enc(1):time_idx_enc(end)),2));
+CurDat2 = squeeze(nanmean(CrossDec.(ROI{r2}).Data(:,c2,time_idx_ret(1):time_idx_ret(end),time_idx_enc(1):time_idx_enc(end)),2));
+
+CurDat1 = squeeze(diff(CrossDec.(ROI{r1}).Data(:,c1,time_idx_ret(1):time_idx_ret(end),time_idx_enc(1):time_idx_enc(end)),1,2));
+CurDat2 = squeeze(diff(CrossDec.(ROI{r2}).Data(:,c2,time_idx_ret(1):time_idx_ret(end),time_idx_enc(1):time_idx_enc(end)),1,2));
 
 
 
@@ -227,9 +267,9 @@ Results6 = PermTestRNDCP2D(cfg, CurDat2);
 
 figure('Pos',[189 137 1531 782])
 subplot(1,2,1)
-curdat = squeeze(mean(CurDat1,1));
+curdat = squeeze(nanmean(CurDat1,1));
 contourf(TimeX, TimeY, curdat, 40,'linestyle','none'); colorbar
-caxis(prctile(curdat(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim); 
+caxis(prctile(curdat(:),[2.5 97.5])); set(gca,'xlim', enc_lim, 'ylim', ret_lim); 
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
@@ -239,9 +279,9 @@ if(Results5.H == 1)
 end
 hold off
 subplot(1,2,2)
-curdat = squeeze(mean(CurDat2,1));
+curdat = squeeze(nanmean(CurDat2,1));
 contourf(TimeX, TimeY, curdat, 40,'linestyle','none'); colorbar
-caxis(prctile(curdat(:),[1 99])); set(gca,'xlim', enc_lim, 'ylim', ret_lim); 
+caxis(prctile(curdat(:),[2.5 97.5])); set(gca,'xlim', enc_lim, 'ylim', ret_lim); 
 hold on
 plot([0 0],[TimeY(1) TimeY(end)],'--w','linewidth',2)
 plot([TimeX(1) TimeX(end)],[0 0],'--w','linewidth',2)
