@@ -5,11 +5,15 @@
 
 % Get Path to EEG data
 
-eeg_fullpath = 'Y:/Christopher/RSA_for_Christopher/EEG_data_preprocessed/';
+if(strcmp(getenv('COMPUTERNAME'),'DESKTOP-4EMDPEJ'))
+    eeg_fullpath = 'Y:/Christopher/RSA_for_Christopher/EEG_data_preprocessed/';
+elseif(strcmp(getenv('COMPUTERNAME'),'CHRISP-PC'))
+    eeg_fullpath = '\\analyse4/Project0298/Christopher/EGG_data_preprocessed/';
+end
 eeg_encpath = 'Full_clean_encoding_2/';
 eeg_retpath = 'Full_clean_retrieval_RL_4seconds/';
 
-if(exist(eeg_fullpath,'dir') ~= 7)
+if(exist(eeg_fullpath,'dir') == 7)
     error('Path does not exist. Network probably not mounted.')
 end
 
@@ -128,23 +132,23 @@ for sub = 1:length(Subj_names)
     %% Create EEG Data Struct for Encoding
     [~,sort_idx] = sortrows(cell2mat(TrialInfo(:,[5 7 9])));
 
-    cfg.TrialInfo = TrialInfo(sort_idx,:);
-    cfg.TimeVec1024 = Preproc_Data_1.time;
-
-    Data = [Preproc_Data_2.trial; Preproc_Data_1.trial];
+    trialinfo = TrialInfo(sort_idx,:);
+    
+    cfg = [];
+    cfg.appenddim = 'rpt';
+    Data = ft_appendtimelock(cfg,Preproc_Data_2, Preproc_Data_1);
     
     % Fill in NaN Trials
     for i = 1:length(Nan_trial_idx)
-        Data = [Data(1:(Nan_trial_idx(i)-1),:,:); nan(1,size(Data,2),size(Data,3)); Data(Nan_trial_idx(i):end,:,:)];
+        Data.trial = [Data.trial(1:(Nan_trial_idx(i)-1),:,:); nan(1,size(Data.trial,2),size(Data.trial,3)); Data.trial(Nan_trial_idx(i):end,:,:)];
     end
 
     % Sort Data
-    Data = Data(sort_idx,:,:);
+    Data.trial = Data.trial(sort_idx,:,:);
 
     % Save
-    Enc_Data_EEG = cfg;
-    Enc_Data_EEG.Data = Data;
-    Enc_Data_EEG.dim = 'trl_chan_time';
+    Enc_Data_EEG = Data;
+    Enc_Data_EEG.trialinfo = trialinfo;
     
     fprintf('Save Encoding Data for Subject %s!', Name)
     fprintf('\n')
@@ -230,23 +234,23 @@ for sub = 1:length(Subj_names)
     %% Create EEG Data Struct for Retrieval
     [~,sort_idx] = sortrows(cell2mat(TrialInfo(:,[5 7 9])));
 
-    cfg.TrialInfo = TrialInfo(sort_idx,:);
-    cfg.TimeVec1024 = Preproc_Data_1.time;
+    trialinfo = TrialInfo(sort_idx,:);
 
-    Data = [Preproc_Data_2.trial; Preproc_Data_1.trial];
+    cfg = [];
+    cfg.appenddim = 'rpt';
+    Data = ft_appendtimelock(cfg,Preproc_Data_2, Preproc_Data_1);
     
     % Fill in NaN Trials
     for i = 1:length(Nan_trial_idx)
-        Data = [Data(1:(Nan_trial_idx(i)-1),:,:); nan(1,size(Data,2),size(Data,3)); Data(Nan_trial_idx(i):end,:,:)];
+        Data.trial = [Data.trial(1:(Nan_trial_idx(i)-1),:,:); nan(1,size(Data.trial,2),size(Data.trial,3)); Data.trial(Nan_trial_idx(i):end,:,:)];
     end
 
     % Sort Data
-    Data = Data(sort_idx,:,:);
+    Data.trial = Data.trial(sort_idx,:,:);
 
     % Save
-    Ret_Data_EEG = cfg;
-    Ret_Data_EEG.Data = Data;
-    Ret_Data_EEG.dim = 'trl_chan_time';
+    Ret_Data_EEG = Data;
+    Ret_Data_EEG.trialinfo = trialinfo;
     
     fprintf('Save Retrieval Data for Subject %s!', Name)
     fprintf('\n')
