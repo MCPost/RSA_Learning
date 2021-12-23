@@ -157,8 +157,7 @@ for sub = 1:length(Subj_names)
     
     fprintf('Save Encoding Data for Subject %s!', Name)
     fprintf('\n')
-    save(['Preproc_EEG_Data/Encoding_object_locked/Enc_EEG_Data_',Name], 'Enc_Data_EEG')
-    save(['Preproc_EEG_Data/Encoding_object_locked/Enc_EEG_Data_',Name], 'Encoding_Data','-append')
+    save(['Preproc_EEG_Data/Encoding_object_locked/Enc_EEG_Data_',Name], 'Enc_Data_EEG', 'Encoding_Data')
     
     clear cfg Enc_Data_EEG Data Preproc_Data_1 Preproc_Data_2 Encoding_Data Nan_trial_idx sort_idx TrialInfo
     
@@ -260,8 +259,7 @@ for sub = 1:length(Subj_names)
     
     fprintf('Save Retrieval Data for Subject %s!', Name)
     fprintf('\n')
-    save(['Preproc_EEG_Data/Retrieval_response_locked/Ret_EEG_Data_',Name], 'Ret_Data_EEG')
-    save(['Preproc_EEG_Data/Retrieval_response_locked/Ret_EEG_Data_',Name], 'Retrieval_Data','-append')
+    save(['Preproc_EEG_Data/Retrieval_response_locked/Ret_EEG_Data_',Name], 'Ret_Data_EEG', 'Retrieval_Data')
 
     clear cfg Ret_Data_EEG Data Preproc_Data_1 Preproc_Data_2 Retrieval_Data Nan_trial_idx sort_idx TrialInfo
     
