@@ -4,16 +4,21 @@
 %% Load from WimberM-Stream
 
 % Get Path to EEG data
-
-if(strcmp(getenv('COMPUTERNAME'),'DESKTOP-4EMDPEJ'))
-    eeg_fullpath = 'Y:/Christopher/RSA_for_Christopher/EEG_data_preprocessed/';
-elseif(strcmp(getenv('COMPUTERNAME'),'CHRISP-PC'))
-    eeg_fullpath = '\\analyse4/Project0298/Christopher/EGG_data_preprocessed/';
+if(ispc)
+    if(sum(ismember({'LAPTOP-O3QOC2SU','DESKTOP-4EMDPEJ'},getenv('COMPUTERNAME'))) > 0)
+        eeg_fullpath = 'Y:\Christopher\RSA_for_Christopher\EEG_data_preprocessed\';
+    else
+        eeg_fullpath = '\\analyse4\Project0298\Christopher\EEG_data_preprocessed\';
+    end
+elseif(isunix)
+    eeg_fullpath = '/analyse/Project0298/Christopher/EEG_data_preprocessed/';
+else
+    eeg_fullpath = '';
 end
 eeg_encpath = 'Full_clean_encoding_2/';
 eeg_retpath = 'Full_clean_retrieval_RL_4seconds/';
 
-if(exist(eeg_fullpath,'dir') == 7)
+if(exist(eeg_fullpath,'dir') ~= 7)
     error('Path does not exist. Network probably not mounted.')
 end
 
@@ -153,6 +158,7 @@ for sub = 1:length(Subj_names)
     fprintf('Save Encoding Data for Subject %s!', Name)
     fprintf('\n')
     save(['Preproc_EEG_Data/Encoding_object_locked/Enc_EEG_Data_',Name], 'Enc_Data_EEG')
+    save(['Preproc_EEG_Data/Encoding_object_locked/Enc_EEG_Data_',Name], 'Encoding_Data','-append')
     
     clear cfg Enc_Data_EEG Data Preproc_Data_1 Preproc_Data_2 Encoding_Data Nan_trial_idx sort_idx TrialInfo
     
@@ -255,7 +261,8 @@ for sub = 1:length(Subj_names)
     fprintf('Save Retrieval Data for Subject %s!', Name)
     fprintf('\n')
     save(['Preproc_EEG_Data/Retrieval_response_locked/Ret_EEG_Data_',Name], 'Ret_Data_EEG')
-    
+    save(['Preproc_EEG_Data/Retrieval_response_locked/Ret_EEG_Data_',Name], 'Retrieval_Data','-append')
+
     clear cfg Ret_Data_EEG Data Preproc_Data_1 Preproc_Data_2 Retrieval_Data Nan_trial_idx sort_idx TrialInfo
     
 end
@@ -264,104 +271,99 @@ end
 
 
 
-%% Load from WimberM-iEEG-compute
-
-% Get Path to EEG data
-
-eeg_fullpath = 'Z:/Christopher/EEG_full_retrieval_Juan/';
-
-if(exist(eeg_fullpath,'dir') ~= 7)
-    error('Path does not exist. Network probably not mounted.')
-end
-
-% Get logfiles and Names
-[~,message,~] = fileattrib('Logs\*');
-currentdir = pwd;
-filenames = strrep({message([message.directory] == 0).Name}',[currentdir,'\'],'');
-filenames = regexprep(filenames,'\','/');
-
-tok_names = unique(cellfun(@(x) x{1}, regexp(filenames,'_(\w*).','tokens','once'),'UniformOutput', 0));
-Subj_names = tok_names(cellfun(@isempty, regexp(tok_names,'_')));
-
-% leave out Subj 'TVV' 
-Subj_names(strcmp(Subj_names,'TVV')) = [];
-
-
-for sub = 1:length(Subj_names)
-    
-    Name = Subj_names{sub};
-    
-    
-    %% Load Behavioral Data (Logfile)
-    
-    fprintf('\n')
-    fprintf('Load Logfile Data for Subject %s!', Name)
-    fprintf('\n')
-    
-    if(sub == 20)
-        logfile = importdata(['Logs/resultfile_',Name,'_nocutted.csv']);
-    else
-        logfile = importdata(['Logs/resultfile_',Name,'.csv']);
-    end
-    
-    logfile.textdata(2:end,find(strcmp(logfile.textdata(find(strcmp(logfile.textdata(:,2),'retrieval'),1,'first'),:),''),1,'first')+(0:size(logfile.data,2)-1)) = num2cell(logfile.data);
-    logfile = logfile.textdata;
-    for i = 1:size(logfile,2)
-        if(~isempty(str2double(logfile{2,i})) && ~isnan(str2double(logfile{2,i})))
-            logfile(2:end,i) = num2cell(str2double(logfile(2:end,i)));
-        end
-    end
-    clear i
-    
-    
-    %% Get Retrieval from logfile and Categories of Objects
-
-    names = {'block_number','trial_retrieval','trial_total_ret','object_name','object_number','object_percep',... 
-             'object_category','cue_retrieval','RT_reinstatement','catch_trial_type','acc_catch','RT_catch_trial',...
-             'catch_trial_2_type','acc_catch_2','RT_catch__2_trial','total_responses_distractor','accuracy_distractor',...
-             'OnsetRetrievalBlockStart','CueRetrievalOnset','ResponseRetrievalOnset','CatchTrialOnset',...
-             'ResponseCatchOnset','CatchTrialOnset_2','ResponseCatchOnset_2','episode_remembered'};
-
-    Retrieval_Data = logfile(strcmp(logfile(:,2),'retrieval'), cell2mat(cellfun(@(x) ismember(x,names), strtrim(logfile(1,:)),'UniformOutput', 0)));
-    % block_number, trial_encoding, trial_total_enc, object_name,
-    % object_number, object_percep, object_category, RT_encoding,
-    % cue_retrieval, OnsetEncodingBlockStart, WordOnsetEncoding, 
-    % ObjectContextOnset, ResponseEncodingOnset, PerceptualDim, SemanticDim,
-    % Category
-
-    Retrieval_Data(cell2mat(Retrieval_Data(:,6)) == 1,26) = {'Drawing'};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,6)) == 2,26) = {'Picture'};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) < 5,27) = {'Animate'};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) > 4,27) = {'Inanimate'};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) < 5,28) = {1};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) > 4,28) = {2};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 1,29) = {'insect'};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 2,29) = {'bird'};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 3,29) = {'mammal'};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 4,29) = {'sea'};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 5,29) = {'fruit'};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 6,29) = {'electronic'};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 7,29) = {'veggie'};
-    Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 8,29) = {'clothe'};
-    cfg.Retrieval_Data = Retrieval_Data;
-
-    
-    %% Load EEG Data
-    
-    fprintf('Load Retrieval EEG Data for Subject %s!', Name)
-    fprintf('\n')
-    
-    Preproc_Data_1 = load([eeg_fullpath,'Prepro_retrieval_full_',Name,'.mat'], ['r_1_',Name]);
-    Preproc_Data_1 = Preproc_Data_1.(cell2mat(fieldnames(Preproc_Data_1)));
-    Preproc_Data_2 = load([eeg_fullpath,eeg_retpath,'Prepro_retrieval_RL_4seconds_full_',Name,'.mat'], ['r_2_',Name]);
-    Preproc_Data_2 = Preproc_Data_2.(cell2mat(fieldnames(Preproc_Data_2)));
-    
-    
-    
-end
-
-
-
-
-
+% %% Load from WimberM-iEEG-compute
+% 
+% % Get Path to EEG data
+% 
+% eeg_fullpath = 'Z:/Christopher/EEG_full_retrieval_Juan/';
+% 
+% if(exist(eeg_fullpath,'dir') ~= 7)
+%     error('Path does not exist. Network probably not mounted.')
+% end
+% 
+% % Get logfiles and Names
+% [~,message,~] = fileattrib('Logs\*');
+% currentdir = pwd;
+% filenames = strrep({message([message.directory] == 0).Name}',[currentdir,'\'],'');
+% filenames = regexprep(filenames,'\','/');
+% 
+% tok_names = unique(cellfun(@(x) x{1}, regexp(filenames,'_(\w*).','tokens','once'),'UniformOutput', 0));
+% Subj_names = tok_names(cellfun(@isempty, regexp(tok_names,'_')));
+% 
+% % leave out Subj 'TVV' 
+% Subj_names(strcmp(Subj_names,'TVV')) = [];
+% 
+% 
+% for sub = 1:length(Subj_names)
+%     
+%     Name = Subj_names{sub};
+%     
+%     
+%     %% Load Behavioral Data (Logfile)
+%     
+%     fprintf('\n')
+%     fprintf('Load Logfile Data for Subject %s!', Name)
+%     fprintf('\n')
+%     
+%     if(sub == 20)
+%         logfile = importdata(['Logs/resultfile_',Name,'_nocutted.csv']);
+%     else
+%         logfile = importdata(['Logs/resultfile_',Name,'.csv']);
+%     end
+%     
+%     logfile.textdata(2:end,find(strcmp(logfile.textdata(find(strcmp(logfile.textdata(:,2),'retrieval'),1,'first'),:),''),1,'first')+(0:size(logfile.data,2)-1)) = num2cell(logfile.data);
+%     logfile = logfile.textdata;
+%     for i = 1:size(logfile,2)
+%         if(~isempty(str2double(logfile{2,i})) && ~isnan(str2double(logfile{2,i})))
+%             logfile(2:end,i) = num2cell(str2double(logfile(2:end,i)));
+%         end
+%     end
+%     clear i
+%     
+%     
+%     %% Get Retrieval from logfile and Categories of Objects
+% 
+%     names = {'block_number','trial_retrieval','trial_total_ret','object_name','object_number','object_percep',... 
+%              'object_category','cue_retrieval','RT_reinstatement','catch_trial_type','acc_catch','RT_catch_trial',...
+%              'catch_trial_2_type','acc_catch_2','RT_catch__2_trial','total_responses_distractor','accuracy_distractor',...
+%              'OnsetRetrievalBlockStart','CueRetrievalOnset','ResponseRetrievalOnset','CatchTrialOnset',...
+%              'ResponseCatchOnset','CatchTrialOnset_2','ResponseCatchOnset_2','episode_remembered'};
+% 
+%     Retrieval_Data = logfile(strcmp(logfile(:,2),'retrieval'), cell2mat(cellfun(@(x) ismember(x,names), strtrim(logfile(1,:)),'UniformOutput', 0)));
+%     % block_number, trial_encoding, trial_total_enc, object_name,
+%     % object_number, object_percep, object_category, RT_encoding,
+%     % cue_retrieval, OnsetEncodingBlockStart, WordOnsetEncoding, 
+%     % ObjectContextOnset, ResponseEncodingOnset, PerceptualDim, SemanticDim,
+%     % Category
+% 
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,6)) == 1,26) = {'Drawing'};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,6)) == 2,26) = {'Picture'};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) < 5,27) = {'Animate'};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) > 4,27) = {'Inanimate'};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) < 5,28) = {1};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) > 4,28) = {2};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 1,29) = {'insect'};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 2,29) = {'bird'};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 3,29) = {'mammal'};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 4,29) = {'sea'};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 5,29) = {'fruit'};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 6,29) = {'electronic'};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 7,29) = {'veggie'};
+%     Retrieval_Data(cell2mat(Retrieval_Data(:,7)) == 8,29) = {'clothe'};
+%     cfg.Retrieval_Data = Retrieval_Data;
+% 
+%     
+%     %% Load EEG Data
+%     
+%     fprintf('Load Retrieval EEG Data for Subject %s!', Name)
+%     fprintf('\n')
+%     
+%     Preproc_Data_1 = load([eeg_fullpath,'Prepro_retrieval_full_',Name,'.mat'], ['r_1_',Name]);
+%     Preproc_Data_1 = Preproc_Data_1.(cell2mat(fieldnames(Preproc_Data_1)));
+%     Preproc_Data_2 = load([eeg_fullpath,eeg_retpath,'Prepro_retrieval_RL_4seconds_full_',Name,'.mat'], ['r_2_',Name]);
+%     Preproc_Data_2 = Preproc_Data_2.(cell2mat(fieldnames(Preproc_Data_2)));
+%     
+%     
+%     
+% end
 
